@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eagles - Registration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="Eagles-front.css">
+</head>
+<body>
+    <header class="topbar">
+
+    <div class="logo">
+        <span class="logo-mark"></span>
+        <span class="logo-text">Eagles Team</span>
+    </div>
+
+    <nav class="nav" id="mainNav">
+        <a href="Eagles-homepage.html" class="nav-link">Home</a>
+        <a href="Eagles.courses.html" class="nav-link">Courses</a>
+        <a href="Eagles-teachers.html" class="nav-link">Teachers</a>
+        <a href="Eagles-about.html" class="nav-link">About</a>
+        <a href="Eagles-contacts.html" class="nav-link">Contacts</a>
+    </nav>
+
+        <button class="zayavka">Join Us!</button>
+
+
+    <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
+        ☰
+    </button>
+
+</header>
+
+
+    <main class="courses-page">
+
+        <section class="courses-hero">
+            <div class="hero-shape" aria-hidden="true"></div>
+            <span class="eyebrow">SIGN UP</span>
+            <h1 class="head2">Start your journey with <span class="accent">EAGLES</span></h1>
+            <span id="text1">Fill in your details below and we'll match you
+            with the right course and teacher.</span>
+        </section>
+
+        <section class="register-section">
+            <div class="register-card">
+                <form class="register-form" id="registerForm" action="#" method="post">
+
+                    <div class="form-group">
+                        <label for="firstName">Name</label>
+                        <input type="text" id="firstName" name="firstName" placeholder="Enter name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" id="lastName" name="lastName" placeholder="Enter Last name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="age">Age</label>
+                        <input type="number" inputmode="numeric" id="age" name="age" placeholder="Enter age" min="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="subject">Subject</label>
+                        <input type="text" id="subject" name="" placeholder="IELTS, pre IELTS, Grammar, CEFR" required>
+                    </div>
+
+                    <div class="form-group form-group-wide">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" inputmode="tel" id="phone" name="phone" placeholder="+998" required>
+                    </div>
+                    <div class="form-group honeypot">
+                    <label for="website">Website</label>
+                    <input
+                        type="text"
+                        id="website"
+                        name="website"
+                        autocomplete="off"
+                        tabindex="-1"
+                    >
+                </div>
+                    <button class="btn2 form-submit" id="sendButton" type="button">Send Request</button>
+                    
+                </form>
+                
+            </div>
+        </section>
+<p id="status">Status:</p>
+    </main>
+   <script src="project.js"></script>
+</body>
+</html>
