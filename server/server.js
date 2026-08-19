@@ -170,7 +170,7 @@ app.get("/", (req, res) => {
             __dirname,
             "..",
             "public",
-            "Eagles-request.html"
+            "Eagles-homepage.html"
         )
     );
 });
