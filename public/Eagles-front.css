@@ -1673,3 +1673,9 @@ select {
     height: 1px;
     overflow: hidden;
 }
+#spn1 {
+    color: rgb(222, 0, 0);
+}
+#spn2 {
+    color: rgb(175, 0, 0);
+}
