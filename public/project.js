@@ -52,7 +52,7 @@ async function SendInfo() {
         return;
     }
     // PHONE VALIDATION
-    const phoneRegex = /^\+9989\d{8}$/;
+    const phoneRegex = /^\+998(?:20|33|50|77|80|87|88|90|91|92|93|94|95|97|98|99)\d{7}$/;
     if (!phoneRegex.test(number)) {
         status.style.color = "black";
         status.style.textShadow = "0px 0px 20px red";

@@ -270,15 +270,14 @@ if (website) {
 
         // PHONE VALIDATION
 
-        const phoneRegex = /^\+9989\d{8}$/;
+        const phoneRegex = /^\+998(?:20|33|50|77|80|87|88|90|91|92|93|94|95|97|98|99)\d{7}$/;
 
-        if (!phoneRegex.test(cleanNumber)) {
-            return res.status(400).json({
-                ok: false,
-                error: "Invalid phone number"
-            });
-        }
-
+if (!phoneRegex.test(cleanNumber)) {
+    return res.status(400).json({
+        ok: false,
+        error: "Invalid phone number"
+    });
+}
         // AGE VALIDATION
 
         const ageNumber = Number(cleanAge);
