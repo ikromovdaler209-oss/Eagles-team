@@ -346,7 +346,9 @@ if (website) {
 📱 Phone number: ${cleanNumber}
 📧 Course: ${cleanSubject}
 
-🕒 Time: ${new Date().toLocaleString()}
+🕒 Time: ${new Date().toLocaleString("en-US", {
+    timeZone: "Asia/Tashkent"
+})}
 `;
 
         // SEND TO TELEGRAM
