@@ -146,3 +146,13 @@ if (menuToggle && mainNav) {
         }
     });
 }
+function Press() {
+           let questions = ["What do you usually do in your free time?", "Do you like taking photos?", "What kind of music do you usually listen to?", "Do you often use public transportation?", "What is your favorite time of the day?", "Do you enjoy cooking?",
+            "How often do you watch movies?", "Do you prefer studying in the morning or evening?", "What kind of weather do you like?", "Do you like visiting new places?",
+            "How often do you use your phone?", "Do you enjoy reading books?", "What is your favorite season?",
+            "Do you like shopping?", "How often do you meet your friends?", "Do you prefer living in a big city or a small town?", 
+            "What do you usually have for breakfast?", "Do you like learning new languages?", "What kind of clothes do you usually wear?",
+            "Do you prefer spending time alone or with other people?"]
+            let random = Math.floor(Math.random() * questions.length);
+            document.getElementById("box10").innerText = questions[random];
+        }

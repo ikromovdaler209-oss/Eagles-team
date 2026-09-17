@@ -1854,7 +1854,28 @@ select {
         width: 100%;
     }
 }
- 
+        #box10 {
+            width: 400px;
+            height: 85px;
+            font-size: 25px;
+            border: 2px solid black;
+            border-radius: 10px;
+            text-align: center;
+            padding-top: 20px;
+            margin-bottom: 3%;
+            margin-left: 2%;
+        }
+        #hh1 {
+            font-size: 30px;
+            margin-left: 2%;
+        }
+        #btn10 {
+            width: 100px;height: 30px;
+            color: white;
+            background-color: black;
+            border-radius: 10px;
+            margin-left: 2%;
+        }
 
 
 
