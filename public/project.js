@@ -146,6 +146,10 @@ if (menuToggle && mainNav) {
         }
     });
 }
+let senddd = document.getElementById("btn10")
+if (senddd) {
+    senddd.addEventListener("click", Press);
+}
 function Press() {
            let questions = ["What do you usually do in your free time?", "Do you like taking photos?", "What kind of music do you usually listen to?", "Do you often use public transportation?", "What is your favorite time of the day?", "Do you enjoy cooking?",
             "How often do you watch movies?", "Do you prefer studying in the morning or evening?", "What kind of weather do you like?", "Do you like visiting new places?",
