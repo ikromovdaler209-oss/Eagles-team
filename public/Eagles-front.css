@@ -1854,28 +1854,154 @@ select {
         width: 100%;
     }
 }
-        #box10 {
-            width: 400px;
-            height: 85px;
-            font-size: 25px;
-            border: 2px solid black;
-            border-radius: 10px;
-            text-align: center;
-            padding-top: 20px;
-            margin-bottom: 3%;
-            margin-left: 2%;
-        }
-        #hh1 {
-            font-size: 30px;
-            margin-left: 2%;
-        }
-        #btn10 {
-            width: 100px;height: 30px;
-            color: white;
-            background-color: black;
-            border-radius: 10px;
-            margin-left: 2%;
-        }
+
+
+.speaking-page {
+    background-color: #000000;
+}
+
+.speaking-wrap {
+    position: relative;
+    width: 92%;
+    max-width: 720px;
+    margin: 6% auto;
+    padding: 48px 40px 44px 40px;
+    background: #ffffff;
+    border: 3px solid #cb0407;
+    border-radius: 10px;
+    overflow: hidden;
+    text-align: center;
+    box-shadow: 0px 0px 40px red;
+}
+
+.speaking-wrap::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 130%;
+    height: 130%;
+    transform: translate(-50%, -50%);
+    background-image: url('eagles-logo-mark.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    opacity: 0.07;
+    pointer-events: none;
+}
+
+.speaking-wrap > * {
+    position: relative;
+    z-index: 1;
+}
+
+#hh1 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 34px;
+    font-weight: 700;
+    color: #0d0d0d;
+    margin: 0 0 32px 0;
+}
+
+.part-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.radio {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+}
+
+.part-tabs label {
+    display: inline-block;
+    padding: 12px 24px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #0d0d0d;
+    background: #ffffff;
+    border: 1px solid rgba(13, 13, 13, 0.14);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s ease;
+    user-select: none;
+}
+
+.part-tabs label:hover {
+    border-color: #cb0407;
+    color: #cb0407;
+}
+
+.radio:checked + label {
+    background: #0d0d0d;
+    border-color: #0d0d0d;
+    color: #ffffff;
+}
+
+.radio:checked + label:hover {
+    color: #ffffff;
+}
+
+.question-box {
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 28px 26px;
+    margin-bottom: 30px;
+    background: #f6f5f3;
+    border: 1px solid rgba(13, 13, 13, 0.14);
+    border-radius: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 18px;
+    line-height: 1.5;
+    color: #0d0d0d;
+}
+
+.question-placeholder {
+    color: #55555a;
+    font-style: italic;
+}
+
+.find-btn {
+    padding: 15px 34px;
+    background: #0d0d0d;
+    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.find-btn:hover {
+    background: #cb0407;
+}
+
+.find-btn:active {
+    transform: scale(0.96);
+}
+
+@keyframes questionSpin {
+    0%   { transform: translateY(0);     opacity: 1;    filter: blur(0); }
+    30%  { transform: translateY(-14px); opacity: 0.25; filter: blur(2px); }
+    55%  { transform: translateY(14px);  opacity: 0;    filter: blur(3px); }
+    75%  { transform: translateY(-6px);  opacity: 0.5;  filter: blur(1px); }
+    100% { transform: translateY(0);     opacity: 1;    filter: blur(0); }
+}
+
+.question-box.spin {
+    animation: questionSpin 0.5s ease;
+}
 
 
 
