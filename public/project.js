@@ -209,17 +209,56 @@ let questions3 = ["Why do you think people spend so much time on social media no
             "Should historical buildings always be preserved, even when replacing them with modern buildings would be more economically beneficial?", "Why are some people attracted to lifestyles that are very different from those of previous generations?",
             "Do you think governments can effectively reduce inequality, or will there always be significant differences between social groups?", "How might people’s attitudes towards education change as technology becomes more advanced?",
             "Some people believe that travelling has become less meaningful because modern tourists can easily access information about almost any destination. To what extent do you agree?"]
-        function Press() {
-            if (radio1.checked) {
-                let random1 = Math.floor(Math.random() * questions1.length);
-                document.getElementById("box10").innerText = questions1[random1];
-            }
-            else if (radio2.checked) {
-                let random2 = Math.floor(Math.random() * questions2.length);
-                document.getElementById("box10").innerText = questions2[random2]
-            }
-            else if (radio3.checked) {
-                let random3 = Math.floor(Math.random() * questions3.length);
-                document.getElementById("box10").innerText = questions3[random3]
-            }
-        }
+        let used1 = []; let used2 = []; let used3 = [];
+function Press() {
+if (radio1.checked) {
+
+    if (used1.length === questions1.length) {
+        used1 = [];
+    }
+
+    let random1;
+
+    do {
+        random1 = Math.floor(Math.random() * questions1.length);
+    } while (used1.includes(random1));
+
+    used1.push(random1);
+
+    document.getElementById("box10").innerText = questions1[random1];
+}
+
+else if (radio2.checked) {
+
+    if (used2.length === questions2.length) {
+        used2 = [];
+    }
+
+    let random2;
+
+    do {
+        random2 = Math.floor(Math.random() * questions2.length);
+    } while (used2.includes(random2));
+
+    used2.push(random2);
+
+    document.getElementById("box10").innerText = questions2[random2];
+}
+
+else if (radio3.checked) {
+
+    if (used3.length === questions3.length) {
+        used3 = [];
+    }
+
+    let random3;
+
+    do {
+        random3 = Math.floor(Math.random() * questions3.length);
+    } while (used3.includes(random3));
+
+    used3.push(random3);
+
+    document.getElementById("box10").innerText = questions3[random3];
+}
+}
