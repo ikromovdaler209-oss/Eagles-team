@@ -2002,6 +2002,12 @@ select {
 .question-box.spin {
     animation: questionSpin 0.5s ease;
 }
-
+#aspeaking {
+    color: white;
+    text-decoration: underline;
+}
+#aspeaking:hover {
+    color: red;
+}
 
 
