@@ -1050,6 +1050,10 @@ button:focus-visible {
     background-image: url(images/location.jpg);
     box-shadow: 0px 12px 28px rgba(10, 10, 10, 0.12);
 }
+.location-photo:hover {
+    box-shadow: 0px 0px 25px rgb(185, 0, 0);
+    transition: 0.3s;
+}
 @media (max-width: 480px) {
     .location-photo {
         min-height: 300px;
