@@ -2009,5 +2009,28 @@ select {
 #aspeaking:hover {
     color: red;
 }
-
+#myh1 {
+    text-align: center;
+    margin-top: 2%;
+    color: white;
+    font-size: 35px;
+    text-shadow: 0px 0px 20px red;
+}
+.logo-speaking {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative; top:6px;
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, var(--orange), var(--orange-deep));
+    color: var(--white);
+    font-weight: 800;
+    font-size: 18px;
+    box-shadow: 0px 4px 14px rgba(230, 18, 31, 0.45);
+    background-image: url(icons/eagles-logo.png);
+    background-position: center;
+    background-size: cover;
+}
 
