@@ -178,7 +178,10 @@ let questions1 = ["What do you usually do in your free time?", "Do you like taki
             "What do you usually do when you feel bored?", "Do you work or are you a student?", "What work do you do? / What subjects are you studying?", "Why did you choose that job?", 
             "Why did you choose to study that subject?", "Do you like your job?", "Is there anything you dislike about your job?", 
             "What do you like about your studies?", "What do you dislike about your studies?", "What was your dream job when you were young?",
-            "Have you changed your mind on your dream job?"]
+            "Have you changed your mind on your dream job?", "Please describe your hometown a little.", "What is your town well-known for?", "Do you like your hometown?", 
+            "Is that a big city or a small place?", "How long have you been living there?", "Do you think you will continue living there for a long time?", "Would you like to live in the countryside in the future?", 
+            "Have you ever lived in the countryside?", "Do you ever spend time in the countryside?", "What is the difference between living in the countryside and the city?", 
+            "What do people living in the countryside like to do?", "What do you like to do in the countryside?", "How has your town changed over the last 20 years?"]
 let questions2 = ["Describe your favorite season of the year.", "Describe a public place that you think needs improvements.", "Describe a city or country you want to live the most in the future.",
             "Describe something you learned in a place/from a person.", "Describe an occasion where you received a good service from a company or shop.",
             "Describe a toy that you received when you were a child", "Describe a famous person that you are interested in",
