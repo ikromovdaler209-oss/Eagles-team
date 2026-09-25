@@ -156,7 +156,7 @@ if (senddd) {
     if (btn && box) {
         btn.addEventListener('click', function () {
             box.classList.remove('spin');
-            void box.offsetWidth; // сброс, чтобы анимация перезапускалась каждый раз
+            void box.offsetWidth;
             box.classList.add('spin');
         });
     }
