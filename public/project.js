@@ -197,7 +197,14 @@ let questions1 = ["What do you usually do in your free time?", "Do you like taki
             "When was the last time you went to the park?", "Do people in your country often go to parks?", "Do you like science?", "Did you like science classes when you were young?", "Do you want to travel in the outer space?",
             "What would you do if you had an opportunity?", "Do you think it's necessary to see other planets?", "Are you interested in films about outer space and stars?", "Do you like science fiction movies?", 
             "Have you ever taken a course about stars?", "Is it important to study stars?", "Do you want to know more about outer space?", "Do you use headphones?", "In what situations would you use headphones?", "What type of headphones do you use?", 
-            "In what situations would you NOT use headphones?"]
+            "In what situations would you NOT use headphones?", "Do you think singing can bring happiness to people?", "Do you like modern art or traditional art?", "Do you like art?", "Have you ever visited an art gallery?", 
+            "Do you think it would be interesting for you to be an artist?", "Do you usually wear T-shirts?", "Do you like wearing T-shirts?", "Do you like T-shirts with pictures and prints?", "What colour clothes do you like to wear?",
+            "What are the differences between men and women's preference in colour?", "What kind of clothes do you like to wear?", "What kind of clothes do you never wear?", "Do you wear the same style of clothes on weekdays and weekends?", 
+            "Are you good at telling jokes?", "Do your friends like to tell jokes?", "Do you like to watch comedies?", "What is your morning routine?", "Do you spend your mornings doing the same things on both weekends and weekdays?", 
+            "Is breakfast important?", "Do you like to get up early?", "Do you like the morning or the evening?", "What do you usually do in the evening?", "Do you think history is important?", "Do you like to learn about history?",
+            "Do you think the internet is a good place to learn about history?", "Do you prefer living in an old building or a modern house?", "Should old buildings be preserved?", "Are there any old buildings you want to see in the future?", 
+            "What aspect of culture do old buildings reflect?", "How do old buildings affect the appearance of a place?", "What kinds of movies do you like best?", "How often do you go to a cinema to watch a movie?", "Did you usually go to the cinema when you were a kid?", 
+            "What was the first film that you watched?", "Do you like to watch movies alone or with your friends?", "Do you like to go to the cinema with your friends?", "Do you prefer foreign films or films made in your country?"]
 let questions2 = ["Describe your favorite season of the year.", "Describe a public place that you think needs improvements.", "Describe a city or country you want to live the most in the future.",
             "Describe something you learned in a place/from a person.", "Describe an occasion where you received a good service from a company or shop.",
             "Describe a toy that you received when you were a child", "Describe a famous person that you are interested in",
@@ -255,7 +262,11 @@ let questions3 = ["Why do you think people spend so much time on social media no
             "Do you think having access to more information necessarily makes people better informed?", "How has globalisation affected traditional cultures, and do you think these effects will become stronger in the future?", 
             "Should historical buildings always be preserved, even when replacing them with modern buildings would be more economically beneficial?", "Why are some people attracted to lifestyles that are very different from those of previous generations?",
             "Do you think governments can effectively reduce inequality, or will there always be significant differences between social groups?", "How might people’s attitudes towards education change as technology becomes more advanced?",
-            "Some people believe that travelling has become less meaningful because modern tourists can easily access information about almost any destination. To what extent do you agree?"]
+            "Some people believe that travelling has become less meaningful because modern tourists can easily access information about almost any destination. To what extent do you agree?", "Why do some people prefer to travel in their own country rather than going abroad?", 
+            "Some people don't like to travel abroad. Why?", "Why do people choose to travel or live abroad?", "What food do you (people in your country) eat on special occasions?", "What is the difference between special food in your country and other countries?", 
+            "Why do many people like to spend a lot of money on food on special days?", "What do you think of people using their mobile phones during a meal?", "Do you think it's good to communicate when eating with your family?", 
+            "More and more people are unwilling to cook. Why is this happening?", "What do you think buildings will be like in the future?", "Which do most people prefer, living in a bungalow or in a tall building?", "Why are taller and taller building being constructed nowadays?", 
+            "Why do people get up early?", "Are there any situations when it's not good to arrive early?", "Is it good to arrive early in any situation?", "Why do some people stay up late at night?", "Is it easy to get up early?"]
         let used1 = []; let used2 = []; let used3 = [];
 function Press() {
 if (radio1.checked) {
