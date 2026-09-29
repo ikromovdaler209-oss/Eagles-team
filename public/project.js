@@ -179,7 +179,7 @@ let questions1 = ["What do you usually do in your free time?", "Do you like taki
             "Why did you choose to study that subject?", "Do you like your job?", "Is there anything you dislike about your job?", 
             "What do you like about your studies?", "What do you dislike about your studies?", "What was your dream job when you were young?",
             "Have you changed your mind on your dream job?", "Please describe your hometown a little.", "What is your town well-known for?", "Do you like your hometown?", 
-            "Is that a big city or a small place?", "How long have you been living there?", "Do you think you will continue living there for a long time?", "Would you like to live in the countryside in the future?", 
+            "The place where you live is a big city or a small place?", "How long have you been living there?", "Do you think you will continue living there for a long time?", "Would you like to live in the countryside in the future?", 
             "Have you ever lived in the countryside?", "Do you ever spend time in the countryside?", "What is the difference between living in the countryside and the city?", 
             "What do people living in the countryside like to do?", "What do you like to do in the countryside?", "How has your town changed over the last 20 years?", "What colour would you choose to paint the walls of your room?", 
             "What colour would you never use in your home?", "Can you describe the place where you live?", "What kind of housing accommodation do you live in?", "What do you like about your flat?", 
