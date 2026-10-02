@@ -161,9 +161,15 @@ if (senddd) {
         });
     }
 })();
+//Speaking
 let radio1 = document.getElementById("radio1")
 let radio2 = document.getElementById("radio2")
 let radio3 = document.getElementById("radio3")
+//Writiong
+let radiot1 = document.getElementById("radio11")
+let radiot2 = document.getElementById("radio22")
+let task1 = []
+let task2 = []
 let questions1 = ["What do you usually do in your free time?", "Do you like taking photos?", "What kind of music do you usually listen to?", "Do you often use public transportation?", "What is your favorite time of the day?", "Do you enjoy cooking?",
             "How often do you watch movies?", "Do you prefer studying in the morning or evening?", "What kind of weather do you like?", "Do you like visiting new places?",
             "How often do you use your phone?", "Do you enjoy reading books?", "What is your favorite season?",
@@ -195,7 +201,7 @@ let questions1 = ["What do you usually do in your free time?", "Do you like taki
             "How often do you go shopping?", "Do you compare prices when you shop?", "Is it difficult for you to make choices when you shop?", "What type of car do you like?", "What colour car would you choose to buy?",
             "Do you think car colours are important?", "What do you usually do when there's a traffic jam?", "Do you prefer to be a driver or a passenger?", "Do you like to go to parks?", 
             "When was the last time you went to the park?", "Do people in your country often go to parks?", "Do you like science?", "Did you like science classes when you were young?", "Do you want to travel in the outer space?",
-            "What would you do if you had an opportunity?", "Do you think it's necessary to see other planets?", "Are you interested in films about outer space and stars?", "Do you like science fiction movies?", 
+            "What would you do if you had an opportunity to travel outer space?", "Do you think it's necessary to see other planets?", "Are you interested in films about outer space and stars?", "Do you like science fiction movies?", 
             "Have you ever taken a course about stars?", "Is it important to study stars?", "Do you want to know more about outer space?", "Do you use headphones?", "In what situations would you use headphones?", "What type of headphones do you use?", 
             "In what situations would you NOT use headphones?", "Do you think singing can bring happiness to people?", "Do you like modern art or traditional art?", "Do you like art?", "Have you ever visited an art gallery?", 
             "Do you think it would be interesting for you to be an artist?", "Do you usually wear T-shirts?", "Do you like wearing T-shirts?", "Do you like T-shirts with pictures and prints?", "What colour clothes do you like to wear?",
