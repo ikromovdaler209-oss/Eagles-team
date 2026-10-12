@@ -1861,7 +1861,7 @@ select {
 
 
 .speaking-page {
-    background-color: #000000;
+    background-color: #2c2c2c;
 }
 
 .speaking-wrap {
@@ -2014,6 +2014,13 @@ select {
 #aspeaking:hover {
     color: red;
 }
+#aspeaking1 {
+    color: white;
+    text-decoration: underline;
+}
+#aspeaking1:hover {
+    color: red;
+}
 #myh1 {
     text-align: center;
     margin-top: 2%;
@@ -2038,4 +2045,18 @@ select {
     background-position: center;
     background-size: cover;
 }
-
+#body2 {
+    background-color: #2c2c2c;
+}
+.btnn {
+    font-size: 20px;
+    background-color: white;
+    color: #0a0a0a;
+    border-radius: 6px;
+    margin: 1%;
+    font-weight: bold;
+}
+.btnn:hover {
+    background-color: red;
+    color: black;
+}
