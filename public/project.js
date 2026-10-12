@@ -382,7 +382,15 @@ let images1 = [
     "part-1/4.png",
     "part-1/5.png",
     "part-1/6.png",
-    "part-1/7.png"
+    "part-1/7.png",
+    "part-1/8.png",
+    "part-1/9.png",
+    "part-1/10.png",
+    "part-1/11.png",
+    "part-1/12.png",
+    "part-1/13.png",
+    "part-1/14.png",
+    "part-1/15.png"
 ];
 
 //Part 2
