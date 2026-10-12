@@ -1861,7 +1861,7 @@ select {
 
 
 .speaking-page {
-    background-color: #2c2c2c;
+    background-color: #000000;
 }
 
 .speaking-wrap {
@@ -2046,7 +2046,7 @@ select {
     background-size: cover;
 }
 #body2 {
-    background-color: #2c2c2c;
+    background-color: #000000;
 }
 .btnn {
     font-size: 20px;
@@ -2059,4 +2059,52 @@ select {
 .btnn:hover {
     background-color: red;
     color: black;
+}
+.task-image {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 220px;
+    margin-bottom: 20px;
+    padding: 12px;
+    background: #ffffff;
+    border: 1px dashed rgba(13, 13, 13, 0.3);
+    border-top: 3px solid #cb0407;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.task-image img {
+    display: block;
+    max-width: 100%;
+    max-height: 420px;
+    border-radius: 6px;
+}
+
+/* пока картинка не задана — показываем только подпись */
+.task-image img:not([src]) {
+    display: none;
+}
+
+.task-image img[src] ~ .task-image-placeholder,
+.task-image:has(img[src]) .task-image-placeholder {
+    display: none;
+}
+
+.task-image-placeholder {
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-style: italic;
+    color: #55555a;
+}
+
+/* Part 2: блок скрыт */
+.task-image.is-hidden {
+    display: none;
+}
+
+/* та же анимация прокрутки, что и у вопроса */
+.task-image.spin {
+    animation: questionSpin 0.5s ease;
 }

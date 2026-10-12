@@ -165,11 +165,7 @@ if (senddd) {
 let radio1 = document.getElementById("radio1")
 let radio2 = document.getElementById("radio2")
 let radio3 = document.getElementById("radio3")
-//Writiong
-let radiot1 = document.getElementById("radio11")
-let radiot2 = document.getElementById("radio22")
-let task1 = []
-let task2 = []
+
 let questions1 = ["What do you usually do in your free time?", "Do you like taking photos?", "What kind of music do you usually listen to?", "Do you often use public transportation?", "What is your favorite time of the day?", "Do you enjoy cooking?",
             "How often do you watch movies?", "Do you prefer studying in the morning or evening?", "What kind of weather do you like?", "Do you like visiting new places?",
             "How often do you use your phone?", "Do you enjoy reading books?", "What is your favorite season?",
@@ -355,3 +351,232 @@ else if (radio3.checked) {
     document.getElementById("box10").innerText = questions3[random3];
 }
 }
+/* WRITING */
+
+//Part 1
+
+let task1 = [
+    "The line graph illustrates the percentage of people who used the internet in two countries between 2010 and 2020. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+    "The table shows the number of students enrolled in four university subjects in 2015, 2020 and 2025. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+    "The bar chart compares the percentages of people in two age groups who use four different forms of transport on a daily basis. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+    "The pie charts compare the proportions of household expenditure allocated to five categories in Country A in 2010 and 2025. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+    "The table shows the number of international tourists visiting four countries in 2010, 2015, 2020 and 2025. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+    "The line graph illustrates the percentages of students in three age groups who took online courses between 2010 and 2025. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+    "The bar chart compares the amounts of electricity generated from five different energy sources in two countries in 2025. Summarise the information by selecting and reporting the main features and make comparisons where relevant.",
+    "The chart below shows the average monthly household expenditure in a city in 2010 and 2020. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+    "The table below shows the number of international tourists who visited a country from different regions between 2015 and 2020. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+    "The line graph below shows the average daily temperature in a city over a year. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+    "The pie chars below shows the main sources of energy in a country in 2000 and 2020. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+    "The bar chart below shows the number of students enrolled in different subjects at a university in 2010 and 2020. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+    "The table below shows the results of a survey about the most popular types of holiday among people in different age groups. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+    "The diagram below shows the process of making cheese from milk. Summarise the information by selecting and reporting the main stages, and make comparisons where relevant.",
+    "The line graph below shows the number of cars sold in a country from 2010 to 2020, divided by type. Summarise the information by selecting and reporting the main features, and make comparisons where relevant."
+];
+
+//Part 1 images
+
+let images1 = [
+    "part-1/1.png",
+    "part-1/2.png",
+    "part-1/3.png",
+    "part-1/4.png",
+    "part-1/5.png",
+    "part-1/6.png",
+    "part-1/7.png"
+];
+
+//Part 2
+
+let task2 = [
+    "Some people believe that university education should be free for everyone. To what extent do you agree or disagree?",
+    "Technology has made communication easier, but it has reduced face-to-face interaction. Discuss both views and give your opinion.",
+    "Technology has made communication easier, but it has also reduced face-to-face interaction. Discuss both views and give your opinion.",
+    "Individuals can do little to improve the environment; only governments and large companies can make a difference. To what extent do you agree or disagree?",
+    "Prison is the most effective form of punishment for criminals. To what extent do you agree or disagree?",
+    "Some people prefer working for a company, while others prefer being self-employed. Discuss both views and give your opinion.",
+    "Governments should spend more money on preventing diseases rather than treating them. To what extent do you agree or disagree?",
+    "Social media has a negative impact on young people's mental and social development. Do you agree or disagree?",
+    "International trade and globalisation have brought more benefits than disadvantages. Discuss both views and give your opinion.",
+    "Advertising encourages people to buy products they do not need. To what extent do you agree or disagree?",
+    "More people are moving from rural areas to cities. What problems does this cause, and what solutions can you suggest?",
+    "Many employees work longer hours than in the past. Why is this happening, and what effects does it have?",
+    "Some people believe that young people should be required to do unpaid community work. To what extent do you agree or disagree?",
+    "Artificial intelligence will replace many human jobs in the future. Do the advantages outweigh the disadvantages?"
+];
+
+(function () {
+
+    const boxx = document.getElementById('box11');
+    const imgBox = document.getElementById('imgBox10');
+    const img = document.getElementById('taskImg');
+    const btnn = document.getElementById('btn11');
+    const radio1 = document.getElementById('radiop1');
+    const radios = document.querySelectorAll('input[name="part"]');
+    const placeholder = imgBox.querySelector(
+
+        '.task-image-placeholder'
+
+    );
+    let used1 = [];
+
+    let used2 = [];
+
+    function updateImageBlock() {
+
+        imgBox.classList.toggle(
+
+            'is-hidden',
+
+            !radio1.checked
+
+        );
+
+    }
+
+    radios.forEach(function (radio) {
+
+        radio.addEventListener('change', updateImageBlock);
+
+    });
+
+    updateImageBlock();
+
+    function replaySpin(el) {
+
+        el.classList.remove('spin');
+
+        void el.offsetWidth;
+
+        el.classList.add('spin');
+
+    }
+
+    function getRandomQuestion(arr, used) {
+
+        if (arr.length === 0) {
+
+            return null;
+
+        }
+
+        if (used.length >= arr.length) {
+
+            used.length = 0;
+
+        }
+
+        let available = [];
+
+        for (let i = 0; i < arr.length; i++) {
+
+            if (!used.includes(i)) {
+
+                available.push(i);
+
+            }
+        }
+
+        let randomPosition = Math.floor(
+
+            Math.random() * available.length
+
+        );
+
+        let index = available[randomPosition];
+
+        used.push(index);
+
+        return index;
+
+    }
+
+    btnn.addEventListener('click', function () {
+
+        const part1 = radio1.checked;
+
+        replaySpin(boxx);
+
+        if (part1) {
+
+            replaySpin(imgBox);
+
+            let index = getRandomQuestion(task1, used1);
+
+            if (index === null) {
+
+                boxx.textContent = 'Add questions to task1 first.';
+
+                img.removeAttribute('src');
+
+                img.style.display = 'none';
+
+                placeholder.style.display = 'block';
+
+                return;
+
+            }
+
+            boxx.textContent = task1[index];
+
+            const imagePath = images1[index];
+
+            if (imagePath) {
+
+                img.onerror = function () {
+                    img.style.display = 'none';
+                    placeholder.textContent = 'Image not found';
+                    placeholder.style.display = 'block';
+
+                };
+
+                img.onload = function () {
+                    img.style.display = 'block';
+                    placeholder.style.display = 'none';
+
+                };
+
+                img.src = imagePath;
+                img.alt = 'Writing Task 1 chart or table';
+                img.style.display = 'block';
+                placeholder.style.display = 'none';
+
+            } else {
+
+                img.removeAttribute('src');
+
+                img.style.display = 'none';
+
+                placeholder.textContent =
+
+                    'No image added for this question';
+
+                placeholder.style.display = 'block';
+
+            }
+
+        } else {
+
+            let index = getRandomQuestion(task2, used2);
+
+            if (index === null) {
+
+                boxx.textContent = 'Add questions to task2 first.';
+
+                return;
+
+            }
+            boxx.textContent = task2[index];
+
+        }
+
+    });
+
+})();
+    var radios = document.querySelectorAll('input[name="part"]');
+    radios.forEach(function (r) {
+        r.addEventListener('change', function () {
+            clearPanel();
+            updateImageBlock();
+        });
+    });
+    updateImageBlock();
