@@ -2055,6 +2055,7 @@ select {
     border-radius: 6px;
     margin: 1%;
     font-weight: bold;
+    border-style: none;
 }
 .btnn:hover {
     background-color: red;
