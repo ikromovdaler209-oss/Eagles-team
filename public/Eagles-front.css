@@ -2082,7 +2082,6 @@ select {
     border-radius: 6px;
 }
 
-/* пока картинка не задана — показываем только подпись */
 .task-image img:not([src]) {
     display: none;
 }
@@ -2099,12 +2098,13 @@ select {
     color: #55555a;
 }
 
-/* Part 2: блок скрыт */
 .task-image.is-hidden {
     display: none;
 }
 
-/* та же анимация прокрутки, что и у вопроса */
 .task-image.spin {
     animation: questionSpin 0.5s ease;
+}
+#reference {
+    color: #ff0c1c;
 }
