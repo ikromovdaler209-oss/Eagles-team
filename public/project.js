@@ -412,179 +412,147 @@ let task2 = [
     "Artificial intelligence will replace many human jobs in the future. Do the advantages outweigh the disadvantages?"
 ];
 
-(function () {
 
+(function () {
     const boxx = document.getElementById('box11');
     const imgBox = document.getElementById('imgBox10');
     const img = document.getElementById('taskImg');
     const btnn = document.getElementById('btn11');
     const radio1 = document.getElementById('radiop1');
     const radios = document.querySelectorAll('input[name="part"]');
+
     const placeholder = imgBox.querySelector(
-
         '.task-image-placeholder'
-
     );
-    let used1 = [];
 
+    let used1 = [];
     let used2 = [];
 
+    const PLACEHOLDER_HTML =
+        '<span class="question-placeholder">Choose a part and press "Find question"</span>';
+
     function updateImageBlock() {
-
         imgBox.classList.toggle(
-
             'is-hidden',
-
             !radio1.checked
-
         );
-
     }
 
-    radios.forEach(function (radio) {
-
-        radio.addEventListener('change', updateImageBlock);
-
-    });
-
-    updateImageBlock();
-
     function replaySpin(el) {
-
         el.classList.remove('spin');
-
         void el.offsetWidth;
-
         el.classList.add('spin');
+    }
 
+    function clearPanel() {
+        boxx.innerHTML = PLACEHOLDER_HTML;
+
+        boxx.classList.remove('spin');
+        imgBox.classList.remove('spin');
+
+        img.onload = null;
+        img.onerror = null;
+        img.removeAttribute('src');
+        img.style.display = 'none';
+
+        placeholder.textContent = 'Chart / table will appear here';
+        placeholder.style.display = 'block';
+
+        updateImageBlock();
     }
 
     function getRandomQuestion(arr, used) {
-
         if (arr.length === 0) {
-
             return null;
-
         }
 
         if (used.length >= arr.length) {
-
             used.length = 0;
-
         }
 
-        let available = [];
+        const available = [];
 
         for (let i = 0; i < arr.length; i++) {
-
             if (!used.includes(i)) {
-
                 available.push(i);
-
             }
         }
 
-        let randomPosition = Math.floor(
-
+        const randomPosition = Math.floor(
             Math.random() * available.length
-
         );
 
-        let index = available[randomPosition];
+        const index = available[randomPosition];
 
         used.push(index);
 
         return index;
+    }
 
+    function showImage(imagePath) {
+        img.onload = function () {
+            img.style.display = 'block';
+            placeholder.style.display = 'none';
+        };
+
+        img.onerror = function () {
+            img.style.display = 'none';
+            placeholder.textContent = 'Image not found';
+            placeholder.style.display = 'block';
+        };
+
+        if (!imagePath) {
+            img.removeAttribute('src');
+            img.style.display = 'none';
+
+            placeholder.textContent =
+                'No image added for this question';
+
+            placeholder.style.display = 'block';
+            return;
+        }
+
+        img.src = imagePath;
+        img.alt = 'Writing Task 1 chart or table';
     }
 
     btnn.addEventListener('click', function () {
-
         const part1 = radio1.checked;
 
         replaySpin(boxx);
 
         if (part1) {
-
             replaySpin(imgBox);
 
-            let index = getRandomQuestion(task1, used1);
+            const index = getRandomQuestion(task1, used1);
 
             if (index === null) {
-
                 boxx.textContent = 'Add questions to task1 first.';
-
-                img.removeAttribute('src');
-
                 img.style.display = 'none';
-
                 placeholder.style.display = 'block';
-
                 return;
-
             }
 
             boxx.textContent = task1[index];
 
-            const imagePath = images1[index];
-
-            if (imagePath) {
-
-                img.onerror = function () {
-                    img.style.display = 'none';
-                    placeholder.textContent = 'Image not found';
-                    placeholder.style.display = 'block';
-
-                };
-
-                img.onload = function () {
-                    img.style.display = 'block';
-                    placeholder.style.display = 'none';
-
-                };
-
-                img.src = imagePath;
-                img.alt = 'Writing Task 1 chart or table';
-                img.style.display = 'block';
-                placeholder.style.display = 'none';
-
-            } else {
-
-                img.removeAttribute('src');
-
-                img.style.display = 'none';
-
-                placeholder.textContent =
-
-                    'No image added for this question';
-
-                placeholder.style.display = 'block';
-
-            }
+            showImage(images1[index]);
 
         } else {
-
-            let index = getRandomQuestion(task2, used2);
+            const index = getRandomQuestion(task2, used2);
 
             if (index === null) {
-
                 boxx.textContent = 'Add questions to task2 first.';
-
                 return;
-
             }
+
             boxx.textContent = task2[index];
-
         }
-
     });
 
-})();
-    var radios = document.querySelectorAll('input[name="part"]');
-    radios.forEach(function (r) {
-        r.addEventListener('change', function () {
-            clearPanel();
-            updateImageBlock();
-        });
+    // Один обработчик для обоих переключателей
+    radios.forEach(function (radio) {
+        radio.addEventListener('change', clearPanel);
     });
+
     updateImageBlock();
+})();
