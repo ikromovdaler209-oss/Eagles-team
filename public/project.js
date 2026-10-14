@@ -363,14 +363,14 @@ let task1 = [
     "The table shows the number of international tourists visiting four countries in 2010, 2015, 2020 and 2025. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
     "The line graph illustrates the percentages of students in three age groups who took online courses between 2010 and 2025. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
     "The bar chart compares the amounts of electricity generated from five different energy sources in two countries in 2025. Summarise the information by selecting and reporting the main features and make comparisons where relevant.",
-    "The chart below shows the average monthly household expenditure in a city in 2010 and 2020. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
-    "The table below shows the number of international tourists who visited a country from different regions between 2015 and 2020. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
-    "The line graph below shows the average daily temperature in a city over a year. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
-    "The pie chars below shows the main sources of energy in a country in 2000 and 2020. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
-    "The bar chart below shows the number of students enrolled in different subjects at a university in 2010 and 2020. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
-    "The table below shows the results of a survey about the most popular types of holiday among people in different age groups. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
-    "The diagram below shows the process of making cheese from milk. Summarise the information by selecting and reporting the main stages, and make comparisons where relevant.",
-    "The line graph below shows the number of cars sold in a country from 2010 to 2020, divided by type. Summarise the information by selecting and reporting the main features, and make comparisons where relevant."
+    "The chart above shows the average monthly household expenditure in a city in 2010 and 2020. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+    "The table above shows the number of international tourists who visited a country from different regions between 2015 and 2020. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+    "The line graph above shows the average daily temperature in a city over a year. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+    "The pie chars above shows the main sources of energy in a country in 2000 and 2020. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+    "The bar chart above shows the number of students enrolled in different subjects at a university in 2010 and 2020. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+    "The table above shows the results of a survey about the most popular types of holiday among people in different age groups. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+    "The diagram above shows the process of making cheese from milk. Summarise the information by selecting and reporting the main stages, and make comparisons where relevant.",
+    "The line graph above shows the number of cars sold in a country from 2010 to 2020, divided by type. Summarise the information by selecting and reporting the main features, and make comparisons where relevant."
 ];
 
 //Part 1 images
