@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Practice | Eagles Community</title>
+  <meta name="description" content="Practice IELTS Writing and Speaking at Eagles Community.">
+  <link rel="stylesheet" href="practice.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="Eagles-homepage.html"><span class="mark">🦅</span><span>Eagles-Community</span></a>
+    <nav aria-label="Main navigation">
+      <a href="Eagles-homepage.html" data-t="home">Home</a>
+      <a href="Eagles.courses.html" data-t="courses">Courses</a>
+      <a href="Eagles-teachers.html" data-t="teachers">Teachers</a>
+      <a href="practice.html" aria-current="page">Practice</a>
+      <a href="Eagles-about.html" data-t="about">About</a>
+      <a href="Eagles-contacts.html" data-t="contacts">Contacts</a>
+      <a href="join.html" class="join" data-t="join">Join Us!</a>
+    </nav>
+  </header>
+  <main>
+    <div class="intro"><span class="eyebrow">EAGLES COMMUNITY</span><h1 data-t="title">Choose your practice</h1><p data-t="subtitle">Build your English skills, one section at a time.</p></div>
+    <section class="cards" aria-label="Practice sections">
+      <a class="card" href="Writing.html"><span class="symbol">✎</span><h2>Writing</h2><p data-t="writing">Practice written responses and improve your writing skills.</p><span class="action" data-t="start">Start practice →</span></a>
+      <a class="card" href="speaking.html"><span class="symbol">◉</span><h2>Speaking</h2><p data-t="speaking">Improve your speaking fluency and confidence.</p><span class="action" data-t="start">Start practice →</span></a>
+      <article class="card disabled"><span class="symbol">▤</span><h2>Reading</h2><p data-t="reading">Reading practice will be available later.</p><span class="coming" data-t="soon">Coming soon</span></article>
+      <article class="card disabled"><span class="symbol">♫</span><h2>Listening</h2><p data-t="listening">Listening practice will be available later.</p><span class="coming" data-t="soon">Coming soon</span></article>
+    </section>
+  </main>
+  <script>
+    (() => {
+      const tr = {
+        ru:{home:'Главная',courses:'Курсы',teachers:'Преподаватели',about:'О нас',contacts:'Контакты',join:'Присоединиться',title:'Выберите раздел практики',subtitle:'Развивайте навыки английского шаг за шагом.',writing:'Практикуйте письменные ответы и улучшайте навыки письма.',speaking:'Развивайте беглость речи и уверенность.',reading:'Практика чтения появится позже.',listening:'Практика аудирования появится позже.',start:'Начать практику →',soon:'Скоро'},
+        uz:{home:'Bosh sahifa',courses:'Kurslar',teachers:'O‘qituvchilar',about:'Biz haqimizda',contacts:'Aloqa',join:'Bizga qo‘shiling',title:'Mashq bo‘limini tanlang',subtitle:'Ingliz tili ko‘nikmalaringizni bosqichma-bosqich rivojlantiring.',writing:'Yozma javoblarni mashq qiling va yozish ko‘nikmangizni oshiring.',speaking:'Ravon va ishonchli gapirishni rivojlantiring.',reading:'O‘qish mashqlari keyinroq qo‘shiladi.',listening:'Tinglab tushunish mashqlari keyinroq qo‘shiladi.',start:'Mashqni boshlash →',soon:'Tez kunda'}
+      };
+      const lang = localStorage.getItem('eagles-language') || localStorage.getItem('eagles_lang') || 'en';
+      if (!tr[lang]) return;
+      document.documentElement.lang = lang;
+      document.querySelectorAll('[data-t]').forEach(el => {const value=tr[lang][el.dataset.t]; if(value) el.textContent=value;});
+    })();
+  </script>
+</body>
+</html>
