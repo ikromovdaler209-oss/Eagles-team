@@ -93,7 +93,9 @@ app.use(
                 ],
 
                 connectSrc: [
-                    "'self'"
+                    "'self'",
+                    "https://identitytoolkit.googleapis.com",
+                    "https://securetoken.googleapis.com"
                 ],
 
                 formAction: [
@@ -108,7 +110,7 @@ app.use(
                     "'none'"
                 ],
 
-                upgradeInsecureRequests: []
+                upgradeInsecureRequests: process.env.NODE_ENV === "production" ? [] : null 
             }
         }
     })
@@ -170,7 +172,7 @@ app.get("/", (req, res) => {
             __dirname,
             "..",
             "public",
-            "Eagles-homepage.html"
+            "index.html"
         )
     );
 });
@@ -193,6 +195,9 @@ function requireJson(req, res, next) {
 }
 
 app.use(requireJson);
+
+// Firebase account and administrative API (Admin SDK bypasses Firestore client rules).
+app.use("/api", checkOrigin, rateLimit({ windowMs: 15 * 60 * 1000, limit: 120 }), require("./account-routes"));
 app.post(
     "/send-message",
     checkOrigin,
