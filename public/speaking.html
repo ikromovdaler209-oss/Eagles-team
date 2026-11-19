@@ -1,15 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><script src="site-i18n.js" defer></script>
+<head>
+<script src="site-copy.js" defer></script>
+<script src="site-i18n.js" defer></script>
+<script src="practice-copy.js" defer></script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Speaking-Questions</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="Eagles-front.css">
+<link rel="stylesheet" href="site-nav.css">
 </head>
 <body class="speaking-page">
-    <a href="Eagles-homepage.html"><button class="btnn">Back</button></a>
+<header class="site-header">
+    <a class="site-brand" href="Eagles-homepage.html"><span class="site-mark" aria-hidden="true">E</span>Eagles-Community</a>
+    <button class="site-toggle" type="button" aria-controls="mainNav" aria-expanded="false" aria-label="Open menu">☰</button>
+    <nav id="mainNav" class="site-nav" aria-label="Main navigation">
+        <a href="Eagles-homepage.html">Home</a>
+        <a href="Eagles.courses.html">Courses</a>
+        <a href="Eagles-teachers.html">Teachers</a>
+        <a href="Eagles-about.html">About</a>
+        <a href="Eagles-contacts.html">Contacts</a>
+        <a href="practice.html" aria-current="location">Practice</a>
+        <a href="join.html">Join Us</a>
+    </nav>
+</header>
+    <a href="practice.html" class="btnn">Back</a>
     <h1 id="myh1"> <span class="logo-speaking"></span> Eagles-Community</h1>
     <div class="speaking-wrap">
         <h1 id="hh1">Speaking questions</h1>
@@ -31,7 +49,8 @@
  
         <button id="btn10" class="find-btn" type="button">Find question</button>
     </div>
-    <script src="project.js"></script>
+    <script src="project.js" defer></script>
+<script src="site-nav.js" defer></script>
 </body>
 </html>
  

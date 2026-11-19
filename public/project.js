@@ -47,8 +47,8 @@ async function SendInfo() {
     if (!name || !lastname || !age || !subject || !number) {
         status.style.color = "black";
         status.style.textShadow = "0px 0px 20px red";
-        status.innerHTML =
-            "✖️ Please fill in all required fields.";
+        status.textContent =
+            "✖️ " + window.eaglesTranslate("Please fill in all required fields.");
         return;
     }
     // PHONE VALIDATION
@@ -56,8 +56,8 @@ async function SendInfo() {
     if (!phoneRegex.test(number)) {
         status.style.color = "black";
         status.style.textShadow = "0px 0px 20px red";
-        status.innerHTML =
-            "✖️ Please enter a valid Uzbekistan phone number.";
+        status.textContent =
+            "✖️ " + window.eaglesTranslate("Please enter a valid Uzbekistan phone number.");
         return;
     }
     // COURSE VALIDATION
@@ -74,8 +74,8 @@ async function SendInfo() {
     if (!validCourse) {
         status.style.color = "black";
         status.style.textShadow = "0px 0px 20px red";
-        status.innerHTML =
-            "✖️ Please select a valid course.";
+        status.textContent =
+            "✖️ " + window.eaglesTranslate("Please select a valid course.");
         return;
     }
     // SEND REQUEST
@@ -99,8 +99,8 @@ async function SendInfo() {
         if (data.ok) {
             status.style.color = "red";
             status.style.textShadow = "0px 0px 20px black";
-            status.innerHTML =
-                "☑️ Your information has been successfully sent.";
+            status.textContent =
+                "☑️ " + window.eaglesTranslate("Your information has been successfully sent.");
             form.reset();
             return;
         }
@@ -110,41 +110,20 @@ async function SendInfo() {
             "Something went wrong. Please try again.";
         status.style.color = "black";
         status.style.textShadow = "0px 0px 20px red";
-        status.innerHTML =
-            `✖️ ${message}`;
+        status.textContent =
+            `✖️ ${window.eaglesTranslate(message)}`;
     } catch (error) {
         console.error(error);
         status.style.color = "red";
         status.style.textShadow = "0px 0px 20px red";
-        status.innerHTML =
-            "✖️ Connection error. Please check your internet connection and try again.";
+        status.textContent =
+            "✖️ " + window.eaglesTranslate("Connection error. Please check your internet connection and try again.");
     }
 }
 // SEND BUTTON
 const sendButton = document.getElementById("sendButton");
 if (sendButton) {
     sendButton.addEventListener("click", SendInfo);
-}
-// MOBILE MENU
-const menuToggle = document.getElementById("menuToggle");
-const mainNav = document.getElementById("mainNav");
-if (menuToggle && mainNav) {
-    menuToggle.addEventListener("click", function () {
-        mainNav.classList.toggle("active");
-        if (mainNav.classList.contains("active")) {
-            menuToggle.textContent = "✕";
-            menuToggle.setAttribute(
-                "aria-label",
-                "Close menu"
-            );
-        } else {
-            menuToggle.textContent = "☰";
-            menuToggle.setAttribute(
-                "aria-label",
-                "Open menu"
-            );
-        }
-    });
 }
 let senddd = document.getElementById("btn10")
 if (senddd) {
@@ -161,6 +140,20 @@ if (senddd) {
         });
     }
 })();
+// Keep the original exam prompt visible alongside the learner's translation.
+function showPrompt(box, question) {
+    const original = document.createElement("span");
+    original.lang = "en";
+    original.textContent = question;
+    box.replaceChildren(original);
+    const column = ["ru", "uz"].indexOf(document.documentElement.lang);
+    if (column >= 0) {
+        const translation = document.createElement("span");
+        translation.className = "prompt-translation";
+        translation.textContent = window.eaglesPrompts[question][column];
+        box.append(translation);
+    }
+}
 //Speaking
 let radio1 = document.getElementById("radio1")
 let radio2 = document.getElementById("radio2")
@@ -314,7 +307,7 @@ if (radio1.checked) {
 
     used1.push(random1);
 
-    document.getElementById("box10").innerText = questions1[random1];
+    showPrompt(document.getElementById("box10"), questions1[random1]);
 }
 
 else if (radio2.checked) {
@@ -331,7 +324,7 @@ else if (radio2.checked) {
 
     used2.push(random2);
 
-    document.getElementById("box10").innerText = questions2[random2];
+    showPrompt(document.getElementById("box10"), questions2[random2]);
 }
 
 else if (radio3.checked) {
@@ -348,7 +341,7 @@ else if (radio3.checked) {
 
     used3.push(random3);
 
-    document.getElementById("box10").innerText = questions3[random3];
+    showPrompt(document.getElementById("box10"), questions3[random3]);
 }
 }
 /* WRITING */
@@ -421,6 +414,8 @@ let task2 = [
     const radio1 = document.getElementById('radiop1');
     const radios = document.querySelectorAll('input[name="part"]');
 
+    if (!boxx || !imgBox || !img || !btnn || !radio1) return;
+
     const placeholder = imgBox.querySelector(
         '.task-image-placeholder'
     );
@@ -429,7 +424,7 @@ let task2 = [
     let used2 = [];
 
     const PLACEHOLDER_HTML =
-        '<span class="question-placeholder">Choose a part and press "Find question"</span>';
+        boxx.querySelector('.question-placeholder').outerHTML;
 
     function updateImageBlock() {
         imgBox.classList.toggle(
@@ -455,7 +450,7 @@ let task2 = [
         img.removeAttribute('src');
         img.style.display = 'none';
 
-        placeholder.textContent = 'Chart / table will appear here';
+        placeholder.textContent = window.eaglesTranslate('Chart / table will appear here');
         placeholder.style.display = 'block';
 
         updateImageBlock();
@@ -497,7 +492,7 @@ let task2 = [
 
         img.onerror = function () {
             img.style.display = 'none';
-            placeholder.textContent = 'Image not found';
+            placeholder.textContent = window.eaglesTranslate('Image not found');
             placeholder.style.display = 'block';
         };
 
@@ -506,14 +501,14 @@ let task2 = [
             img.style.display = 'none';
 
             placeholder.textContent =
-                'No image added for this question';
+                window.eaglesTranslate('No image added for this question');
 
             placeholder.style.display = 'block';
             return;
         }
 
         img.src = imagePath;
-        img.alt = 'Writing Task 1 chart or table';
+        img.alt = window.eaglesTranslate('Writing Task 1 chart or table');
     }
 
     btnn.addEventListener('click', function () {
@@ -527,13 +522,13 @@ let task2 = [
             const index = getRandomQuestion(task1, used1);
 
             if (index === null) {
-                boxx.textContent = 'Add questions to task1 first.';
+                boxx.textContent = window.eaglesTranslate('Add questions to task1 first.');
                 img.style.display = 'none';
                 placeholder.style.display = 'block';
                 return;
             }
 
-            boxx.textContent = task1[index];
+            showPrompt(boxx, task1[index]);
 
             showImage(images1[index]);
 
@@ -541,11 +536,11 @@ let task2 = [
             const index = getRandomQuestion(task2, used2);
 
             if (index === null) {
-                boxx.textContent = 'Add questions to task2 first.';
+                boxx.textContent = window.eaglesTranslate('Add questions to task2 first.');
                 return;
             }
 
-            boxx.textContent = task2[index];
+            showPrompt(boxx, task2[index]);
         }
     });
 

@@ -1,26 +1,69 @@
-/* Language selection is persisted in localStorage; public pages retain English for untranslated content. */
 (() => {
-  const supported = ['en','ru','uz'];
-  const dictionaries = {
-    en: {practiceEyebrow:"LEARNING ZONE",practiceTitle:"Choose your practice",practiceIntro:"Improve your English skills, one step at a time.",writingDesc:"Practice structured writing and IELTS tasks.",speakingDesc:"Build fluency and confidence in speaking.",reading:"Reading",readingDesc:"Reading practice is on the way.",listening:"Listening",listeningDesc:"Listening practice is on the way.",practiceStart:"Start practicing →",soon:"Coming soon",joinEyebrow:'YOUR NEXT STEP',joinTitle:'Join Eagles Community',joinSubtitle:'Choose the option that describes you.',joinNew:'I want to study here',joinNewDesc:'Not enrolled yet? Send an application and our team will contact you.',joinApply:'Send application →',joinStudent:'I am already a student',joinStudentDesc:'Create an account for your student dashboard. Approval is required.',joinRegister:'Register / Sign in →',backHome:'Back to homepage',backChoices:'Back to options',studentPortal:'STUDENT PORTAL',accountTitle:'Your Eagles account',accountSubtitle:'Register if you already study at Eagles Community. An administrator will verify your account.',registerTitle:'Create an account',firstName:'First name',lastName:'Last name',groupName:'Study group',email:'Email',password:'Password (8+ characters)',passwordShort:'Password',createAccount:'Create account',loginTitle:'Already registered?',signIn:'Sign in',approvalNote:'New accounts require administrator approval.',adminEyebrow:'MANAGEMENT',adminTitle:'Student administration',adminSubtitle:'Review applications and manage access permissions.',refresh:'Refresh students',student:'Student',group:'Group',status:'Status',active:'Active',tests:'Tests',reviews:'Reviews',action:'Action',accountLink:'Account',home:'Home',courses:'Courses',teachers:'Teachers',about:'About',contacts:'Contacts',practice:'Practice',writing:'Writing',speaking:'Speaking',comingSoon:'Reading & Listening — coming soon',joinButton:'Join Us!',heroTitle:'Build Your Future,',heroSubtitle:'Grammar, IELTS, pre IELTS and CEFR courses with highly qualified teachers.',learnMore:'Learn more',viewCourses:'View courses'},
-    ru: {practiceEyebrow:"ПРАКТИКА",practiceTitle:"Выберите направление",practiceIntro:"Развивайте навыки английского шаг за шагом.",writingDesc:"Практика письма и заданий IELTS.",speakingDesc:"Развивайте беглость и уверенность в речи.",reading:"Чтение",readingDesc:"Задания по чтению появятся позже.",listening:"Аудирование",listeningDesc:"Задания по аудированию появятся позже.",practiceStart:"Начать практику →",soon:"Скоро",joinEyebrow:'СЛЕДУЮЩИЙ ШАГ',joinTitle:'Присоединяйтесь к Eagles Community',joinSubtitle:'Выберите подходящий вариант.',joinNew:'Хочу учиться в центре',joinNewDesc:'Ещё не учитесь у нас? Отправьте заявку, и мы свяжемся с вами.',joinApply:'Отправить заявку →',joinStudent:'Я уже учусь в центре',joinStudentDesc:'Создайте личный кабинет ученика. Регистрацию подтвердит администратор.',joinRegister:'Регистрация / Вход →',backHome:'На главную',backChoices:'Назад к выбору',studentPortal:'КАБИНЕТ УЧЕНИКА',accountTitle:'Ваш аккаунт Eagles',accountSubtitle:'Регистрация для действующих учеников Eagles Community. Администратор проверит заявку.',registerTitle:'Создать аккаунт',firstName:'Имя',lastName:'Фамилия',groupName:'Учебная группа',email:'Электронная почта',password:'Пароль (от 8 символов)',passwordShort:'Пароль',createAccount:'Создать аккаунт',loginTitle:'Уже зарегистрированы?',signIn:'Войти',approvalNote:'Новые аккаунты требуют подтверждения администратора.',adminEyebrow:'УПРАВЛЕНИЕ',adminTitle:'Управление учениками',adminSubtitle:'Проверка заявок и настройка доступа.',refresh:'Обновить список',student:'Ученик',group:'Группа',status:'Статус',active:'Активен',tests:'Тесты',reviews:'Отзывы',action:'Действие',accountLink:'Аккаунт',home:'Главная',courses:'Курсы',teachers:'Преподаватели',about:'О нас',contacts:'Контакты',practice:'Практика',writing:'Письмо',speaking:'Говорение',comingSoon:'Чтение и аудирование — скоро',joinButton:'Присоединиться!',heroTitle:'Построй своё будущее,',heroSubtitle:'Курсы Grammar, IELTS, Pre-IELTS и CEFR с опытными преподавателями.',learnMore:'Подробнее',viewCourses:'Посмотреть курсы'},
-    uz: {practiceEyebrow:"MASHG‘ULOTLAR",practiceTitle:"Mashq turini tanlang",practiceIntro:"Ingliz tili ko‘nikmalaringizni bosqichma-bosqich rivojlantiring.",writingDesc:"IELTS yozma topshiriqlarini mashq qiling.",speakingDesc:"Ravon va ishonchli gapirishni mashq qiling.",reading:"O‘qish",readingDesc:"O‘qish mashqlari tez orada qo‘shiladi.",listening:"Tinglash",listeningDesc:"Tinglash mashqlari tez orada qo‘shiladi.",practiceStart:"Mashqni boshlash →",soon:"Tez orada",joinEyebrow:'KEYINGI QADAM',joinTitle:'Eagles Community safiga qo‘shiling',joinSubtitle:'O‘zingizga mos variantni tanlang.',joinNew:'Men bu yerda o‘qimoqchiman',joinNewDesc:'Hali o‘quvchi emasmisiz? Ariza yuboring, biz siz bilan bog‘lanamiz.',joinApply:'Ariza yuborish →',joinStudent:'Men allaqachon o‘quvchiman',joinStudentDesc:'O‘quvchi kabinetini yarating. Ro‘yxatdan o‘tishni administrator tasdiqlaydi.',joinRegister:'Ro‘yxatdan o‘tish / Kirish →',backHome:'Bosh sahifaga',backChoices:'Tanlovga qaytish',studentPortal:'O‘QUVCHI KABINETI',accountTitle:'Eagles hisobingiz',accountSubtitle:'Eagles Community o‘quvchilari uchun ro‘yxatdan o‘tish. Administrator arizani tekshiradi.',registerTitle:'Hisob yaratish',firstName:'Ism',lastName:'Familiya',groupName:'O‘quv guruhi',email:'Elektron pochta',password:'Parol (kamida 8 belgi)',passwordShort:'Parol',createAccount:'Hisob yaratish',loginTitle:'Hisobingiz bormi?',signIn:'Kirish',approvalNote:'Yangi hisoblar administrator tasdig‘ini talab qiladi.',adminEyebrow:'BOSHQARUV',adminTitle:'O‘quvchilar boshqaruvi',adminSubtitle:'Arizalarni ko‘rib chiqish va ruxsatlarni boshqarish.',refresh:'Ro‘yxatni yangilash',student:'O‘quvchi',group:'Guruh',status:'Holat',active:'Faol',tests:'Testlar',reviews:'Sharhlar',action:'Amal',accountLink:'Hisob',home:'Bosh sahifa',courses:'Kurslar',teachers:'O‘qituvchilar',about:'Biz haqimizda',contacts:'Aloqa',practice:'Mashqlar',writing:'Yozish',speaking:'Gapirish',comingSoon:'O‘qish va tinglash — tez orada',joinButton:'Bizga qo‘shiling',heroTitle:'Kelajagingizni yarating,',heroSubtitle:'Tajribali ustozlar bilan Grammar, IELTS, Pre-IELTS va CEFR kurslari.',learnMore:'Batafsil',viewCourses:'Kurslarni ko‘rish'}
-  };
-  const lang = localStorage.getItem('eaglesLanguage');
-  const isChooser = document.querySelector('[data-choose-language]');
-  if (!supported.includes(lang) && !isChooser && location.pathname !== '/') {
-    sessionStorage.setItem('eaglesAfterLanguage', location.pathname + location.search);
-    location.replace('/');
+  const languages = ['en', 'ru', 'uz'];
+  const current = ['eaglesLanguage', 'eagles-language', 'eagles_lang']
+    .map(key => localStorage.getItem(key)).find(value => languages.includes(value));
+  const chooser = document.querySelector('[data-choose-language]');
+  const home = '/Eagles-homepage.html';
+
+  function destination() {
+    const stored = sessionStorage.getItem('eaglesAfterLanguage');
+    sessionStorage.removeItem('eaglesAfterLanguage');
+    if (!stored) return home;
+    const url = new URL(stored, location.origin);
+    return url.origin === location.origin && /^\/[\w.-]+\.html$/.test(url.pathname)
+      && url.pathname !== '/index.html' ? url.pathname + url.search + url.hash : home;
+  }
+
+  if (chooser) {
+    if (current) {
+      location.replace(destination());
+    } else {
+      for (const button of document.querySelectorAll('[data-choose-language]')) {
+        button.addEventListener('click', () => {
+          localStorage.setItem('eaglesLanguage', button.dataset.chooseLanguage);
+          location.replace(destination());
+        });
+      }
+    }
     return;
   }
-  const current = supported.includes(lang) ? lang : 'en';
-  const t = key => dictionaries[current][key] || dictionaries.en[key] || key;
+  if (!current) {
+    sessionStorage.setItem('eaglesAfterLanguage', location.pathname + location.search + location.hash);
+    location.replace('/index.html');
+    return;
+  }
+  localStorage.setItem('eaglesLanguage', current);
   document.documentElement.lang = current;
-  document.querySelectorAll('[data-choose-language]').forEach(button => button.addEventListener('click', () => {
-    localStorage.setItem('eaglesLanguage', button.dataset.chooseLanguage);
-    const next = sessionStorage.getItem('eaglesAfterLanguage') || '/Eagles-homepage.html';
-    sessionStorage.removeItem('eaglesAfterLanguage'); location.assign(next);
-  }));
-  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
-  window.eaglesTranslate = t;
+  const column = languages.indexOf(current) - 1;
+  function translate(source) {
+    const key = source.trim().replace(/\s+/g, ' ');
+    const value = window.eaglesCopy[key]?.[column];
+    return value ? source.replace(/\S[\s\S]*\S|\S/, () => value) : source;
+  }
+  window.eaglesTranslate = source => translate(window.eaglesTranslationKeys[source] || source);
+  for (const field of document.querySelectorAll('form input, form select')) {
+    field.addEventListener('input', () => field.setCustomValidity(''));
+    field.addEventListener('invalid', () => {
+      const validity = field.validity;
+      let message = 'Please check this field.';
+      if (validity.valueMissing) message = 'Please fill in all required fields.';
+      else if (validity.typeMismatch && field.type === 'email') message = 'Enter a valid email address.';
+      else if (validity.tooShort && field.type === 'password') message = 'Use at least 8 characters.';
+      else if (field.name === 'age') message = 'Please enter a valid age.';
+      field.setCustomValidity(translate(message));
+    });
+  }
+  if (current === 'en') return;
+
+  const nodes = document.createTreeWalker(document.documentElement, NodeFilter.SHOW_TEXT);
+  while (nodes.nextNode()) {
+    const node = nodes.currentNode;
+    if (!node.parentElement.closest('script, style')) node.data = translate(node.data);
+  }
+  for (const attribute of ['placeholder', 'alt', 'aria-label', 'title', 'content']) {
+    const selector = attribute === 'content' ? 'meta[name="description"]' : '[' + attribute + ']';
+    for (const element of document.querySelectorAll(selector)) {
+      element.setAttribute(attribute, translate(element.getAttribute(attribute)));
+    }
+  }
 })();
