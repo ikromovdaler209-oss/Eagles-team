@@ -9,7 +9,7 @@
   let shouldPlay = false;
   try {
     shouldPlay = sessionStorage.getItem(FLAG) === '1';
-    sessionStorage.removeItem(FLAG);                // play only once per language choice
+    sessionStorage.removeItem(FLAG);                // play once per entry through index.html
   } catch (e) {}
   if (!shouldPlay) return;
   if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;

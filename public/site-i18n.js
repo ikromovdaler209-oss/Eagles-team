@@ -16,7 +16,12 @@
 
   if (chooser) {
     if (current) {
-      location.replace(destination());
+      const next = destination();
+      if (new URL(next, location.origin).pathname === home &&
+          !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        sessionStorage.setItem('eaglesIntro', '1');
+      }
+      location.replace(next);
     } else {
       let leaving = false;
       for (const button of document.querySelectorAll('[data-choose-language]')) {
