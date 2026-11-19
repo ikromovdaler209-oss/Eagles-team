@@ -18,10 +18,24 @@
     if (current) {
       location.replace(destination());
     } else {
+      let leaving = false;
       for (const button of document.querySelectorAll('[data-choose-language]')) {
         button.addEventListener('click', () => {
+          if (leaving) return;
+          leaving = true;
           localStorage.setItem('eaglesLanguage', button.dataset.chooseLanguage);
-          location.replace(destination());
+          const next = destination();
+          if (new URL(next, location.origin).pathname !== home ||
+              matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            location.replace(next);
+            return;
+          }
+          sessionStorage.setItem('eaglesIntro', '1');
+          const veil = document.createElement('div');
+          veil.style.cssText = 'position:fixed;inset:0;background:#000;z-index:2147483647';
+          document.body.appendChild(veil);
+          if (veil.animate) veil.animate([{opacity: 0}, {opacity: 1}], {duration: 500});
+          setTimeout(() => location.replace(next), 520);
         });
       }
     }

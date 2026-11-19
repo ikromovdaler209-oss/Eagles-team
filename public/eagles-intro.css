@@ -1,0 +1,70 @@
+/* Eagles-Community — entry animation (eagle intro). Works together with eagles-intro.js */
+
+/* While the intro runs: black page, hidden content, no scroll */
+html.eagles-intro-on { background: #000; }
+html.eagles-intro-on body { visibility: hidden; }
+html.eagles-intro-on,
+html.eagles-intro-lock { overflow: hidden; }
+
+#eagles-intro {
+    position: fixed;
+    inset: 0;
+    z-index: 2147483000;
+    visibility: visible;
+    overflow: hidden;
+}
+
+#eagles-intro .ei-bg {
+    position: absolute;
+    inset: 0;
+    background: #000;
+}
+
+/* The eagle is a square 1254x1254 canvas, exactly like icons/eagles-logo.png,
+   so after scaling it down it lands precisely in the header logo box. */
+#eagles-intro .ei-eagle {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: min(62vmin, 620px);
+    height: min(62vmin, 620px);
+    overflow: visible;
+    opacity: 0;
+    will-change: transform, opacity, filter;
+}
+
+#eagles-intro .ei-fill { fill: #d4000f; opacity: 0; }
+#eagles-intro .ei-line {
+    fill: none;
+    stroke: #ff3b45;
+    stroke-width: 4;
+    stroke-linejoin: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+}
+#eagles-intro .ei-eye  { fill: #ff4a3d; opacity: 0; filter: drop-shadow(0 0 8px #ff1a1a); }
+#eagles-intro .ei-halo {
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+    pointer-events: none;
+}
+
+#eagles-intro .ei-skip {
+    position: absolute;
+    right: max(20px, env(safe-area-inset-right));
+    bottom: max(20px, env(safe-area-inset-bottom));
+    min-height: 44px;
+    padding: 8px 14px;
+    font: 600 12px/1 Inter, system-ui, sans-serif;
+    letter-spacing: .04em;
+    color: rgba(255, 255, 255, .55);
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, .22);
+    border-radius: 8px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity .4s, color .2s, border-color .2s;
+}
+#eagles-intro .ei-skip.is-visible { opacity: 1; }
+#eagles-intro .ei-skip:hover { color: #fff; border-color: #e6121f; }
