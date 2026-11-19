@@ -8,9 +8,18 @@ async function auth(req, res, next) {
   const match = /^Bearer (\S+)$/.exec(req.get("authorization") || "");
   if (!match) return res.status(401).json({ error: "Authentication required" });
   try {
-   req.user = await firebaseAuth.verifyIdToken(match[1], true);
-    next();
-  } catch (_) { res.status(401).json({ error: "Invalid session" }); }
+    req.user = await firebaseAuth.verifyIdToken(match[1], true);
+  } catch (error) {
+    const code = /^[a-z]+\/[a-z-]+$/.test(error.code) ? error.code : "unknown";
+    const projectMismatch = /incorrect "(aud|iss)" claim/i.test(error.message || "");
+    const reason = projectMismatch ? "project-mismatch" : code;
+    console.warn("[firebase-auth]", req.method, req.path, reason);
+    const invalid = ["auth/id-token-expired", "auth/id-token-revoked", "auth/user-disabled",
+      "auth/user-not-found", "auth/invalid-id-token", "auth/argument-error"].includes(code);
+    if (invalid || projectMismatch) return res.status(401).json({error: "Invalid session"});
+    return res.status(503).json({error: "Authentication service unavailable"});
+  }
+  next();
 }
 async function adminOnly(req, res, next) {
   try {
