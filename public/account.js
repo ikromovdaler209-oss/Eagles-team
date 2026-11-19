@@ -6,7 +6,14 @@ for (const id of ["register", "login"]) {
     try {
       await firebaseAuth(id === "register" ? "signUp" : "signInWithPassword", form.get("email"), form.get("password"));
       if (id === "register") {
-        await request("/profile", { method: "POST", body: JSON.stringify({ firstName: form.get("firstName"), lastName: form.get("lastName"), groupName: form.get("groupName") }) });
+        // Account creation and profile creation are separate operations.
+        // A failed profile request must not be reported as a failed Firebase sign-up.
+        try {
+          await request("/profile", { method: "POST", body: JSON.stringify({ firstName: form.get("firstName"), lastName: form.get("lastName"), groupName: form.get("groupName") }) });
+        } catch (profileError) {
+          show("Account created, but profile setup could not be completed. Please sign in again to finish your profile.");
+          return;
+        }
       }
       const {status} = await request("/me");
       location.replace(status === "admin" ? "/admin.html" : "/student-dashboard.html");
@@ -14,7 +21,7 @@ for (const id of ["register", "login"]) {
       if (error instanceof TypeError) {
         show("Connection error. Please check your internet connection and try again.");
       } else {
-        show(Object.hasOwn(window.eaglesCopy, error.message) ? error.message : "Request failed");
+        show(error.message || "Request failed");
       }
     }
   });

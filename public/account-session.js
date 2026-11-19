@@ -19,17 +19,54 @@ async function firebaseAuth(action, email, password) {
     const code = data.error?.message?.split(/\s*:/)[0];
     throw new Error(messages[code] || "Authentication failed");
   }
-  sessionStorage.setItem("eaglesIdToken", data.idToken);
+  saveSession(data);
   return data.idToken;
 }
+function saveSession(data) {
+  if (data.idToken) sessionStorage.setItem("eaglesIdToken", data.idToken);
+  if (data.refreshToken) sessionStorage.setItem("eaglesRefreshToken", data.refreshToken);
+  if (data.expiresIn) sessionStorage.setItem("eaglesTokenExpiresAt", String(Date.now() + Number(data.expiresIn) * 1000));
+}
+function clearSession() {
+  for (const key of ["eaglesIdToken", "eaglesRefreshToken", "eaglesTokenExpiresAt"]) sessionStorage.removeItem(key);
+}
+let refreshInFlight;
+async function refreshSession() {
+  if (refreshInFlight) return refreshInFlight;
+  const refreshToken = sessionStorage.getItem("eaglesRefreshToken");
+  if (!refreshToken) throw new Error("Authentication required");
+  refreshInFlight = (async () => {
+    const response = await fetch(`https://securetoken.googleapis.com/v1/token?key=${API_KEY}`, {
+      method: "POST", headers: {"Content-Type": "application/x-www-form-urlencoded"},
+      body: new URLSearchParams({grant_type: "refresh_token", refresh_token: refreshToken})
+    });
+    if (!response.ok) {
+      if ([400, 401].includes(response.status)) clearSession();
+      throw new Error(response.status >= 500 ? "Authentication service unavailable" : "Invalid session");
+    }
+    const data = await response.json();
+    saveSession({idToken: data.id_token, refreshToken: data.refresh_token, expiresIn: data.expires_in});
+    return data.id_token;
+  })();
+  try { return await refreshInFlight; } finally { refreshInFlight = null; }
+}
 async function request(path, options = {}) {
+  const expiry = Number(sessionStorage.getItem("eaglesTokenExpiresAt") || 0);
+  if (expiry && Date.now() >= expiry - 60000) await refreshSession();
+  return sendRequest(path, options, true);
+}
+async function sendRequest(path, options, retry) {
   const response = await fetch(`/api${path}`, {
     ...options, headers: { "Content-Type": "application/json", Authorization: `Bearer ${sessionStorage.getItem("eaglesIdToken") || ""}`, ...options.headers }
   });
-  const data = await response.json();
+  const data = await response.json().catch(() => ({}));
+  if (response.status === 401 && retry && sessionStorage.getItem("eaglesRefreshToken")) {
+    await refreshSession();
+    return sendRequest(path, options, false);
+  }
   if (!response.ok) {
-    if (response.status === 401) sessionStorage.removeItem("eaglesIdToken");
-    throw Object.assign(new Error(data.error || "Request failed"), {code: response.status, status: data.status});
+    if (response.status === 401) clearSession();
+    throw Object.assign(new Error(data.error || `Request failed (${response.status})`), {code: response.status, status: data.status});
   }
   return data;
 }

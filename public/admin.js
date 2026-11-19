@@ -1,8 +1,7 @@
 const msg = document.getElementById("message");
 const tbody = document.getElementById("students");
 async function api(path, method = "GET", body) {
-  const response = await fetch(`/api${path}`, { method, headers: { "Content-Type": "application/json", Authorization: `Bearer ${sessionStorage.getItem("eaglesIdToken") || ""}` }, body: body ? JSON.stringify(body) : undefined });
-  const data = await response.json(); if (!response.ok) throw new Error(data.error || "Request failed"); return data;
+  return request(path, {method, ...(body ? {body: JSON.stringify(body)} : {})});
 }
 function select(values, value) { const s = document.createElement("select"); for (const v of values) { const o = document.createElement("option"); o.value = v; o.textContent = v; s.append(o); } s.value = value; return s; }
 function checkbox(value) { const c = document.createElement("input"); c.type = "checkbox"; c.checked = !!value; return c; }
@@ -42,7 +41,7 @@ async function load() {
 document.getElementById("refresh").addEventListener("click", load); load();
 
 document.getElementById("signout").addEventListener("click", () => {
-  sessionStorage.removeItem("eaglesIdToken");
+  clearSession();
   location.replace("/account.html");
 });
 window.addEventListener("pageshow", event => {

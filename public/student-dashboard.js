@@ -12,7 +12,7 @@
   let email;
   let revision = 0;
   function logout() {
-    sessionStorage.removeItem("eaglesIdToken");
+    clearSession();
     location.replace("/account.html");
   }
   function renderStatus(status) {
