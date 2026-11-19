@@ -198,6 +198,7 @@ app.use(requireJson);
 
 // Firebase account and administrative API (Admin SDK bypasses Firestore client rules).
 app.use("/api", checkOrigin, rateLimit({ windowMs: 15 * 60 * 1000, limit: 120 }), require("./account-routes"));
+app.use("/api/quizzes", checkOrigin, rateLimit({ windowMs: 15 * 60 * 1000, limit: 120 }), require("./quiz-routes"));
 app.post(
     "/send-message",
     checkOrigin,

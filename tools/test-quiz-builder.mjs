@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+const route = readFileSync(new URL('../server/quiz-routes.js', import.meta.url), 'utf8');
+const html = readFileSync(new URL('../public/quiz-builder.html', import.meta.url), 'utf8');
+const client = readFileSync(new URL('../public/quiz-builder.js', import.meta.url), 'utf8');
+assert.match(route, /canCreateTests !== true/);
+assert.match(route, /verifyIdToken\(token, true\)/);
+assert.match(route, /\[25, 30\]/);
+assert.match(route, /q\.options\.length !== 4/);
+assert.match(route, /correctOption < 0 \|\| q\.correctOption > 3/);
+assert.match(route, /runTransaction/);
+assert.match(html, /account-session\.js/);
+assert.match(client, /request\("\/quizzes"\)/);
+assert.doesNotMatch(client, /innerHTML\s*=/);
+for (const file of ['server/quiz-routes.js','server/server.js','public/quiz-builder.js']) execFileSync('node',['--check',new URL('../'+file,import.meta.url).pathname]);
+console.log('Quiz Builder static checks: PASS (not an integration test)');

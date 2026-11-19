@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Test Builder — Eagles Team</title><link rel="stylesheet" href="account.css"><link rel="stylesheet" href="quiz-builder.css"></head>
+<body><main class="qb-shell"><header class="qb-top"><div><p class="eyebrow">EAGLES TEAM · v1.3.1</p><h1>Test Builder</h1><p class="muted">Create quizzes for upcoming Live Quiz sessions.</p></div><div class="qb-actions"><a href="/admin.html" id="adminLink" hidden>Admin Page</a><a href="/student-dashboard.html">Dashboard</a><a href="/Eagles-homepage.html">Home</a></div></header>
+<p id="qbMessage" role="status" aria-live="polite"></p>
+<section class="qb-grid"><aside class="qb-panel"><div class="qb-row"><h2>My tests</h2><button type="button" id="newQuiz">New test</button></div><div id="quizList" class="qb-list"></div></aside>
+<section class="qb-panel" id="editor" hidden><div class="qb-row"><h2 id="editorHeading">New test</h2><span id="questionCount"></span></div>
+<label>Title<input id="quizTitle" maxlength="120" required></label><label>Description<textarea id="quizDescription" maxlength="1000" rows="3"></textarea></label>
+<div id="questions"></div><button type="button" id="addQuestion" class="qb-secondary">+ Add question</button>
+<div class="qb-footer"><label>Status<select id="quizStatus"><option value="draft">Draft</option><option value="published">Published</option></select></label><button type="button" id="previewQuiz" class="qb-secondary">Preview</button><button type="button" id="duplicateQuiz" class="qb-secondary">Duplicate</button><button type="button" id="deleteQuiz" class="qb-danger">Delete</button><button type="button" id="saveQuiz">Save test</button></div>
+</section></section><dialog id="previewDialog"><div class="qb-row"><h2>Test preview</h2><button type="button" id="closePreview">Close</button></div><div id="previewContent"></div></dialog></main>
+<script src="account-session.js" defer></script><script src="quiz-builder.js" defer></script></body></html>
