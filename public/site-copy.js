@@ -383,3 +383,118 @@ window.eaglesTranslationKeys = {
   "learnMore": "Learn more",
   "viewCourses": "View courses"
 };
+
+Object.assign(window.eaglesCopy, {
+  "My account": [
+    "Личный кабинет",
+    "Shaxsiy kabinet"
+  ],
+  "Student dashboard": [
+    "Кабинет студента",
+    "O‘quvchi kabineti"
+  ],
+  "Loading your account…": [
+    "Загружаем ваш кабинет…",
+    "Kabinet yuklanmoqda…"
+  ],
+  "Refresh": [
+    "Обновить",
+    "Yangilash"
+  ],
+  "Sign out": [
+    "Выйти",
+    "Chiqish"
+  ],
+  "Complete your profile": [
+    "Завершите заполнение профиля",
+    "Profilingizni to‘ldiring"
+  ],
+  "Submit profile": [
+    "Отправить профиль",
+    "Profilni yuborish"
+  ],
+  "Welcome": [
+    "Добро пожаловать",
+    "Xush kelibsiz"
+  ],
+  "Student profile": [
+    "Профиль студента",
+    "O‘quvchi profili"
+  ],
+  "Edit profile": [
+    "Изменить профиль",
+    "Profilni tahrirlash"
+  ],
+  "Save changes": [
+    "Сохранить изменения",
+    "O‘zgarishlarni saqlash"
+  ],
+  "Learning progress": [
+    "Учебный прогресс",
+    "O‘qishdagi natijalar"
+  ],
+  "No learning progress recorded.": [
+    "Данные о прогрессе пока отсутствуют.",
+    "O‘qishdagi natijalar hozircha qayd etilmagan."
+  ],
+  "Test results": [
+    "Результаты тестов",
+    "Test natijalari"
+  ],
+  "No test results yet.": [
+    "Результатов тестов пока нет.",
+    "Hozircha test natijalari yo‘q."
+  ],
+  "IELTS Practice": [
+    "Практика IELTS",
+    "IELTS mashqlari"
+  ],
+  "Recent activity": [
+    "Последние действия",
+    "So‘nggi harakatlar"
+  ],
+  "Account settings": [
+    "Настройки аккаунта",
+    "Hisob sozlamalari"
+  ],
+  "Change password": [
+    "Изменить пароль",
+    "Parolni o‘zgartirish"
+  ],
+  "Current password": [
+    "Текущий пароль",
+    "Joriy parol"
+  ],
+  "New password": [
+    "Новый пароль",
+    "Yangi parol"
+  ],
+  "Your registration is awaiting approval.": [
+    "Ваша регистрация ожидает подтверждения администратора.",
+    "Ro‘yxatdan o‘tish arizangiz administrator tasdig‘ini kutmoqda."
+  ],
+  "Your registration was rejected. Contact the centre.": [
+    "Заявка отклонена. Свяжитесь с учебным центром.",
+    "Arizangiz rad etildi. O‘quv markaziga murojaat qiling."
+  ],
+  "Your account is inactive. Contact the centre.": [
+    "Ваш аккаунт деактивирован. Свяжитесь с центром.",
+    "Hisobingiz faolsizlantirilgan. Markazga murojaat qiling."
+  ],
+  "Account status: Approved": [
+    "Статус аккаунта: подтверждён",
+    "Hisob holati: tasdiqlangan"
+  ],
+  "Registered": [
+    "Регистрация",
+    "Ro‘yxatdan o‘tish"
+  ],
+  "Profile updated": [
+    "Обновление профиля",
+    "Profil yangilandi"
+  ],
+  "No recent activity.": [
+    "Недавних действий пока нет.",
+    "Hozircha harakatlar yo‘q."
+  ]
+});

@@ -1,0 +1,61 @@
+<!doctype html><html lang="en"><head>
+<script src="site-copy.js" defer></script>
+<script src="site-i18n.js" defer></script>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Student dashboard</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="account.css"><link rel="stylesheet" href="site-nav.css">
+<link rel="stylesheet" href="student-dashboard.css"></head><body><header class="site-header">
+    <a class="site-brand" href="Eagles-homepage.html"><span class="site-mark" aria-hidden="true">E</span>Eagles-Community</a>
+    <button class="site-toggle" type="button" aria-controls="mainNav" aria-expanded="false" aria-label="Open menu">☰</button>
+    <nav id="mainNav" class="site-nav" aria-label="Main navigation">
+        <a href="Eagles-homepage.html">Home</a>
+        <a href="Eagles.courses.html">Courses</a>
+        <a href="Eagles-teachers.html">Teachers</a>
+        <a href="Eagles-about.html">About</a>
+        <a href="Eagles-contacts.html">Contacts</a>
+        <a href="practice.html">Practice</a>
+        <a href="join.html">Join Us</a>
+    </nav>
+</header><main class="panel dashboard">
+  <p class="eyebrow">STUDENT PORTAL</p>
+  <h1>Student dashboard</h1>
+  <p id="state" role="status">Loading your account…</p>
+  <div class="dashboard-actions">
+    <button id="retry" type="button">Refresh</button>
+    <button id="logout" type="button">Sign out</button>
+  </div>
+  <form id="finishProfile" hidden>
+    <h2>Complete your profile</h2>
+    <label>First name<input name="firstName" required maxlength="70"></label>
+    <label>Last name<input name="lastName" required maxlength="70"></label>
+    <label>Study group<input name="groupName" required maxlength="70"></label>
+    <button>Submit profile</button>
+  </form>
+  <div id="workspace" hidden>
+    <h2><span>Welcome</span>, <span id="welcome"></span></h2>
+    <div class="dashboard-grid">
+      <section><h2>Student profile</h2><dl id="profile"></dl>
+        <details><summary>Edit profile</summary><form id="edit">
+          <label>First name<input name="firstName" maxlength="70" required></label>
+          <label>Last name<input name="lastName" maxlength="70" required></label>
+          <button>Save changes</button>
+        </form></details>
+      </section>
+      <section><h2>Learning progress</h2><p>No learning progress recorded.</p></section>
+      <section><h2>Test results</h2><p>No test results yet.</p></section>
+      <section><h2>IELTS Practice</h2><ul>
+        <li><a href="Writing.html">Writing</a></li><li><a href="speaking.html">Speaking</a></li>
+        <li><span>Reading</span> · <span>Coming soon</span></li><li><span>Listening</span> · <span>Coming soon</span></li>
+      </ul></section>
+      <section><h2>Recent activity</h2><ul id="activity"></ul></section>
+      <section><h2>Account settings</h2><details><summary>Change password</summary>
+        <form id="password" method="post">
+          <label>Current password<input name="current" type="password" autocomplete="current-password" required></label>
+          <label>New password<input name="newPassword" type="password" autocomplete="new-password" minlength="8" required></label>
+          <button>Change password</button>
+        </form></details></section>
+    </div>
+  </div>
+  <p id="feedback" aria-live="polite"></p>
+</main>
+<script src="account-session.js" defer></script>
+<script src="student-dashboard.js" defer></script>
+<script src="site-nav.js" defer></script></body></html>

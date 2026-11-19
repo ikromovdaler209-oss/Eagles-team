@@ -12,17 +12,39 @@ async function load() {
   try {
     const { students } = await api("/admin/students");
     for (const p of students.filter(x => x.role === "student")) {
-      const row = tbody.insertRow(); cell(row, `${p.firstName || ""} ${p.lastName || ""}`); cell(row, p.groupName || ""); cell(row, p.email || "");
+      const row = tbody.insertRow(); cell(row, `${p.firstName || ""} ${p.lastName || ""}`); const group = document.createElement("input");
+      group.value = p.groupName || "";
+      group.maxLength = 70;
+      group.setAttribute("aria-label", "Study group");
+      cell(row, group); cell(row, p.email || "");
       const status = select(["pending", "approved", "rejected"], p.approvalStatus); cell(row, status);
       const active = checkbox(p.isActive), tests = checkbox(p.canCreateTests), reviews = checkbox(p.canWriteReviews);
       cell(row, active); cell(row, tests); cell(row, reviews);
       const save = document.createElement("button"); save.textContent = "Save";
       save.addEventListener("click", async () => {
-        try { await api(`/admin/students/${encodeURIComponent(p.uid)}`, "PATCH", { approvalStatus: status.value, isActive: active.checked, canCreateTests: tests.checked, canWriteReviews: reviews.checked }); msg.textContent = "Saved"; }
+        try { await api(`/admin/students/${encodeURIComponent(p.uid)}`, "PATCH", { groupName: group.value, approvalStatus: status.value, isActive: active.checked, canCreateTests: tests.checked, canWriteReviews: reviews.checked }); await load(); msg.textContent = "Saved"; }
         catch (e) { msg.textContent = e.message; }
       }); cell(row, save);
+      const details = document.createElement("details");
+      const summary = document.createElement("summary");
+      summary.textContent = "View profile";
+      details.append(summary);
+      const info = document.createElement("p");
+      info.textContent = [p.firstName, p.lastName, p.email, p.groupName,
+        "No learning progress recorded.", "No test results yet.",
+        ...p.activity.map(event => (event.type === "registered" ? "Registered" : "Profile updated") + " · " + new Date(event.date).toLocaleDateString("en"))].join(" · ");
+      details.append(info);
+      cell(row, details);
     }
     msg.textContent = `${students.length} profiles loaded`;
   } catch (e) { msg.textContent = e.message + ". Sign in with an approved admin account first."; }
 }
 document.getElementById("refresh").addEventListener("click", load); load();
+
+document.getElementById("signout").addEventListener("click", () => {
+  sessionStorage.removeItem("eaglesIdToken");
+  location.replace("/account.html");
+});
+window.addEventListener("pageshow", event => {
+  if (event.persisted) load();
+});

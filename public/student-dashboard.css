@@ -1,0 +1,15 @@
+.dashboard { overflow-wrap:anywhere; }
+.dashboard-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%, 275px),1fr)); gap:16px; }
+.dashboard-grid section { min-width:0; padding:20px; border:1px solid #e4e6ea; border-radius:14px; }
+.dashboard-actions { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:24px; }
+.dashboard-actions button:first-child { background:#272727; }
+.dashboard details summary { color:#ae1725; cursor:pointer; font-weight:600; }
+.dashboard form { margin-top:14px; }
+.dashboard dt { font-size:.8rem; color:#626978; }
+.dashboard dd { margin:0 0 8px; }
+.dashboard ul { padding-inline-start:20px; }
+.dashboard li { margin-block:6px; }
+.dashboard [hidden] { display:none; }
+@media (max-width:480px) {
+  .dashboard-grid { grid-template-columns:minmax(0,1fr); }
+}
