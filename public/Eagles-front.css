@@ -1860,8 +1860,9 @@ select {
 }
 
 
-.speaking-page {
-    background-color: #000000;
+.speaking-page,
+#body2 {
+    background-color: #fff;
 }
 
 .speaking-wrap {
@@ -2024,9 +2025,8 @@ select {
 #myh1 {
     text-align: center;
     margin-top: 2%;
-    color: white;
+    color: var(--navy);
     font-size: 35px;
-    text-shadow: 0px 0px 20px red;
 }
 .logo-speaking {
     display: inline-flex;
@@ -2044,22 +2044,6 @@ select {
     background-image: url(icons/eagles-logo.png);
     background-position: center;
     background-size: cover;
-}
-#body2 {
-    background-color: #000000;
-}
-.btnn {
-    font-size: 20px;
-    background-color: white;
-    color: #0a0a0a;
-    border-radius: 6px;
-    margin: 1%;
-    font-weight: bold;
-    border-style: none;
-}
-.btnn:hover {
-    background-color: red;
-    color: black;
 }
 .task-image {
     position: relative;
@@ -2107,7 +2091,6 @@ select {
 }
 .question-box:has(.prompt-translation) { display: block; height: auto; }
 .prompt-translation { display: block; margin-top: 12px; padding-top: 12px; border-top: 1px solid #ddd; font-size: .93em; }
-.btnn[href] { display: inline-block; padding: 5px 12px; text-decoration: none; }
 
 @media (max-width: 480px) {
     .speaking-wrap { padding: 28px 16px; }

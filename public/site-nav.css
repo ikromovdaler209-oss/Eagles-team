@@ -1,3 +1,4 @@
+html { scrollbar-gutter: stable; }
 .site-header {
   box-sizing: border-box;
   position: relative;
@@ -23,10 +24,35 @@
 }
 .site-mark::after { content: ''; position: absolute; inset: 0; background: url(icons/eagles-logo.png) center/cover; }
 .site-nav { display: flex; align-items: center; gap: clamp(5px, .8vw, 18px); }
-.site-nav a { padding: 10px 6px; border-bottom: 2px solid transparent; }
-.site-nav a[aria-current], .site-nav a:hover { border-color: #ed2535; }
-.site-nav a:last-child { background: #c81e2c; color: #fff; border-radius: 10px; padding-inline: 14px; }
-.site-nav a:last-child[aria-current] { box-shadow: inset 0 -3px #fff; }
+.site-nav a {
+  position: relative;
+  padding: 11px 6px;
+  white-space: nowrap;
+}
+.site-nav a::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 2px;
+  background: #ed2535;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .25s ease;
+}
+.site-nav a:is(:hover, :focus-visible, [aria-current])::after { transform: scaleX(1); }
+.site-nav a[href="join.html"] {
+  flex: none;
+  inline-size: 10rem;
+  text-align: center;
+  background: #c81e2c;
+  color: #fff;
+  border-radius: 10px;
+}
+.site-nav a[href="join.html"]::after { inset: auto 14px 5px; background: #ff8b95; }
+.site-nav a[href="join.html"][aria-current] { background: #ad1724; }
+@media (prefers-reduced-motion: reduce) {
+  .site-nav a::after { transition: none; }
+}
 .site-toggle { display: none; padding: 6px; min-width: 44px; min-height: 44px; background: #242424; border: 0; border-radius: 9px; color: white; font-size: 21px; cursor: pointer; }
 .site-header :focus-visible { outline: 2px solid white; outline-offset: 2px; }
 body:has(> .site-header + .panel) { padding: 0; }
@@ -36,5 +62,6 @@ body:has(> .site-header + .panel) { padding: 0; }
   .site-toggle { display: block; }
   .site-nav { display: none; position: absolute; inset: calc(100% + 6px) 0 auto; padding: 10px; border-radius: 12px; background: #101010; box-shadow: 0 10px 20px #0003; max-height: 70vh; overflow: auto; }
   .site-nav.is-open { display: grid; }
+  .site-nav a[href="join.html"] { inline-size: auto; }
   .site-nav a { display: block; padding: 12px; }
 }
