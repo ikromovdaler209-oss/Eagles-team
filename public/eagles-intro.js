@@ -1,7 +1,7 @@
 /* Eagles-Community — entry animation.
    Flow: language chooser (index.html) -> fade to black -> Eagles-homepage.html:
-   eagle silhouette appears -> eye ignites -> cry -> eagle flies into the header logo box.
-   Needs: eagles-intro.css, sounds/eagle-cry.mp3 */
+   eagle silhouette appears -> eye ignites -> eagle flies into the header logo box.
+   Needs: eagles-intro.css */
 (() => {
   'use strict';
 
@@ -14,7 +14,6 @@
   if (!shouldPlay) return;
   if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  const SOUND_URL = 'sounds/eagle-cry.mp3';
   const root = document.documentElement;
   root.classList.add('eagles-intro-on');             // page is black from the very first paint
 
@@ -46,13 +45,12 @@
     return a.finished.catch(() => {});
   };
 
-  let overlay, logoMark, audio, done = false, skipped = false;
+  let overlay, logoMark, done = false, skipped = false;
 
   function cleanup() {
     if (done) return;
     done = true;
     anims.forEach(a => { try { a.cancel(); } catch (e) {} });
-    if (audio) { try { audio.pause(); } catch (e) {} }
     if (logoMark) { logoMark.style.opacity = ''; logoMark.style.transition = ''; }
     root.classList.remove('eagles-intro-on', 'eagles-intro-lock');
     if (overlay) overlay.remove();
@@ -82,9 +80,6 @@
     skip.addEventListener('keydown', event => {
       if (event.key === 'Escape') skip.click();
     });
-    audio = new Audio(SOUND_URL);
-    audio.preload = 'auto';
-    audio.volume = 0.85;
 
     skip.addEventListener('click', () => { skipped = true; cleanup(); });
     setTimeout(() => skip.classList.add('is-visible'), 700);
@@ -121,8 +116,7 @@
       A(halo, [{ opacity: .55, transform: 'scale(.9)' }, { opacity: 1, transform: 'scale(1.2)' }],
                       { duration: 750, direction: 'alternate', iterations: Infinity, easing: 'ease-in-out' });
 
-      // 3) cry (blocked autoplay is ignored silently) + eye flash
-      try { const p = audio.play(); if (p && p.catch) p.catch(() => {}); } catch (e) {}
+      // 3) eye flash (silent animation)
       A(halo, [{ transform: 'scale(1.2)' }, { transform: 'scale(2)', offset: .25 }, { transform: 'scale(1.2)' }],
         { duration: 600, fill: 'none' });
       await wait(1500);
