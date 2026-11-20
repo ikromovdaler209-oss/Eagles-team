@@ -196,11 +196,20 @@ function requireJson(req, res, next) {
 
 app.use(requireJson);
 
+// Login status is checked on each page and by every live participant. Its
+// limit is separate so users on one classroom Wi-Fi do not exhaust the general
+// account mutation quota.
+app.use("/api/me", checkOrigin, rateLimit({ windowMs: 15 * 60 * 1000, limit: 8000 }));
 // Firebase account and administrative API (Admin SDK bypasses Firestore client rules).
-app.use("/api", checkOrigin, rateLimit({ windowMs: 15 * 60 * 1000, limit: 120 }), require("./account-routes"));
+// Account rate limiting must not also count live polling requests. Express
+// middleware mounted at /api otherwise matches every /api/live-sessions URL.
+app.use("/api", checkOrigin, rateLimit({ windowMs: 15 * 60 * 1000, limit: 120,
+    skip: req => /^\/(?:live-sessions|quizzes)(?:\/|$)/.test(req.path) ||
+      (req.method === "GET" && req.path === "/me")
+}), require("./account-routes"));
 app.use("/api/quizzes", checkOrigin, rateLimit({ windowMs: 15 * 60 * 1000, limit: 120 }), require("./quiz-routes"));
 // Lobby status uses periodic reads; keep its limiter separate from account API.
-app.use("/api/live-sessions", checkOrigin, rateLimit({ windowMs: 15 * 60 * 1000, limit: 30000 }), require("./live-lobby-routes"));
+app.use("/api/live-sessions", checkOrigin, rateLimit({ windowMs: 15 * 60 * 1000, limit: 90000 }), require("./live-lobby-routes"));
 app.post(
     "/send-message",
     checkOrigin,

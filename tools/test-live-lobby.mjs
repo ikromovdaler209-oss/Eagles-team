@@ -83,7 +83,7 @@ const fakeExpress={Router:()=>router};
 const fakeAuth={verifyIdToken:async token=>({uid:token})};
 const source=readFileSync(new URL("../server/live-lobby-routes.js", import.meta.url),"utf8");
 vm.runInNewContext(source,{
-  require:id=>id==="express"?fakeExpress:id==="node:crypto"?require("node:crypto"):
+  require:id=>id==="express"?fakeExpress:id==="express-rate-limit"?(()=>async (_req,_res,next)=>next()):id==="node:crypto"?require("node:crypto"):
     id==="firebase-admin/firestore"?{Timestamp,FieldValue}:
     id==="./firebase"?{auth:fakeAuth,db}:id==="./live-lobby-core"?core:require(id),
   module:{exports:{}},console,Date,Promise

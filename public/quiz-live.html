@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Live Quiz Lobby — Eagles Team</title>
+  <title>Live Quiz — Eagles Team</title>
   <meta name="description" content="Join an Eagles Team live quiz using a PIN code.">
   <link rel="stylesheet" href="practice.css"><script src="/site-nav-hint.js"></script><link rel="stylesheet" href="site-nav.css"><link rel="stylesheet" href="quiz-live.css">
   <script src="site-copy.js" defer></script><script src="site-i18n.js" defer></script>
@@ -43,11 +43,28 @@
         <div><small>Players</small><strong id="activeCount">0</strong></div>
         <div><small>Questions</small><strong id="activeQuestions">0</strong></div></div>
       <p id="activeAlias" class="live-help"></p>
-      <div id="hostRoomTools" hidden><h3>Players (anonymous aliases)</h3><ul id="playerList" class="live-players"></ul>
-        <p class="live-help">Start Quiz will be enabled in v1.3.3, when synchronized questions and server timers are implemented.</p>
-        <button type="button" disabled title="Available in v1.3.3">Start Quiz — coming soon</button>
-        <button type="button" id="closeRoom" class="live-danger">Close room</button></div>
+      <div id="hostRoomTools" hidden>
+        <div id="waitingPlayers"><h3>Players (anonymous aliases)</h3><ul id="playerList" class="live-players"></ul></div>
+        <button type="button" id="startQuiz" hidden>Start Quiz</button>
+        <button type="button" id="nextQuestion" hidden>Next question</button>
+        <button type="button" id="closeRoom" class="live-danger">Close room</button>
+      </div>
       <button type="button" id="leaveRoom" class="live-secondary" hidden>Leave room</button>
+      <section id="gameplay" class="live-game" aria-label="Live quiz question" hidden>
+        <div class="live-game-meta"><span id="gameProgress"></span><strong id="gameTimer" role="timer" aria-live="off"></strong></div>
+        <h3 id="gameQuestion"></h3>
+        <div id="answerGrid" class="live-answers" role="group" aria-label="Answer choices"></div>
+        <p id="answerNotice" class="live-help" aria-live="polite"></p>
+        <div id="roundReview" class="live-review" hidden>
+          <h3>Round complete</h3>
+          <p id="correctAnswer"></p>
+          <p id="roundStats"></p>
+        </div>
+      </section>
+      <section id="finalResult" class="live-review" hidden>
+        <h3>Quiz finished</h3><p id="resultMessage"></p>
+        <p class="live-help">Your quiz history will be available in a future update.</p>
+      </section>
       <a href="/practice.html" class="live-back">Back to Practice</a>
     </section>
   </main>

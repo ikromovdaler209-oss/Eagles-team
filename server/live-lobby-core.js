@@ -10,17 +10,25 @@ const canHost = p => canJoin(p) && (p.role === "admin" || p.canCreateTests === t
 const randomPin = () => String(crypto.randomInt(100000, 1000000));
 const randomAlias = () => `Player-${crypto.randomBytes(4).toString("hex").toUpperCase()}`;
 const dateIso = value => value?.toDate?.()?.toISOString() || null;
-function publicSession(id, data, isHost, alias = null) {
+function effectiveStatus(data, now = Date.now()) {
+  if (data.status === "lobby" && (data.expiresAt?.toMillis?.() || 0) <= now) return "expired";
+  if (data.status === "question" && (data.questionEndsAt?.toMillis?.() || 0) <= now) return "review";
+  return data.status;
+}
+function publicSession(id, data, isHost, alias = null, now = Date.now()) {
   return {
     id,
     pin: data.pin,
     quizTitle: data.quizTitle,
     questionCount: data.questionCount,
-    status: Date.now() >= (data.expiresAt?.toMillis?.() || 0) && data.status === "lobby" ? "expired" : data.status,
+    status: effectiveStatus(data, now),
     participantCount: data.participantCount || 0,
     expiresAt: dateIso(data.expiresAt),
     isHost,
-    alias
+    alias,
+    questionIndex: Number.isInteger(data.currentQuestionIndex) ? data.currentQuestionIndex : null,
+    question: data.currentQuestion || null,
+    questionEndsAt: dateIso(data.questionEndsAt)
   };
 }
-module.exports = {ROOM_LIFETIME_MS, MAX_PARTICIPANTS, validId, validPin, canJoin, canHost, randomPin, randomAlias, publicSession};
+module.exports = {ROOM_LIFETIME_MS, MAX_PARTICIPANTS, validId, validPin, canJoin, canHost, randomPin, randomAlias, effectiveStatus, publicSession};
