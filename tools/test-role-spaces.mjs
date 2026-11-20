@@ -22,7 +22,7 @@ for (const file of ['public/site-nav.js','public/quiz-builder.js','public/admin.
 
 async function scenario({status=null, canCreateTests=false, path='/Eagles-homepage.html', auth=true, error=null}) {
   const classes = new Set();
-  const links = [{href:'practice.html', label:'Practice'}, {href:'join.html', label:'Join Us', remove(){const i=links.indexOf(this);if(i!==-1)links.splice(i,1);}}];
+  const links = [{href:'practice.html', label:'Practice'}, {href:'join.html', textContent:'Join Us', classList:{add(){}}, setAttribute(){},removeAttribute(){},remove(){const i=links.indexOf(this);if(i!==-1)links.splice(i,1);}}];
   const attrs = {};
   const nav = {
     classList:{ contains:c=>classes.has(c), toggle:(c,v)=>v?classes.add(c):classes.delete(c) },
@@ -42,7 +42,8 @@ async function scenario({status=null, canCreateTests=false, path='/Eagles-homepa
       addEventListener(){},head:{appendChild(){throw new Error('Session script should already be available in VM')}}
     },
     matchMedia:()=>({addEventListener(){}}),
-    sessionStorage:{getItem:()=>auth?'token':null},
+    sessionStorage:{getItem:()=>null},
+    localStorage:{getItem:()=>auth?'token':null},
     location:{pathname:path,replace:to=>{redirect=to}},
     request:async()=>{if(error)throw error;return {status,profile:{canCreateTests}}},
     window:{eaglesTranslate:txt=>txt}
@@ -59,11 +60,11 @@ r=await scenario({auth:false,path:'/practice.html'});
 assert.equal(r.redirect,'/account.html');
 r=await scenario({status:'approved'});
 assert.equal(r.classes.has('eagles-practice-enabled'),true);
-assert.ok(r.links.some(x=>x.href==='/student-dashboard.html'));
+assert.ok(r.links.some(x=>x.href==='/student-dashboard.html' && x.textContent==='My account'));
 assert.ok(!r.links.some(x=>x.href==='join.html'));
 r=await scenario({status:'admin',path:'/practice.html'});
 assert.equal(r.redirect,null);
-assert.ok(r.links.some(x=>x.href==='/admin.html'));
+assert.ok(r.links.some(x=>x.href==='/admin.html' && x.textContent==='My account'));
 assert.equal(r.builderCard.hidden,false);
 r=await scenario({status:'approved',canCreateTests:false,path:'/practice.html'});
 assert.equal(r.builderCard.hidden,true);

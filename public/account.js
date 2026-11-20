@@ -1,8 +1,10 @@
 const msg = document.getElementById("message");
+let submitting = false;
 const show = text => { msg.textContent = window.eaglesTranslate(text); };
 for (const id of ["register", "login"]) {
   document.getElementById(id).addEventListener("submit", async e => {
-    e.preventDefault(); const form = new FormData(e.currentTarget); show("Please wait...");
+    e.preventDefault(); submitting = true;
+    const form = new FormData(e.currentTarget); show("Please wait...");
     try {
       await firebaseAuth(id === "register" ? "signUp" : "signInWithPassword", form.get("email"), form.get("password"));
       if (id === "register") {
@@ -23,6 +25,19 @@ for (const id of ["register", "login"]) {
       } else {
         show(error.message || "Request failed");
       }
-    }
+    } finally { submitting = false; }
   });
 }
+
+// Returning users keep their Firebase session and go directly to their workspace.
+// /api/me, not a locally saved role, determines the destination.
+(async () => {
+  if (!hasAuthSession()) return;
+  try {
+    const {status} = await request("/me");
+    if (!submitting) location.replace(status === "admin" ? "/admin.html" : "/student-dashboard.html");
+  } catch (error) {
+    // Expired/revoked sessions are cleared by request(). Temporary 503s do not erase login.
+    if (!submitting && error.code !== 401) show(error.message || "Request failed");
+  }
+})();

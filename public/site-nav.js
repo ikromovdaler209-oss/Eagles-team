@@ -27,19 +27,22 @@
   });
   matchMedia('(max-width: 72em)').addEventListener('change', () => setOpen(false));
 
-  function appendAccountLink(href, label) {
-    const link = document.createElement('a');
+  function showAccountLink(status) {
+    const link = nav.querySelector('a[href="join.html"]');
+    if (!link) return;
+    const href = status === 'admin' ? '/admin.html' : '/student-dashboard.html';
     link.href = href;
-    link.textContent = translate(label);
+    link.textContent = translate('My account');
+    link.classList.add('account-cta');
+    link.removeAttribute('aria-current');
     if (location.pathname === href) link.setAttribute('aria-current', 'page');
-    const join = nav.querySelector('a[href="join.html"]');
-    nav.insertBefore(link, join);
   }
 
   // The standard public nav is the guest state. Never trust a stored token to grant access.
   // Verify the account status and permissions against the existing server endpoint.
   async function checkAccount() {
-    if (!sessionStorage.getItem('eaglesIdToken') && !sessionStorage.getItem('eaglesRefreshToken')) {
+    if (!localStorage.getItem('eaglesIdToken') && !localStorage.getItem('eaglesRefreshToken') &&
+        !sessionStorage.getItem('eaglesIdToken') && !sessionStorage.getItem('eaglesRefreshToken')) {
       return null;
     }
     // Public pages do not load account-session.js. Reuse it rather than duplicating token refresh logic.
@@ -72,12 +75,7 @@
           builderCard.hidden = false;
         }
       }
-      if (role === 'admin') {
-        appendAccountLink('/admin.html', 'Admin Panel');
-      } else {
-        appendAccountLink('/student-dashboard.html', 'My account');
-      }
-      nav.querySelector('a[href="join.html"]')?.remove();
+      showAccountLink(role);
       if (!permitted && restrictedPage) location.replace('/student-dashboard.html');
     } catch (error) {
       // On a temporary 503/network failure, fail closed. Do not clear valid credentials.

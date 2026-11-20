@@ -31,7 +31,7 @@
     renderStatus("loading");
     el("state").textContent = t("Loading your account…");
     el("feedback").textContent = "";
-    if (!sessionStorage.getItem("eaglesIdToken")) return logout();
+    if (!hasAuthSession()) return logout();
     try {
       const data = await request("/dashboard");
       if (rev !== revision) return;
