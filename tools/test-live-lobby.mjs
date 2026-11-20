@@ -89,17 +89,26 @@ docs.set("quizzes/test1",{title:"English basics",creatorUid:"teacher",status:"pu
 docs.set("quizzes/draft",{title:"Draft",creatorUid:"teacher",status:"draft",questions:[{text:"Question",options:["1","2","3","4"],correctOption:0,timeLimit:25}]});
 docs.set("quizzes/otherQuiz",{title:"Admin test",creatorUid:"admin",status:"published",questions:[{text:"Question",options:["1","2","3","4"],correctOption:0,timeLimit:25}]});
 const routes=[],middlewares=[];
-const router={use(fn){middlewares.push(fn);},get(path,...fns){routes.push({method:"GET",path,fns});},post(path,...fns){routes.push({method:"POST",path,fns});}};
+const router={use(...fns){middlewares.push(...fns);},get(path,...fns){routes.push({method:"GET",path,fns});},post(path,...fns){routes.push({method:"POST",path,fns});}};
 const fakeExpress={Router:()=>router};
 const fakeAuth={verifyIdToken:async token=>({uid:token})};
+const rateLimitConfigs=[];
+const fakeRateLimit=options=>{rateLimitConfigs.push(options);return async (_req,_res,next)=>next();};
 const source=readFileSync(new URL("../server/live-lobby-routes.js", import.meta.url),"utf8");
 vm.runInNewContext(source,{
-  require:id=>id==="express"?fakeExpress:id==="express-rate-limit"?(()=>async (_req,_res,next)=>next()):id==="node:crypto"?require("node:crypto"):
+  require:id=>id==="express"?fakeExpress:id==="express-rate-limit"?fakeRateLimit:id==="node:crypto"?require("node:crypto"):
     id==="firebase-admin/firestore"?{Timestamp,FieldValue}:
     id==="./firebase"?{auth:fakeAuth,db}:id==="./live-lobby-core"?core:
     id==="./quiz-results-store"?require("../server/quiz-results-store.js"):require(id),
   module:{exports:{}},console,Date,Promise
 },{filename:"live-lobby-routes.js"});
+assert.equal(rateLimitConfigs.length,3);
+const memberLimit = rateLimitConfigs.find(c=>c.limit===1000);
+assert.equal(memberLimit.keyGenerator({user:{uid:"student"}}),"student");
+const creationLimit = rateLimitConfigs.find(c=>c.limit===10);
+assert.equal(creationLimit.keyGenerator({user:{uid:"teacher"}}),"teacher");
+const pinLimit = rateLimitConfigs.find(c=>c.limit===30);
+assert.equal(pinLimit.keyGenerator({user:{uid:"student"}}),"student");
 async function call(method,path,uid,body={}) {
   const res={statusCode:200,body:null,sent:false,headers:{},set(k,v){this.headers[k]=v;return this;},status(n){this.statusCode=n;return this;},json(v){this.sent=true;this.body=v;return this;}};
   const req={method,path,body,user:null,profile:null,params:{},get:key=>key==="authorization"?`Bearer ${uid}`:null};

@@ -34,10 +34,18 @@ const creator = req => admin(req) || req.profile.canCreateTests === true;
 function canViewSummary(room, req) {
   return admin(req) || (creator(req) && (room.quizCreatorUid === req.user.uid || room.hostUid === req.user.uid));
 }
-function publicSummary(doc) {
+// Aggregate statistics for a 1-2 person room effectively reveal that
+// student's individual performance. Only admins may view small-group metrics.
+const MIN_ANONYMOUS_GROUP = 3;
+function publicSummary(doc, isAdmin = false) {
   const d = doc.data();
+  const raw = d.resultsSummary || null;
+  const summary = raw && !isAdmin && raw.participantCount < MIN_ANONYMOUS_GROUP
+    ? {participantCount: raw.participantCount, questionCount: raw.questionCount,
+       averageAccuracy: null, averageCorrect: null, breakdown: [], privacyLimited: true}
+    : raw;
   return {id: doc.id, quizTitle: d.quizTitle, questionCount: d.questionCount,
-    completedAt: date(d.finishedAt), summary: d.resultsSummary || null};
+    completedAt: date(d.finishedAt), summary};
 }
 const rank = (a, b) => b.accuracy - a.accuracy || b.correct - a.correct;
 
@@ -75,7 +83,7 @@ router.get("/sessions", async (req, res, next) => {
       if (isCompleted(doc.data()) && !doc.get("resultsArchivedAt")) await ensureArchived(db, doc.id);
     }
     const all = await Promise.all(docs.filter(doc => isCompleted(doc.data()) && canViewSummary(doc.data(), req))
-      .map(async doc => publicSummary(await db.collection("liveSessions").doc(doc.id).get())));
+      .map(async doc => publicSummary(await db.collection("liveSessions").doc(doc.id).get(), admin(req))));
     all.sort((a,b) => (b.completedAt || "").localeCompare(a.completedAt || ""));
     res.json({sessions: all.slice(0, 100), limited: docs.length >= 150});
   } catch (err) {next(err);}
@@ -99,7 +107,7 @@ router.get("/sessions/:id", async (req, res, next) => {
   try {
     const doc = await authorizedRoom(req, res);
     if (!doc) return;
-    res.json({session: publicSummary(doc)});
+    res.json({session: publicSummary(doc, admin(req))});
   } catch (err) {next(err);}
 });
 

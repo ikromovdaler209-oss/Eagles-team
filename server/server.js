@@ -116,6 +116,9 @@ app.use(
     })
 );
 
+// Quiz Builder supports up to 100 questions, which can exceed the general
+// 10 KB JSON ceiling. Other endpoints retain their smaller request limit.
+app.use("/api/quizzes", express.json({limit: "768kb"}));
 app.use(express.json({
     limit: "10kb"
 }));

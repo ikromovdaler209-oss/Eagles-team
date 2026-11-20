@@ -92,17 +92,26 @@ docs.set("quizzes/test1",{title:"English basics",creatorUid:"teacher",status:"pu
 docs.set("quizzes/draft",{title:"Draft",creatorUid:"teacher",status:"draft",questions:[{text:"Question",options:["1","2","3","4"],correctOption:0,timeLimit:25}]});
 docs.set("quizzes/otherQuiz",{title:"Admin test",creatorUid:"admin",status:"published",questions:[{text:"Question",options:["1","2","3","4"],correctOption:0,timeLimit:25}]});
 const routes=[],middlewares=[];
-const router={use(fn){middlewares.push(fn);},get(path,...fns){routes.push({method:"GET",path,fns});},post(path,...fns){routes.push({method:"POST",path,fns});}};
+const router={use(...fns){middlewares.push(...fns);},get(path,...fns){routes.push({method:"GET",path,fns});},post(path,...fns){routes.push({method:"POST",path,fns});}};
 const fakeExpress={Router:()=>router};
 const fakeAuth={verifyIdToken:async token=>({uid:token})};
+const rateLimitConfigs=[];
+const fakeRateLimit=options=>{rateLimitConfigs.push(options);return async (_req,_res,next)=>next();};
 const source=readFileSync(new URL("../server/live-lobby-routes.js", import.meta.url),"utf8");
 vm.runInNewContext(source,{
-  require:id=>id==="express"?fakeExpress:id==="express-rate-limit"?(()=>async (_req,_res,next)=>next()):id==="node:crypto"?require("node:crypto"):
+  require:id=>id==="express"?fakeExpress:id==="express-rate-limit"?fakeRateLimit:id==="node:crypto"?require("node:crypto"):
     id==="firebase-admin/firestore"?{Timestamp,FieldValue}:
     id==="./firebase"?{auth:fakeAuth,db}:id==="./live-lobby-core"?core:
     id==="./quiz-results-store"?require("../server/quiz-results-store.js"):require(id),
   module:{exports:{}},console,Date,Promise
 },{filename:"live-lobby-routes.js"});
+assert.equal(rateLimitConfigs.length,3);
+const memberLimit = rateLimitConfigs.find(c=>c.limit===1000);
+assert.equal(memberLimit.keyGenerator({user:{uid:"student"}}),"student");
+const creationLimit = rateLimitConfigs.find(c=>c.limit===10);
+assert.equal(creationLimit.keyGenerator({user:{uid:"teacher"}}),"teacher");
+const pinLimit = rateLimitConfigs.find(c=>c.limit===30);
+assert.equal(pinLimit.keyGenerator({user:{uid:"student"}}),"student");
 async function call(method,path,uid,body={}) {
   const res={statusCode:200,body:null,sent:false,headers:{},set(k,v){this.headers[k]=v;return this;},status(n){this.statusCode=n;return this;},json(v){this.sent=true;this.body=v;return this;}};
   const req={method,path,body,user:null,profile:null,params:{},get:key=>key==="authorization"?`Bearer ${uid}`:null};
@@ -211,6 +220,37 @@ docs.get(`liveSessions/${lateRoom}`).questionEndsAt = Timestamp.fromMillis(Date.
 r = await call("POST", `/${lateRoom}/answer`, "other", {questionIndex:0,selectedOption:0});
 assert.equal(r.statusCode, 409);
 assert.equal(docs.has(`liveSessions/${lateRoom}/answers/0_other`), false);
+// A transient archive write failure must not make the finished room look broken.
+const originalBatch = db.batch;
+let unavailableBatches = 2;
+db.batch = () => {
+  const batch = originalBatch();
+  const commit = batch.commit;
+  batch.commit = async () => {
+    if (unavailableBatches-- > 0) {
+      const error = new Error("Simulated Firestore write outage");
+      error.code = "unavailable";
+      throw error;
+    }
+    return commit();
+  };
+  return batch;
+};
+r = await call("POST", `/${lateRoom}/advance`, "admin");
+assert.equal(r.statusCode, 200);
+assert.equal(r.body.finished, true);
+assert.equal(r.body.archivePending, true);
+assert(!docs.get(`liveSessions/${lateRoom}`).resultsArchivedAt);
+r = await call("GET", `/${lateRoom}`, "other");
+assert.equal(r.statusCode, 200);
+assert.equal(r.body.room.status, "finished");
+assert.equal(r.body.myResult.accuracy, 0);
+assert(!docs.get(`liveSessions/${lateRoom}`).resultsArchivedAt);
+db.batch = originalBatch;
+r = await call("GET", `/${lateRoom}`, "other");
+assert.equal(r.statusCode, 200);
+assert(docs.get(`liveSessions/${lateRoom}`).resultsArchivedAt);
+assert.equal(docs.get(`quizResults/${lateRoom}_other`).accuracy, 0);
 console.log("Live Quiz v1.3.3 simulated gameplay: PASS (roles, start, privacy, deadlines, duplicate answers, review, finish, reconnect, no points)");
 for (const f of ["server/live-lobby-routes.js", "server/live-lobby-core.js", "public/quiz-live.js"])
   execFileSync("node", ["--check", new URL(`../${f}`, import.meta.url).pathname]);

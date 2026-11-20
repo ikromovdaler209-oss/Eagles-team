@@ -53,9 +53,13 @@ function view(doc) { const {title, description, status, questionCount, creatorUi
 router.use(authenticate, permission);
 router.get("/", async (req, res, next) => {
   try {
-    // Avoid composite indexes; filter creator in memory for the initial small deployment.
-    const snap = await db.collection("quizzes").limit(500).get();
-    res.json({quizzes: snap.docs.filter(d => ownOrAdmin(d.data(), req)).map(view)});
+    // Filter on Firestore for creators, so a teacher's tests cannot disappear
+    // simply because the global first 500 documents belong to other users.
+    // Single-field creatorUid query needs no composite index.
+    const collection = db.collection("quizzes");
+    const query = req.profile.role === "admin" ? collection : collection.where("creatorUid", "==", req.user.uid);
+    const snap = await query.limit(500).get();
+    res.json({quizzes: snap.docs.filter(d => ownOrAdmin(d.data(), req)).map(view), limited: snap.docs.length >= 500});
   } catch (e) { next(e); }
 });
 router.post("/", async (req, res, next) => {

@@ -26,7 +26,14 @@ async function authorize(req, res, next) {
     next();
   } catch (err) { next(err); }
 }
-router.use(authorize);
+// Separate per-account limit: one student cannot consume the shared classroom
+// request budget. Polling every four seconds remains comfortably supported.
+const participantLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, limit: 1000,
+  standardHeaders: "draft-7", legacyHeaders: false,
+  keyGenerator: req => req.user.uid
+});
+router.use(authorize, participantLimiter);
 
 function requireHost(req, res) {
   if (canHost(req.profile)) return true;
@@ -42,8 +49,15 @@ function validRoom(req, res, next) {
   next();
 }
 
+// Limit room creation separately from polling to avoid exhausting PINs and
+// accumulating unused Firestore rooms from a compromised creator account.
+const roomCreationLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, limit: 10,
+  standardHeaders: "draft-7", legacyHeaders: false,
+  keyGenerator: req => req.user.uid
+});
 // Only the host/admin may create a room, and only from a published test they own.
-router.post("/", async (req, res, next) => {
+router.post("/", roomCreationLimiter, async (req, res, next) => {
   if (!requireHost(req, res)) return;
   if (!cleanBody(req.body, ["quizId"]) || !validId(req.body.quizId)) return res.status(400).json({error: "Invalid test ID"});
   try {
@@ -129,8 +143,12 @@ router.get("/:id", validRoom, async (req, res, next) => {
     const member = isHost ? null : await roomRef.collection("participants").doc(req.user.uid).get();
     if (!isHost && !member.exists) return res.status(403).json({error: "Not a member of this room"});
     // Only a host or participant can trigger recovery of an unfinished archive.
-    if (data.finishedAt && !data.resultsArchivedAt && ["finished", "closed"].includes(data.status))
-      await ensureArchived(db, roomRef.id);
+    if (data.finishedAt && !data.resultsArchivedAt && ["finished", "closed"].includes(data.status)) {
+      // Archiving is retryable. A temporary write outage must not prevent a
+      // participant from seeing the already-finished room and their result.
+      try { await ensureArchived(db, roomRef.id); }
+      catch (err) { console.warn("[quiz-archive-pending]", err.code || err.name || "unknown"); }
+    }
     const now = Date.now();
     const room = publicSession(doc.id, data, isHost, member?.get("alias") || null, now);
     const response = {room, serverTime: new Date(now).toISOString()};
@@ -304,7 +322,13 @@ router.post("/:id/advance", validRoom, async (req, res, next) => {
       return {ok: true, finished: false};
     });
     if (result.status) return res.status(result.status).json({error: result.error});
-    if (result.finished) await ensureArchived(db, req.params.id);
+    if (result.finished) {
+      try { await ensureArchived(db, req.params.id); }
+      catch (err) {
+        console.warn("[quiz-archive-pending]", err.code || err.name || "unknown");
+        return res.json({...result, archivePending: true});
+      }
+    }
     res.json(result);
   } catch (err) { next(err); }
 });

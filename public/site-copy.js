@@ -1,4 +1,5 @@
 window.eaglesCopy = {
+  "Aggregate statistics are hidden for rooms with fewer than three participants.": ["Общая статистика скрыта для комнат с менее чем тремя участниками.", "Uch nafardan kam ishtirokchisi bor xonalarda umumiy statistika yashiriladi."],
   "Average correct answers": ["В среднем правильных ответов", "O‘rtacha to‘g‘ri javoblar"],
   "Your learning, results and account in one place.": ["Ваши занятия, результаты и аккаунт в одном месте.", "O‘qish, natijalar va hisobingiz bir joyda."],
   "MY ACCOUNT": ["МОЙ КАБИНЕТ", "MENING KABINETIM"],
