@@ -1,20 +1,80 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin — Eagles Community</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="account.css"><script src="/site-nav-hint.js"></script><link rel="stylesheet" href="site-nav.css">
-</head><body><header class="site-header">
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin — Eagles Community</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="account.css">
+  <script src="/site-nav-hint.js"></script>
+  <link rel="stylesheet" href="site-nav.css">
+  <link rel="stylesheet" href="portal-ux.css">
+</head>
+<body class="admin-page">
+  <header class="site-header">
     <a class="site-brand" href="Eagles-homepage.html"><span class="site-mark" aria-hidden="true">E</span>Eagles-Community</a>
     <button class="site-toggle" type="button" aria-controls="mainNav" aria-expanded="false" aria-label="Open menu">☰</button>
     <nav id="mainNav" class="site-nav" aria-label="Main navigation">
-        <a href="Eagles-homepage.html">Home</a>
-        <a href="Eagles.courses.html">Courses</a>
-        <a href="Eagles-teachers.html">Teachers</a>
-        <a href="Eagles-about.html">About</a>
-        <a href="Eagles-contacts.html">Contacts</a>
-        <a href="practice.html">Practice</a>
-        <a href="join.html">Join Us</a>
+      <a href="Eagles-homepage.html">Home</a>
+      <a href="Eagles.courses.html">Courses</a>
+      <a href="Eagles-teachers.html">Teachers</a>
+      <a href="Eagles-about.html">About</a>
+      <a href="Eagles-contacts.html">Contacts</a>
+      <a href="practice.html">Practice</a>
+      <a href="join.html">Join Us</a>
     </nav>
-</header><p id="adminAccessMessage" class="practice-access-notice" role="status">Checking admin access...</p><main class="panel wide" id="adminWorkspace" hidden><div class="admin-heading"><div><p class="eyebrow">MANAGEMENT</p><h1>Student administration</h1><p class="muted">Review applications and manage access permissions.</p></div><button id="refresh" type="button">Refresh students</button></div><div class="admin-shortcuts">
-  <a href="#studentsSection" class="admin-shortcut"><strong>Manage students</strong><span>Applications, groups, account permissions</span></a>
-  <a href="/quiz-builder.html" class="admin-shortcut"><strong>Test Builder</strong><span>Create and manage Live Quiz tests</span></a>
-  <a href="/quiz-statistics.html" class="admin-shortcut"><strong>Quiz statistics</strong><span>Completed sessions, student accuracy, question analytics</span></a>
-  <a href="/practice.html" class="admin-shortcut"><strong>Practice</strong><span>Explore all learning activities</span></a>
-</div><p id="message" role="status" aria-live="polite"></p><div id="studentsSection" class="table-wrap"><table><thead><tr><th>Student</th><th>Group</th><th>Email</th><th>Status</th><th>Active</th><th>Tests</th><th>Reviews</th><th>Action</th><th>Profile and learning</th></tr></thead><tbody id="students"></tbody></table></div><div class="panel-links"><a href="/quiz-builder.html">Manage quizzes</a><a href="/quiz-statistics.html">Quiz statistics</a><button type="button" id="signout">Sign out</button><a href="/account.html">Account</a><a href="/Eagles-homepage.html">Back to homepage</a></div></main><script src="account-session.js" defer></script><script src="admin.js" defer></script><script src="site-nav.js" defer></script>
-</body></html>
+  </header>
+  <p id="adminAccessMessage" class="practice-access-notice" role="status">Checking admin access...</p>
+  <main class="panel wide admin-dashboard" id="adminWorkspace" hidden>
+    <div class="admin-hero">
+      <div>
+        <p class="eyebrow">EAGLES TEAM · ADMIN</p>
+        <h1>Administration</h1>
+        <p>Manage student access, tests and learning results from one workspace.</p>
+      </div>
+      <div class="admin-hero-actions">
+        <button id="refresh" type="button">Refresh students</button>
+        <a href="/Eagles-homepage.html">View site →</a>
+      </div>
+    </div>
+
+    <section class="admin-metrics" aria-label="Student overview">
+      <div><span>Student accounts</span><strong id="adminTotalStudents">—</strong></div>
+      <button class="admin-metric-action" id="adminPendingMetric" type="button" aria-label="Show pending student accounts"><span>Awaiting approval</span><strong id="adminPendingStudents">—</strong><span class="admin-metric-hint">View pending →</span></button>
+      <div><span>Approved</span><strong id="adminApprovedStudents">—</strong></div>
+      <div><span>Inactive</span><strong id="adminInactiveStudents">—</strong></div>
+    </section>
+
+    <div class="admin-shortcuts">
+      <a href="#studentsSection" class="admin-shortcut"><span class="admin-shortcut-icon" aria-hidden="true">01</span><strong>Manage students</strong><span>Applications, groups and permissions</span><span class="admin-shortcut-arrow" aria-hidden="true">→</span></a>
+      <a href="/quiz-builder.html" class="admin-shortcut"><span class="admin-shortcut-icon" aria-hidden="true">02</span><strong>Test Builder</strong><span>Create and manage Live Quiz tests</span><span class="admin-shortcut-arrow" aria-hidden="true">→</span></a>
+      <a href="/quiz-statistics.html" class="admin-shortcut"><span class="admin-shortcut-icon" aria-hidden="true">03</span><strong>Quiz statistics</strong><span>Accuracy, sessions and answers</span><span class="admin-shortcut-arrow" aria-hidden="true">→</span></a>
+      <a href="/practice.html" class="admin-shortcut"><span class="admin-shortcut-icon" aria-hidden="true">04</span><strong>Practice</strong><span>Open the learning hub</span><span class="admin-shortcut-arrow" aria-hidden="true">→</span></a>
+    </div>
+
+    <section class="admin-students-section" id="studentsSection" aria-labelledby="studentsHeading">
+      <div class="admin-section-heading">
+        <div><p class="eyebrow">STUDENTS</p><h2 id="studentsHeading">Student administration</h2><p class="muted">Review applications and update account permissions.</p></div>
+        <div class="admin-filters">
+          <label for="studentSearch">Search students<input type="search" id="studentSearch" placeholder="Name, email or group" autocomplete="off"></label>
+          <label for="studentStatusFilter">Account status<select id="studentStatusFilter"><option value="all">All statuses</option><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option><option value="inactive">Inactive</option></select></label>
+        </div>
+      </div>
+      <p id="message" role="status" aria-live="polite"></p>
+      <div class="table-wrap">
+        <table><thead><tr><th scope="col">Student</th><th scope="col">Group</th><th scope="col">Email</th><th scope="col">Status</th><th scope="col">Active</th><th scope="col">Tests</th><th scope="col">Reviews</th><th scope="col">Action</th><th scope="col">Profile and learning</th></tr></thead><tbody id="students"></tbody></table>
+      </div>
+    </section>
+    <div class="panel-links admin-footer-links">
+      <a href="/quiz-builder.html">Manage quizzes</a>
+      <a href="/quiz-statistics.html">Quiz statistics</a>
+      <a href="/account.html">Account</a>
+      <button type="button" id="signout">Sign out</button>
+    </div>
+  </main>
+  <script src="account-session.js" defer></script>
+  <script src="admin.js" defer></script>
+  <script src="site-nav.js" defer></script>
+</body>
+</html>

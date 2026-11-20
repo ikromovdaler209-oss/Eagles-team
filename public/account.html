@@ -1,18 +1,61 @@
-<!doctype html><html lang="en"><head>
-<script src="site-copy.js" defer></script>
-<script src="site-i18n.js" defer></script>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Student account — Eagles Community</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="account.css"><script src="/site-nav-hint.js"></script><link rel="stylesheet" href="site-nav.css">
-</head><body><header class="site-header">
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Student account — Eagles Community</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="account.css">
+  <script src="/site-nav-hint.js"></script>
+  <link rel="stylesheet" href="site-nav.css">
+  <link rel="stylesheet" href="portal-ux.css">
+  <script src="site-copy.js" defer></script>
+  <script src="site-i18n.js" defer></script>
+</head>
+<body class="account-entry">
+  <header class="site-header">
     <a class="site-brand" href="Eagles-homepage.html"><span class="site-mark" aria-hidden="true">E</span>Eagles-Community</a>
     <button class="site-toggle" type="button" aria-controls="mainNav" aria-expanded="false" aria-label="Open menu">☰</button>
     <nav id="mainNav" class="site-nav" aria-label="Main navigation">
-        <a href="Eagles-homepage.html">Home</a>
-        <a href="Eagles.courses.html">Courses</a>
-        <a href="Eagles-teachers.html">Teachers</a>
-        <a href="Eagles-about.html">About</a>
-        <a href="Eagles-contacts.html">Contacts</a>
-        <a href="practice.html">Practice</a>
-        <a href="join.html" aria-current="location">Join Us</a>
+      <a href="Eagles-homepage.html">Home</a>
+      <a href="Eagles.courses.html">Courses</a>
+      <a href="Eagles-teachers.html">Teachers</a>
+      <a href="Eagles-about.html">About</a>
+      <a href="Eagles-contacts.html">Contacts</a>
+      <a href="practice.html">Practice</a>
+      <a href="join.html" aria-current="location">Join Us</a>
     </nav>
-</header><main class="panel account-panel"><p class="eyebrow">STUDENT PORTAL</p><h1>Your Eagles account</h1><p class="muted">Register if you already study at Eagles Community. An administrator will verify your account.</p><div class="form-columns"><form id="register" method="post" action="/account.html"><h2>Create an account</h2><label><span>First name</span><input name="firstName" autocomplete="given-name" maxlength="70" required></label><label><span>Last name</span><input name="lastName" autocomplete="family-name" maxlength="70" required></label><label><span>Study group</span><input name="groupName" maxlength="70" required></label><label><span>Email</span><input name="email" type="email" autocomplete="email" required></label><label><span>Password (8+ characters)</span><input name="password" type="password" autocomplete="new-password" minlength="8" required></label><button type="submit">Create account</button></form><form id="login" method="post" action="/account.html"><h2>Already registered?</h2><label><span>Email</span><input name="email" type="email" autocomplete="email" required></label><label><span>Password</span><input name="password" type="password" autocomplete="current-password" required></label><button type="submit">Sign in</button><p class="muted small">New accounts require administrator approval.</p></form></div><p id="message" role="status" aria-live="polite"></p><div class="panel-links"><a href="/join.html">Back to options</a><a href="/Eagles-homepage.html">Back to homepage</a></div></main><script src="account-session.js" defer></script><script src="account.js" defer></script><script src="site-nav.js" defer></script>
-</body></html>
+  </header>
+  <main class="panel account-panel">
+    <div class="account-heading">
+      <p class="eyebrow">STUDENT PORTAL</p>
+      <h1>Your Eagles account</h1>
+      <p class="muted">Register if you already study at Eagles Community. An administrator will verify your account.</p>
+    </div>
+    <div class="form-columns">
+      <form id="register" class="account-form-card" method="post" action="/account.html">
+        <h2>Create an account</h2>
+        <label><span>First name</span><input name="firstName" autocomplete="given-name" maxlength="70" required></label>
+        <label><span>Last name</span><input name="lastName" autocomplete="family-name" maxlength="70" required></label>
+        <label><span>Study group</span><input name="groupName" maxlength="70" required></label>
+        <label><span>Email</span><input name="email" type="email" autocomplete="email" required></label>
+        <label><span>Password (8+ characters)</span><input name="password" type="password" autocomplete="new-password" minlength="8" required></label>
+        <button type="submit">Create account</button>
+      </form>
+      <form id="login" class="account-form-card" method="post" action="/account.html">
+        <h2>Already registered?</h2>
+        <label><span>Email</span><input name="email" type="email" autocomplete="email" required></label>
+        <label><span>Password</span><input name="password" type="password" autocomplete="current-password" required></label>
+        <button type="submit">Sign in</button>
+        <p class="muted small">New accounts require administrator approval.</p>
+      </form>
+    </div>
+    <p id="message" role="status" aria-live="polite"></p>
+    <div class="panel-links"><a href="/join.html">Back to options</a><a href="/Eagles-homepage.html">Back to homepage</a></div>
+  </main>
+  <script src="account-session.js" defer></script>
+  <script src="account.js" defer></script>
+  <script src="site-nav.js" defer></script>
+</body>
+</html>

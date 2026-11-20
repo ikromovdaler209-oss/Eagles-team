@@ -39,6 +39,7 @@
       const metrics = $("statsMetrics"); metrics.replaceChildren(
         metric(String(data.participantCount), "Participants"),
         metric(percent(data.averageAccuracy), "Average accuracy"),
+        metric(`${data.averageCorrect ?? 0} / ${data.questionCount}`, "Average correct answers"),
         metric(String(data.questionCount), "Questions")
       );
       const questions = $("statsQuestions"); questions.replaceChildren();

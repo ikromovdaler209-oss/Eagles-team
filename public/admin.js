@@ -1,44 +1,166 @@
+"use strict";
 const msg = document.getElementById("message");
 const tbody = document.getElementById("students");
+const studentSearch = document.getElementById("studentSearch");
+const studentStatusFilter = document.getElementById("studentStatusFilter");
+let loadedStudents = [];
+
 async function api(path, method = "GET", body) {
-  return request(path, {method, ...(body ? {body: JSON.stringify(body)} : {})});
+  return request(path, { method, ...(body ? { body: JSON.stringify(body) } : {}) });
 }
-function select(values, value) { const s = document.createElement("select"); for (const v of values) { const o = document.createElement("option"); o.value = v; o.textContent = v; s.append(o); } s.value = value; return s; }
-function checkbox(value) { const c = document.createElement("input"); c.type = "checkbox"; c.checked = !!value; return c; }
-function cell(row, element) { const td = row.insertCell(); if (typeof element === "string") td.textContent = element; else td.append(element); }
+
+function select(values, value) {
+  const element = document.createElement("select");
+  for (const item of values) {
+    const option = document.createElement("option");
+    option.value = item;
+    option.textContent = item;
+    element.append(option);
+  }
+  element.value = value;
+  return element;
+}
+
+function checkbox(value, label) {
+  const element = document.createElement("input");
+  element.type = "checkbox";
+  element.checked = !!value;
+  element.setAttribute("aria-label", label);
+  return element;
+}
+
+function cell(row, label, content) {
+  const td = row.insertCell();
+  td.dataset.label = label;
+  if (typeof content === "string") td.textContent = content;
+  else td.append(content);
+  return td;
+}
+
+function updateMetrics(students) {
+  const count = predicate => students.filter(predicate).length;
+  document.getElementById("adminTotalStudents").textContent = String(students.length);
+  document.getElementById("adminPendingStudents").textContent = String(count(p => p.approvalStatus === "pending"));
+  document.getElementById("adminApprovedStudents").textContent = String(count(p => p.approvalStatus === "approved"));
+  document.getElementById("adminInactiveStudents").textContent = String(count(p => p.isActive === false));
+}
+
+function renderStudents() {
+  const phrase = studentSearch.value.trim().toLocaleLowerCase();
+  const filter = studentStatusFilter.value;
+  const filtered = loadedStudents.filter(p => {
+    const matchesSearch = [p.firstName, p.lastName, p.email, p.groupName]
+      .some(value => String(value || "").toLocaleLowerCase().includes(phrase));
+    const matchesStatus = filter === "all" || (filter === "inactive" ? p.isActive === false : p.approvalStatus === filter);
+    return matchesSearch && matchesStatus;
+  });
+  tbody.replaceChildren();
+
+  for (const p of filtered) {
+    const fullName = [p.firstName, p.lastName].filter(Boolean).join(" ").trim() || "Unnamed student";
+    const row = tbody.insertRow();
+    const name = document.createElement("strong");
+    name.className = "admin-student-name";
+    name.textContent = fullName;
+    cell(row, "Student", name);
+
+    const group = document.createElement("input");
+    group.value = p.groupName || "";
+    group.maxLength = 70;
+    group.setAttribute("aria-label", `Study group for ${fullName}`);
+    cell(row, "Group", group);
+    cell(row, "Email", p.email || "—");
+
+    const status = select(["pending", "approved", "rejected"], p.approvalStatus);
+    status.className = "admin-status-select";
+    status.dataset.status = status.value;
+    status.setAttribute("aria-label", `Account status for ${fullName}`);
+    status.addEventListener("change", () => { status.dataset.status = status.value; });
+    cell(row, "Status", status);
+
+    const active = checkbox(p.isActive, `Active account for ${fullName}`);
+    const tests = checkbox(p.canCreateTests, `Can create tests for ${fullName}`);
+    const reviews = checkbox(p.canWriteReviews, `Can write reviews for ${fullName}`);
+    cell(row, "Active", active);
+    cell(row, "Tests", tests);
+    cell(row, "Reviews", reviews);
+
+    const save = document.createElement("button");
+    save.type = "button";
+    save.className = "admin-save-button";
+    save.textContent = "Save";
+    save.addEventListener("click", async () => {
+      save.disabled = true;
+      try {
+        await api(`/admin/students/${encodeURIComponent(p.uid)}`, "PATCH", {
+          groupName: group.value,
+          approvalStatus: status.value,
+          isActive: active.checked,
+          canCreateTests: tests.checked,
+          canWriteReviews: reviews.checked
+        });
+        await load();
+        msg.textContent = "Student profile saved.";
+      } catch (error) {
+        msg.textContent = error.message || "Unable to save student.";
+        save.disabled = false;
+      }
+    });
+    cell(row, "Action", save);
+
+    const details = document.createElement("details");
+    details.className = "admin-profile-details";
+    const summary = document.createElement("summary");
+    summary.textContent = "View profile";
+    details.append(summary);
+    const description = document.createElement("p");
+    description.textContent = `${fullName} · ${p.email || "—"} · ${p.groupName || "No group assigned"}`;
+    details.append(description);
+    const learning = document.createElement("p");
+    learning.textContent = "See Quiz statistics for completed test results.";
+    details.append(learning);
+    const activity = Array.isArray(p.activity) ? p.activity : [];
+    for (const event of activity) {
+      const line = document.createElement("p");
+      line.textContent = `${event.type === "registered" ? "Registered" : "Profile updated"} · ${event.date ? new Date(event.date).toLocaleDateString("en") : ""}`;
+      details.append(line);
+    }
+    cell(row, "Profile and learning", details);
+  }
+  msg.textContent = `${filtered.length} of ${loadedStudents.length} student profiles shown`;
+  if (!filtered.length) {
+    const row = tbody.insertRow();
+    const empty = row.insertCell();
+    empty.colSpan = 9;
+    empty.className = "admin-no-results";
+    empty.textContent = "No students match these filters.";
+  }
+}
+
 async function load() {
-  msg.textContent = "Loading..."; tbody.replaceChildren();
+  msg.textContent = "Loading student profiles...";
   try {
     const { students } = await api("/admin/students");
-    for (const p of students.filter(x => x.role === "student")) {
-      const row = tbody.insertRow(); cell(row, `${p.firstName || ""} ${p.lastName || ""}`); const group = document.createElement("input");
-      group.value = p.groupName || "";
-      group.maxLength = 70;
-      group.setAttribute("aria-label", "Study group");
-      cell(row, group); cell(row, p.email || "");
-      const status = select(["pending", "approved", "rejected"], p.approvalStatus); cell(row, status);
-      const active = checkbox(p.isActive), tests = checkbox(p.canCreateTests), reviews = checkbox(p.canWriteReviews);
-      cell(row, active); cell(row, tests); cell(row, reviews);
-      const save = document.createElement("button"); save.textContent = "Save";
-      save.addEventListener("click", async () => {
-        try { await api(`/admin/students/${encodeURIComponent(p.uid)}`, "PATCH", { groupName: group.value, approvalStatus: status.value, isActive: active.checked, canCreateTests: tests.checked, canWriteReviews: reviews.checked }); await load(); msg.textContent = "Saved"; }
-        catch (e) { msg.textContent = e.message; }
-      }); cell(row, save);
-      const details = document.createElement("details");
-      const summary = document.createElement("summary");
-      summary.textContent = "View profile";
-      details.append(summary);
-      const info = document.createElement("p");
-      info.textContent = [p.firstName, p.lastName, p.email, p.groupName,
-        "No learning progress recorded.", "See Quiz statistics for completed test results.",
-        ...p.activity.map(event => (event.type === "registered" ? "Registered" : "Profile updated") + " · " + new Date(event.date).toLocaleDateString("en"))].join(" · ");
-      details.append(info);
-      cell(row, details);
-    }
-    msg.textContent = `${students.length} profiles loaded`;
-  } catch (e) { msg.textContent = e.message + ". Sign in with an approved admin account first."; }
+    loadedStudents = students.filter(p => p.role === "student");
+    updateMetrics(loadedStudents);
+    renderStudents();
+  } catch (error) {
+    loadedStudents = [];
+    tbody.replaceChildren();
+    updateMetrics([]);
+    msg.textContent = `${error.message}. Sign in with an approved admin account first.`;
+  }
 }
+
+studentSearch.addEventListener("input", renderStudents);
+studentStatusFilter.addEventListener("change", renderStudents);
+document.getElementById("adminPendingMetric").addEventListener("click", () => {
+  studentStatusFilter.value = "pending";
+  renderStudents();
+  document.getElementById("studentsSection").scrollIntoView({ behavior: "smooth", block: "start" });
+});
 document.getElementById("refresh").addEventListener("click", load);
+
 async function checkAdminAccess() {
   const note = document.getElementById("adminAccessMessage");
   try {
@@ -55,8 +177,8 @@ async function checkAdminAccess() {
     note.textContent = error.message || "Unable to verify admin access";
   }
 }
-checkAdminAccess();
 
+checkAdminAccess();
 document.getElementById("signout").addEventListener("click", () => {
   clearSession();
   location.replace("/account.html");

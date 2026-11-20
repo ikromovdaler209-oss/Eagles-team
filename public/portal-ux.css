@@ -1,0 +1,255 @@
+/* Eagles Team portal UI. Presentation only: no auth or API behavior is changed here. */
+[hidden] { display:none!important; }
+.student-page, .admin-page, .account-entry {
+  --portal-red:#be1e2c; --portal-red-dark:#9c1422; --portal-ink:#1a202c;
+  --portal-muted:#657083; --portal-line:#e1e5ec; --portal-surface:#fff;
+  background:linear-gradient(180deg,#eef1f5,#f6f7fa 45%,#edf0f4);
+  min-height:100vh; color:var(--portal-ink); padding:0;
+}
+.student-page .site-header, .admin-page .site-header, .account-entry .site-header {
+  width:min(94%,1440px); margin-top:clamp(12px,2vw,26px);
+}
+.student-page .panel, .admin-page .panel, .account-entry .panel {
+  width:min(94%,1240px); max-width:1240px; margin:26px auto 76px;
+}
+.student-page a, .admin-page a, .account-entry a { text-underline-offset:3px; }
+.student-page :is(a,button,input,select,summary):focus-visible,
+.admin-page :is(a,button,input,select,summary):focus-visible,
+.account-entry :is(a,button,input,select,summary):focus-visible {
+  outline:3px solid #ef6470; outline-offset:3px;
+}
+/* Student dashboard */
+.student-page .dashboard {
+  background:transparent; border:0; box-shadow:none; padding:0;
+  overflow:visible; max-width:1240px;
+}
+.dashboard-hero,.admin-hero {
+  position:relative; overflow:hidden; display:flex; justify-content:space-between;
+  align-items:center; gap:26px; padding:clamp(24px,4vw,44px);
+  background:linear-gradient(118deg,#121820 0%,#1e2029 65%,#411a24 100%);
+  border-radius:23px; color:#fff; box-shadow:0 20px 40px #18202b1e;
+}
+.dashboard-hero::after,.admin-hero::after {
+  content:""; position:absolute; width:220px; aspect-ratio:1; right:-75px; bottom:-140px;
+  border:32px solid #ed49551e; border-radius:50%; pointer-events:none;
+}
+.dashboard-hero > *, .admin-hero > * { position:relative; z-index:1; }
+.dashboard-hero .eyebrow,.admin-hero .eyebrow { color:#ff9ba4; margin:0 0 8px; }
+.dashboard-hero h1,.admin-hero h1 { font-size:clamp(29px,4vw,44px); margin:0 0 7px; letter-spacing:-.035em; }
+.dashboard-hero-subtitle,.admin-hero p:not(.eyebrow) { color:#d5d9e2; margin:0; max-width:530px; }
+.dashboard-hero #state { color:#fff; font-size:13px; margin:18px 0 0; max-width:520px; min-height:22px; }
+.dashboard-hero #state:empty { display:none; }
+.dashboard-hero .dashboard-actions { display:flex; gap:9px; margin:0; align-items:center; flex-shrink:0; }
+.dashboard-hero .dashboard-actions button { border:1px solid #ffffff60; color:#fff; background:#ffffff13; border-radius:10px; font-size:13px; padding:10px 17px; }
+.dashboard-hero .dashboard-actions button:first-child { background:#fff; color:#222733; border-color:#fff; }
+.dashboard-hero .dashboard-actions button:hover { background:#ffffff31; }
+.dashboard-hero .dashboard-actions button:first-child:hover { background:#e7e9ed; }
+.student-identity {
+  display:flex; align-items:center; gap:18px; padding:24px 27px; margin:18px 0;
+  background:var(--portal-surface); border:1px solid var(--portal-line);
+  border-radius:19px; box-shadow:0 8px 20px #1a20300b;
+}
+.student-avatar { display:grid; flex:none; place-items:center; width:67px; height:67px;
+  background:linear-gradient(135deg,#da3545,#741426); color:#fff; border-radius:19px;
+  font:800 25px/1 Poppins,system-ui,sans-serif; letter-spacing:.03em;
+}
+.student-identity-copy { flex:1; min-width:0; }
+.student-identity .eyebrow {font-size:11px; margin:0 0 3px;}
+.student-identity h2 { margin:0 0 4px; font:800 clamp(20px,2.5vw,27px)/1.25 Poppins,system-ui,sans-serif; }
+.student-identity-email,.student-group-line { margin:2px 0; font-size:13px; color:var(--portal-muted); overflow-wrap:anywhere; }
+.student-group-line strong { color:var(--portal-ink); }
+.portal-action-link {display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;min-height:43px;
+  padding:9px 17px; background:var(--portal-red); color:#fff!important; border-radius:10px;
+  font-weight:700; font-size:13px; text-decoration:none;
+}
+.portal-action-link:hover { background:var(--portal-red-dark); }
+.dashboard .dashboard-grid { display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:18px; }
+.dashboard-grid > .dashboard-card {
+  grid-column:span 6; min-width:0; padding:26px;
+  background:var(--portal-surface); border:1px solid var(--portal-line);
+  border-radius:19px; box-shadow:0 8px 20px #1a20300b;
+}
+.dashboard .dashboard-grid > .quiz-history-section { grid-column:1/-1; }
+.dashboard .dashboard-grid > .dashboard-practice-section { grid-column:span 7; }
+.dashboard .dashboard-grid > .dashboard-profile-section { grid-column:span 5; }
+.portal-section-heading { display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:18px; }
+.portal-section-heading .eyebrow { margin:0 0 4px;font-size:11px; }
+.portal-section-heading h2 { margin:0; font:800 clamp(19px,2vw,23px)/1.3 Poppins,system-ui,sans-serif; letter-spacing:-.02em; }
+.portal-text-link { font-weight:700; font-size:13px; white-space:nowrap; text-decoration:none; }
+.portal-text-link:hover { text-decoration:underline; }
+.student-profile-list {display:grid;grid-template-columns:1fr 1fr;gap:13px 14px;margin:0 0 22px;}
+.student-profile-list dt {font-size:12px;color:var(--portal-muted);font-weight:600;}
+.student-profile-list dd {font-size:14px;font-weight:700;margin:2px 0 0;overflow-wrap:anywhere;}
+.dashboard .portal-details {border-top:1px solid var(--portal-line);padding-top:16px;}
+.dashboard .portal-details summary {color:var(--portal-red-dark);font-weight:700;cursor:pointer;}
+.dashboard .portal-details[open] summary {margin-bottom:10px;}
+.dashboard .portal-details label {font-size:12px;}
+.dashboard .portal-details button { min-height:41px; }
+.portal-resource-links {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+.portal-resource-links a {display:flex;flex-direction:column;justify-content:center;gap:4px;padding:16px 18px;
+  border-radius:13px;border:1px solid var(--portal-line);background:#f8f9fb;color:var(--portal-ink);
+  text-decoration:none;min-height:81px;transition:border-color .15s,background .15s;
+}
+.portal-resource-links a:hover {border-color:var(--portal-red);background:#fff7f8;}
+.portal-resource-links strong {font:700 15px Poppins,system-ui,sans-serif;}
+.portal-resource-links span {font-size:12px;color:var(--portal-red-dark);font-weight:700;}
+.portal-muted-note {color:var(--portal-muted);font-size:12px;margin:15px 0 0;}
+.portal-empty-state {border:1px dashed #cfd4dd;border-radius:13px;padding:22px;color:var(--portal-muted);background:#fafbfd;margin:0;}
+.portal-activity {list-style:none!important;padding:0!important;margin:0!important;}
+.portal-activity li {margin:0!important;padding:10px 0 10px 18px;border-left:2px solid #e4d6d9;font-size:13px;position:relative;color:#495162;}
+.portal-activity li::before {content:"";width:8px;height:8px;border-radius:50%;background:#ca3342;position:absolute;left:-5px;top:17px;}
+.dashboard .quiz-summary-grid {grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;}
+.dashboard .quiz-summary-grid > div {padding:21px 20px; background:linear-gradient(145deg,#f7f8fa,#f1f3f6); border:1px solid #e6e9ee;border-radius:14px;}
+.dashboard .quiz-summary-grid strong {font-size:clamp(24px,3vw,35px);color:#ac182a;}
+.dashboard .quiz-summary-grid small {font-size:12px;font-weight:600;}
+.dashboard .quiz-history-list {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+.dashboard .quiz-history-list li {margin:0!important; padding:17px 18px; background:#fff;border:1px solid var(--portal-line);border-radius:13px;}
+.quiz-history-item-head {display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.quiz-history-item-head > strong:first-child {font-size:14px;min-width:0;overflow-wrap:anywhere;}
+.quiz-history-accuracy {font:800 19px Poppins,system-ui,sans-serif;color:var(--portal-red-dark);white-space:nowrap;}
+.quiz-history-track {height:6px;background:#edf0f4;border-radius:50px;overflow:hidden;margin-top:4px;}
+.quiz-history-track span {height:100%;display:block;background:linear-gradient(90deg,#bf1e31,#d84c5a);border-radius:50px;}
+.dashboard #quizHistoryState {color:var(--portal-muted);font-size:13px;}
+.dashboard #quizHistoryState:empty {display:none;}
+.dashboard #quizHistoryState:not(:empty) {border:1px dashed #cfd4dd;border-radius:12px;padding:15px 18px;background:#fafbfd;}
+.dashboard #recentQuizzesHeading[hidden] {display:none!important;}
+.dashboard #feedback:not(:empty) {margin:20px 0 0;padding:14px 18px;background:#fff;border-left:4px solid var(--portal-red);border-radius:9px;color:var(--portal-ink);}
+.dashboard .dashboard-complete {margin:18px 0;background:#fff;padding:25px;border:1px solid var(--portal-line);border-radius:18px;}
+.portal-form-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;}
+/* Administrator */
+.admin-page .admin-dashboard {width:min(94%,1320px);max-width:1320px; padding:0;background:transparent; border:0;box-shadow:none;overflow:visible;}
+.admin-hero {margin-bottom:17px;}
+.admin-hero .admin-hero-actions {display:flex;gap:11px;flex-direction:column;align-items:flex-end;flex-shrink:0;}
+.admin-hero-actions button {background:#fff;color:#202431;padding:11px 17px;border-radius:10px;font-size:13px;}
+.admin-hero-actions button:hover {background:#e9e9ef;color:#202431;}
+.admin-hero-actions a {color:#e5e8ee;text-decoration:none;font-size:13px;font-weight:700;}
+.admin-metrics {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-bottom:17px;}
+.admin-metrics > div,.admin-metrics > button {display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:8px;
+  margin:0;padding:20px 22px;background:#fff;border:1px solid var(--portal-line);border-radius:15px;
+  box-shadow:0 7px 18px #1a20300b;color:var(--portal-ink);}
+.admin-metrics > button {cursor:pointer;font:inherit;}
+.admin-metrics > button:hover {background:#fff7f8;border-color:#db6d76;}
+.admin-metrics span:first-child {font-size:12px;color:var(--portal-muted);font-weight:700;}
+.admin-metrics strong {font:800 clamp(26px,3vw,34px)/1.1 Poppins,system-ui,sans-serif;color:#1c202a;}
+.admin-metrics .admin-metric-action strong {color:var(--portal-red-dark);}
+.admin-metric-hint {font-size:11px;color:var(--portal-red-dark);font-weight:700;}
+.admin-page .admin-shortcuts {grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin:0 0 19px;}
+.admin-page .admin-shortcut {min-height:158px;display:flex;flex-direction:column;align-items:flex-start;position:relative;
+  gap:7px;padding:21px 20px;border:1px solid var(--portal-line);border-radius:15px;background:#fff;color:var(--portal-ink);
+  box-shadow:0 7px 18px #1a20300b;transition:transform .15s,border-color .15s;
+}
+.admin-page .admin-shortcut:hover {transform:translateY(-2px);border-color:#cf6d78;}
+.admin-shortcut-icon {color:var(--portal-red-dark)!important;font:800 12px Poppins,system-ui,sans-serif!important;letter-spacing:.13em;}
+.admin-page .admin-shortcut strong {font-size:16px;line-height:1.35;}
+.admin-page .admin-shortcut > span:nth-last-child(2) {font-size:12px;line-height:1.5;}
+.admin-shortcut-arrow {position:absolute;right:17px;top:17px;font-size:18px!important;color:var(--portal-red-dark)!important;}
+.admin-students-section {padding:clamp(19px,3vw,29px);background:#fff;border:1px solid var(--portal-line);border-radius:19px;box-shadow:0 8px 20px #1a20300b;scroll-margin-top:18px;}
+.admin-section-heading {display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:15px;}
+.admin-section-heading h2 {margin:0;font:800 clamp(20px,2vw,25px) Poppins,system-ui,sans-serif;}
+.admin-section-heading .eyebrow {margin:0 0 3px;}
+.admin-section-heading .muted {font-size:13px;margin:4px 0 0;}
+.admin-filters {display:flex;gap:10px;align-items:end;flex-wrap:wrap;}
+.admin-filters label {font-size:12px;margin:0;color:var(--portal-muted);font-weight:700;}
+.admin-filters input,.admin-filters select {margin:5px 0 0;min-height:41px;padding:8px 12px;font-size:13px;border-radius:9px;}
+.admin-filters input {width:min(260px,100%);}
+.admin-filters select {min-width:142px;}
+.admin-page #message {color:var(--portal-muted);min-height:22px;font-size:12px;font-weight:600;margin:12px 0;}
+.admin-page .table-wrap {border:1px solid var(--portal-line);border-radius:12px;overflow-x:auto;}
+.admin-page table {min-width:1050px;width:100%;}
+.admin-page th {font-size:11px;text-transform:uppercase;letter-spacing:.05em;background:#f4f5f8;color:#515a6b;white-space:nowrap;padding:14px 10px;}
+.admin-page td {vertical-align:middle;padding:14px 10px;font-size:12px;color:#414958;}
+.admin-page tbody tr:hover {background:#fcf7f8;}
+.admin-student-name {font-size:13px;color:#1d2532;line-height:1.3;}
+.admin-page td input:not([type="checkbox"]),.admin-page td select {min-width:115px;max-width:180px;margin:0;padding:8px 10px;font-size:12px;}
+.admin-page td input[type="checkbox"] {margin:0;width:18px;height:18px;cursor:pointer;}
+.admin-page td .admin-status-select[data-status="approved"] {background:#ecf8f1;border-color:#a2d9b7;color:#246745;}
+.admin-page td .admin-status-select[data-status="pending"] {background:#fff7e8;border-color:#eccd92;color:#885e14;}
+.admin-page td .admin-status-select[data-status="rejected"] {background:#fdf0f0;border-color:#e6aaaa;color:#8d2c36;}
+.admin-page .admin-save-button {background:var(--portal-red);padding:8px 13px;font-size:12px;}
+.admin-profile-details {max-width:185px;}
+.admin-profile-details summary {cursor:pointer;color:var(--portal-red-dark);font-weight:700;}
+.admin-profile-details p {font-size:12px;line-height:1.4;margin:8px 0;overflow-wrap:anywhere;}
+.admin-no-results {text-align:center!important;padding:28px!important;color:var(--portal-muted)!important;}
+.admin-footer-links {display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:16px 3px;}
+.admin-footer-links a {font-size:13px;font-weight:700;text-decoration:none;}
+.admin-footer-links #signout {margin-left:auto;background:transparent;border:1px solid #aeb3bc;color:#444b57;font-size:13px;padding:9px 15px;}
+.admin-footer-links #signout:hover {border-color:var(--portal-red-dark);color:var(--portal-red-dark);}
+/* Registration and sign-in */
+.account-entry .account-panel {max-width:1060px;padding:clamp(23px,4vw,45px);}
+.account-heading {max-width:670px;margin:0 auto;text-align:center;}
+.account-heading .eyebrow {margin:0 0 9px;}
+.account-heading h1 {font-size:clamp(29px,4vw,39px);letter-spacing:-.025em;}
+.account-heading .muted {line-height:1.7;}
+.account-entry .form-columns {gap:17px;align-items:start;margin-top:24px;}
+.account-entry .form-columns form.account-form-card {border:1px solid var(--portal-line);border-radius:18px;background:#f9fafc;padding:27px;margin:0;box-shadow:none;}
+.account-entry .form-columns form.account-form-card + form.account-form-card {border-left:1px solid var(--portal-line);border-top:1px solid var(--portal-line);padding:27px;}
+.account-form-card h2 {font-size:20px;line-height:1.3;margin:0 0 21px;}
+.account-form-card label {font-size:12px;margin-bottom:14px;}
+.account-form-card input {border-radius:9px;min-height:45px;background:#fff;}
+.account-form-card button[type="submit"] {width:100%;min-height:45px;margin-top:8px;}
+.account-form-card .muted {font-size:12px;margin:16px 0 0;}
+.account-entry #message:not(:empty) {margin-top:19px;padding:13px 17px;background:#fff6f6;border-left:3px solid var(--portal-red);border-radius:8px;}
+.account-entry .panel-links {justify-content:center;margin-top:25px;}
+.account-entry .panel-links a {font-size:13px;font-weight:700;text-decoration:none;}
+@media(max-width:1100px) {
+  .admin-page .admin-shortcuts {grid-template-columns:repeat(2,minmax(0,1fr));}
+  .admin-metrics {grid-template-columns:repeat(2,minmax(0,1fr));}
+  .admin-section-heading {align-items:flex-start;flex-direction:column;}
+}
+@media(max-width:850px) {
+  .dashboard-hero,.admin-hero {align-items:flex-start;flex-direction:column;}
+  .dashboard .dashboard-grid > .dashboard-card {grid-column:1/-1;}
+  .student-identity {flex-wrap:wrap;}
+  .student-identity .portal-action-link {margin-left:auto;}
+  .portal-form-grid {grid-template-columns:1fr;}
+}
+@media(max-width:700px) {
+  .student-page .panel, .admin-page .panel, .account-entry .panel {margin:15px auto 50px;width:min(94%,1240px);}
+  .dashboard-hero,.admin-hero {padding:26px 22px;border-radius:17px;}
+  .dashboard-hero .dashboard-actions,.admin-hero .admin-hero-actions {width:100%;flex-direction:row;align-items:center;}
+  .student-identity {padding:20px 17px;}
+  .student-avatar {width:53px;height:53px;border-radius:14px;font-size:19px;}
+  .student-identity .portal-action-link {width:100%;margin:0;}
+  .dashboard-grid > .dashboard-card {padding:21px 17px;}
+  .dashboard .quiz-summary-grid {grid-template-columns:repeat(2,minmax(0,1fr));}
+  .dashboard .quiz-history-list {grid-template-columns:1fr;}
+  .portal-resource-links {grid-template-columns:1fr 1fr;}
+  .admin-metrics {gap:9px;}
+  .admin-metrics > div,.admin-metrics > button {padding:17px 15px;}
+  .admin-page .admin-shortcuts {gap:9px;}
+  .admin-page .admin-shortcut {padding:16px;min-height:147px;}
+  .admin-page .admin-shortcut strong {font-size:14px;}
+  .admin-students-section {padding:18px 14px;}
+  .admin-filters {width:100%;}
+  .admin-filters label {flex:1 1 165px;}
+  .admin-filters input,.admin-filters select {width:100%;min-width:0;}
+  .admin-page .table-wrap {overflow:visible;border:0;}
+  .admin-page table {min-width:0;display:block;}
+  .admin-page table thead {position:absolute;clip:rect(0,0,0,0);clip-path:inset(50%);overflow:hidden;width:1px;height:1px;white-space:nowrap;}
+  .admin-page table tbody {display:grid;gap:12px;}
+  .admin-page table tbody tr {display:block;border:1px solid var(--portal-line);border-radius:14px;padding:12px 15px;background:#fff;}
+  .admin-page table tbody td {display:grid;grid-template-columns:minmax(90px,37%) minmax(0,1fr);align-items:center;gap:12px;border-bottom:1px solid #edf0f3;padding:11px 0;}
+  .admin-page table tbody td:last-child {border:0;}
+  .admin-page table tbody td::before {content:attr(data-label);font-size:11px;font-weight:700;color:var(--portal-muted);}
+  .admin-page table tbody td input:not([type="checkbox"]),.admin-page table tbody td select {width:100%;max-width:none;min-width:0;}
+  .admin-page table tbody td input[type="checkbox"] {justify-self:start;}
+  .admin-profile-details {max-width:none;}
+  .admin-page table tbody td.admin-no-results {display:block;}
+  .admin-page table tbody td.admin-no-results::before {content:none;}
+  .account-entry .form-columns {grid-template-columns:1fr;}
+  .account-entry .account-panel {padding:26px 18px;}
+  .account-entry .form-columns form.account-form-card,.account-entry .form-columns form.account-form-card+form.account-form-card {padding:23px 20px;}
+}
+@media(max-width:430px) {
+  .dashboard .quiz-summary-grid > div {padding:16px 12px;}
+  .portal-resource-links {grid-template-columns:1fr;}
+  .student-profile-list {grid-template-columns:1fr;}
+  .portal-section-heading {align-items:flex-start;}
+  .admin-page .admin-shortcuts {grid-template-columns:1fr;}
+  .admin-page .admin-shortcut {min-height:120px;}
+  .admin-page .admin-footer-links #signout {margin-left:0;}
+  .admin-page .admin-metrics strong {font-size:27px;}
+}
+@media(prefers-reduced-motion:reduce) {
+  .portal-resource-links a,.admin-page .admin-shortcut {transition:none;transform:none!important;}
+}

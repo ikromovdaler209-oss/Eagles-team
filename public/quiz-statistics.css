@@ -4,7 +4,7 @@
 .stats-session-list button{display:flex;flex-direction:column;text-align:left;background:#f7f8fa;border:1px solid #e0e3e8;border-radius:12px;color:#202228;padding:13px;gap:5px;cursor:pointer;font:600 14px Inter,Arial,sans-serif}
 .stats-session-list button:hover,.stats-session-list button[aria-current="true"]{border-color:#bc2130;background:#fff1f2}
 .stats-session-list small{font-weight:400;color:#626977}
-.stats-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:24px}
+.stats-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:24px}
 .stats-metrics>div{background:#f5f6f8;padding:16px;border-radius:12px;display:flex;flex-direction:column;gap:6px}
 .stats-metrics strong{font:800 clamp(19px,3vw,27px)/1.2 Poppins,Inter,sans-serif;color:#ad2030}
 .stats-metrics small{font-size:12px;color:#636979}
@@ -20,3 +20,8 @@
 #statsNotice:not(:empty){padding:10px 0;color:#6c2832}
 @media(max-width:840px){.stats-layout{grid-template-columns:minmax(0,1fr)}.stats-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:420px){.stats-metrics{grid-template-columns:1fr}.stats-questions>div{align-items:flex-start;flex-direction:column}}
+
+/* Readable four-metric session summary, including correct answers per participant. */
+.stats-metrics>div{min-width:0;overflow-wrap:anywhere;border:1px solid #e5e7ed;}
+.stats-metrics strong{font-variant-numeric:tabular-nums;}
+@media(max-width:1060px){.stats-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}

@@ -1,73 +1,123 @@
-<!doctype html><html lang="en"><head>
-<script src="site-copy.js" defer></script>
-<script src="site-i18n.js" defer></script>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Student dashboard</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="account.css"><script src="/site-nav-hint.js"></script><link rel="stylesheet" href="site-nav.css">
-<link rel="stylesheet" href="student-dashboard.css"></head><body><header class="site-header">
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Student dashboard — Eagles Community</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="account.css">
+  <script src="/site-nav-hint.js"></script>
+  <link rel="stylesheet" href="site-nav.css">
+  <link rel="stylesheet" href="student-dashboard.css">
+  <link rel="stylesheet" href="portal-ux.css">
+  <script src="site-copy.js" defer></script>
+  <script src="site-i18n.js" defer></script>
+</head>
+<body class="student-page">
+  <header class="site-header">
     <a class="site-brand" href="Eagles-homepage.html"><span class="site-mark" aria-hidden="true">E</span>Eagles-Community</a>
     <button class="site-toggle" type="button" aria-controls="mainNav" aria-expanded="false" aria-label="Open menu">☰</button>
     <nav id="mainNav" class="site-nav" aria-label="Main navigation">
-        <a href="Eagles-homepage.html">Home</a>
-        <a href="Eagles.courses.html">Courses</a>
-        <a href="Eagles-teachers.html">Teachers</a>
-        <a href="Eagles-about.html">About</a>
-        <a href="Eagles-contacts.html">Contacts</a>
-        <a href="practice.html">Practice</a>
-        <a href="join.html">Join Us</a>
+      <a href="Eagles-homepage.html">Home</a>
+      <a href="Eagles.courses.html">Courses</a>
+      <a href="Eagles-teachers.html">Teachers</a>
+      <a href="Eagles-about.html">About</a>
+      <a href="Eagles-contacts.html">Contacts</a>
+      <a href="practice.html">Practice</a>
+      <a href="join.html">Join Us</a>
     </nav>
-</header><main class="panel dashboard">
-  <p class="eyebrow">STUDENT PORTAL</p>
-  <h1>Student dashboard</h1>
-  <p id="state" role="status">Loading your account…</p>
-  <div class="dashboard-actions">
-    <button id="retry" type="button">Refresh</button>
-    <button id="logout" type="button">Sign out</button>
-  </div>
-  <form id="finishProfile" hidden>
-    <h2>Complete your profile</h2>
-    <label>First name<input name="firstName" required maxlength="70"></label>
-    <label>Last name<input name="lastName" required maxlength="70"></label>
-    <label>Study group<input name="groupName" required maxlength="70"></label>
-    <button>Submit profile</button>
-  </form>
-  <div id="workspace" hidden>
-    <h2><span>Welcome</span>, <span id="welcome"></span></h2>
-    <div class="dashboard-grid">
-      <section><h2>Student profile</h2><dl id="profile"></dl>
-        <details><summary>Edit profile</summary><form id="edit">
-          <label>First name<input name="firstName" maxlength="70" required></label>
-          <label>Last name<input name="lastName" maxlength="70" required></label>
-          <button>Save changes</button>
-        </form></details>
-      </section>
-      <section><h2>Learning progress</h2><p>No learning progress recorded.</p></section>
-      <section class="quiz-history-section"><h2>Test results</h2>
-        <p id="quizHistoryState" role="status">Loading test results...</p>
-        <div id="quizHistoryContent" hidden>
-          <div class="quiz-summary-grid">
-            <div><strong id="quizTestsTaken">0</strong><small>Tests taken</small></div>
-            <div><strong id="quizAvgAccuracy">—</strong><small>Average accuracy</small></div>
-            <div><strong id="quizBestAccuracy">—</strong><small>Best result</small></div>
-            <div><strong id="quizLatestAccuracy">—</strong><small>Latest result</small></div>
-          </div>
-          <h3>Recent quizzes</h3>
-          <ul class="quiz-history-list" id="quizHistoryList"></ul>
-        </div>
-      </section>
-      <section><h2>Practice</h2><p><a href="practice.html">Open Practice Hub →</a></p><p><a href="quiz-builder.html" id="dashboardBuilderLink" hidden>Create tests →</a></p><ul>
-        <li><a href="Writing.html">Writing</a></li><li><a href="speaking.html">Speaking</a></li>
-        <li><span>Reading</span> · <span>Coming soon</span></li><li><span>Listening</span> · <span>Coming soon</span></li>
-      </ul></section>
-      <section><h2>Recent activity</h2><ul id="activity"></ul></section>
-      <section><h2>Account settings</h2><details><summary>Change password</summary>
-        <form id="password" method="post">
-          <label>Current password<input name="current" type="password" autocomplete="current-password" required></label>
-          <label>New password<input name="newPassword" type="password" autocomplete="new-password" minlength="8" required></label>
-          <button>Change password</button>
-        </form></details></section>
+  </header>
+  <main class="panel dashboard">
+    <div class="dashboard-hero">
+      <div class="dashboard-hero-copy">
+        <p class="eyebrow">STUDENT PORTAL</p>
+        <h1>Student dashboard</h1>
+        <p class="dashboard-hero-subtitle">Your learning, results and account in one place.</p>
+        <p id="state" role="status">Loading your account…</p>
+      </div>
+      <div class="dashboard-actions">
+        <button id="retry" type="button">Refresh</button>
+        <button id="logout" type="button">Sign out</button>
+      </div>
     </div>
-  </div>
-  <p id="feedback" aria-live="polite"></p>
-</main>
-<script src="account-session.js" defer></script>
-<script src="student-dashboard.js" defer></script>
-<script src="site-nav.js" defer></script></body></html>
+
+    <form id="finishProfile" class="dashboard-card dashboard-complete" hidden>
+      <h2>Complete your profile</h2>
+      <div class="portal-form-grid">
+        <label>First name<input name="firstName" autocomplete="given-name" required maxlength="70"></label>
+        <label>Last name<input name="lastName" autocomplete="family-name" required maxlength="70"></label>
+        <label>Study group<input name="groupName" required maxlength="70"></label>
+      </div>
+      <button type="submit">Submit profile</button>
+    </form>
+
+    <div id="workspace" hidden>
+      <section class="student-identity" aria-label="Student information">
+        <span class="student-avatar" id="studentInitials" aria-hidden="true">E</span>
+        <div class="student-identity-copy">
+          <p class="eyebrow">MY ACCOUNT</p>
+          <h2><span>Welcome</span>, <span id="welcome"></span></h2>
+          <p id="studentIdentityEmail" class="student-identity-email"></p>
+          <p class="student-group-line"><span>Study group</span>: <strong id="studentIdentityGroup">—</strong></p>
+        </div>
+        <a href="practice.html" class="portal-action-link">Open Practice Hub →</a>
+      </section>
+
+      <div class="dashboard-grid">
+        <section class="dashboard-card quiz-history-section" aria-labelledby="quizHistoryHeading">
+          <div class="portal-section-heading"><div><p class="eyebrow">LIVE QUIZ</p><h2 id="quizHistoryHeading">Test results</h2></div><a href="practice.html" class="portal-text-link">Practice →</a></div>
+          <p id="quizHistoryState" role="status">Loading test results...</p>
+          <div id="quizHistoryContent" hidden>
+            <div class="quiz-summary-grid">
+              <div><strong id="quizTestsTaken">0</strong><small>Tests taken</small></div>
+              <div><strong id="quizAvgAccuracy">—</strong><small>Average accuracy</small></div>
+              <div><strong id="quizBestAccuracy">—</strong><small>Best result</small></div>
+              <div><strong id="quizLatestAccuracy">—</strong><small>Latest result</small></div>
+            </div>
+            <h3 id="recentQuizzesHeading">Recent quizzes</h3>
+            <ul class="quiz-history-list" id="quizHistoryList"></ul>
+          </div>
+        </section>
+
+        <section class="dashboard-card dashboard-profile-section" aria-labelledby="studentProfileHeading">
+          <div class="portal-section-heading"><div><p class="eyebrow">ACCOUNT</p><h2 id="studentProfileHeading">Student profile</h2></div></div>
+          <dl id="profile" class="student-profile-list"></dl>
+          <details class="portal-details">
+            <summary>Edit profile</summary>
+            <form id="edit">
+              <label>First name<input name="firstName" autocomplete="given-name" maxlength="70" required></label>
+              <label>Last name<input name="lastName" autocomplete="family-name" maxlength="70" required></label>
+              <button type="submit">Save changes</button>
+            </form>
+          </details>
+        </section>
+
+        <section class="dashboard-card dashboard-practice-section" aria-labelledby="studentPracticeHeading">
+          <div class="portal-section-heading"><div><p class="eyebrow">LEARNING</p><h2 id="studentPracticeHeading">Practice</h2></div><a href="practice.html" class="portal-text-link">Open Practice Hub →</a></div>
+          <div class="portal-resource-links">
+            <a href="quiz-live.html"><strong>Live Quiz</strong><span>Join a classroom test →</span></a>
+            <a href="Writing.html"><strong>Writing</strong><span>Start practice →</span></a>
+            <a href="speaking.html"><strong>Speaking</strong><span>Start practice →</span></a>
+            <a href="quiz-builder.html" id="dashboardBuilderLink" hidden><strong>Test Builder</strong><span>Create tests →</span></a>
+          </div>
+          <p class="portal-muted-note">Reading · Listening — Coming soon</p>
+        </section>
+
+        <section class="dashboard-card dashboard-progress-section"><div class="portal-section-heading"><div><p class="eyebrow">OVERVIEW</p><h2>Learning progress</h2></div></div><p class="portal-empty-state">No learning progress recorded.</p></section>
+        <section class="dashboard-card dashboard-activity-section"><div class="portal-section-heading"><div><p class="eyebrow">HISTORY</p><h2>Recent activity</h2></div></div><ul id="activity" class="portal-activity"></ul></section>
+        <section class="dashboard-card dashboard-settings-section"><div class="portal-section-heading"><div><p class="eyebrow">SECURITY</p><h2>Account settings</h2></div></div><details class="portal-details"><summary>Change password</summary>
+          <form id="password" method="post">
+            <label>Current password<input name="current" type="password" autocomplete="current-password" required></label>
+            <label>New password<input name="newPassword" type="password" autocomplete="new-password" minlength="8" required></label>
+            <button type="submit">Change password</button>
+          </form></details></section>
+      </div>
+    </div>
+    <p id="feedback" role="status" aria-live="polite"></p>
+  </main>
+  <script src="account-session.js" defer></script>
+  <script src="student-dashboard.js" defer></script>
+  <script src="site-nav.js" defer></script>
+</body>
+</html>

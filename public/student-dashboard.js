@@ -45,10 +45,25 @@
         const details = document.createElement("span");
         const when = item.completedAt ? new Date(item.completedAt).toLocaleDateString(document.documentElement.lang) : "";
         details.textContent = `${item.accuracy}% · ${item.correct}/${item.total} ${t("correct")} · ${item.wrong} ${t("wrong")} · ${item.skipped} ${t("skipped")} · ${when}`;
-        li.append(title, details); list.append(li);
+        const head = document.createElement("div"); head.className = "quiz-history-item-head";
+        const accuracy = document.createElement("strong"); accuracy.className = "quiz-history-accuracy";
+        accuracy.textContent = formatAccuracy(item.accuracy);
+        head.append(title, accuracy);
+        const track = document.createElement("div"); track.className = "quiz-history-track";
+        track.setAttribute("role", "meter");
+        track.setAttribute("aria-label", t("Your result"));
+        track.setAttribute("aria-valuemin", "0");
+        track.setAttribute("aria-valuemax", "100");
+        const numericAccuracy = Number(item.accuracy);
+        const safeAccuracy = Number.isFinite(numericAccuracy) ? Math.max(0, Math.min(100, numericAccuracy)) : 0;
+        track.setAttribute("aria-valuenow", String(safeAccuracy));
+        const fill = document.createElement("span"); fill.style.width = `${safeAccuracy}%`;
+        track.append(fill);
+        li.append(head, details, track); list.append(li);
       }
       state.textContent = totalResults ? "" : t("No test results yet.");
-      content.hidden = !totalResults;
+      el("recentQuizzesHeading").hidden = !totalResults;
+      content.hidden = false;
     } catch (error) {
       if (rev !== revision) return;
       state.textContent = t("Unable to load test results. Try Refresh.");
@@ -68,6 +83,10 @@
       email = p.email;
       el("dashboardBuilderLink").hidden = p.canCreateTests !== true;
       el("welcome").textContent = p.firstName;
+      el("studentInitials").textContent = [p.firstName, p.lastName]
+        .filter(Boolean).map(part => String(part).trim().charAt(0).toLocaleUpperCase()).join("").slice(0, 2) || "E";
+      el("studentIdentityEmail").textContent = email || "";
+      el("studentIdentityGroup").textContent = p.groupName || "—";
       el("profile").replaceChildren();
       for (const [label, value] of [["First name",p.firstName],["Last name",p.lastName],["Email",email],["Study group",p.groupName]]) {
         const dt = document.createElement("dt"), dd = document.createElement("dd");
