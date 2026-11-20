@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="practice.css">
 <link rel="stylesheet" href="site-nav.css">
 </head>
-<body>
+<body data-practice-page>
   <header class="site-header">
     <a class="site-brand" href="Eagles-homepage.html"><span class="site-mark" aria-hidden="true">E</span>Eagles-Community</a>
     <button class="site-toggle" type="button" aria-controls="mainNav" aria-expanded="false" aria-label="Open menu">☰</button>
@@ -25,6 +25,7 @@
         <a href="join.html">Join Us</a>
     </nav>
 </header>
+  <p id="practiceGate" class="practice-access-notice" role="status">Checking account access...</p>
   <main>
     <div class="intro"><span class="eyebrow">EAGLES COMMUNITY</span><h1>Choose your practice</h1><p>Build your English skills, one section at a time.</p></div>
     <section class="cards" aria-label="Practice sections">
@@ -32,6 +33,8 @@
       <a class="card" href="speaking.html"><span class="symbol">◉</span><h2>Speaking</h2><p>Improve your speaking fluency and confidence.</p><span class="action">Start practice →</span></a>
       <article class="card disabled"><span class="symbol">▤</span><h2>Reading</h2><p>Reading practice will be available later.</p><span class="coming">Coming soon</span></article>
       <article class="card disabled"><span class="symbol">♫</span><h2>Listening</h2><p>Listening practice will be available later.</p><span class="coming">Coming soon</span></article>
+      <article class="card disabled"><span class="symbol">◷</span><h2>Live Quiz</h2><p>Join a live test with a PIN code. Available in the next update.</p><span class="coming">Coming soon</span></article>
+      <a class="card" id="practiceBuilderCard" href="quiz-builder.html" hidden><span class="symbol">▣</span><h2>Test Builder</h2><p>Create and manage live tests.</p><span class="action">Manage tests →</span></a>
     </section>
   </main>
 

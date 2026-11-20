@@ -38,12 +38,29 @@ async function load() {
     msg.textContent = `${students.length} profiles loaded`;
   } catch (e) { msg.textContent = e.message + ". Sign in with an approved admin account first."; }
 }
-document.getElementById("refresh").addEventListener("click", load); load();
+document.getElementById("refresh").addEventListener("click", load);
+async function checkAdminAccess() {
+  const note = document.getElementById("adminAccessMessage");
+  try {
+    const me = await request("/me");
+    if (me.status !== "admin") {
+      location.replace(me.status === "approved" ? "/student-dashboard.html" : "/account.html");
+      return;
+    }
+    note.hidden = true;
+    document.getElementById("adminWorkspace").hidden = false;
+    await load();
+  } catch (error) {
+    if (error.code === 401) return location.replace("/account.html");
+    note.textContent = error.message || "Unable to verify admin access";
+  }
+}
+checkAdminAccess();
 
 document.getElementById("signout").addEventListener("click", () => {
   clearSession();
   location.replace("/account.html");
 });
 window.addEventListener("pageshow", event => {
-  if (event.persisted) load();
+  if (event.persisted) checkAdminAccess();
 });

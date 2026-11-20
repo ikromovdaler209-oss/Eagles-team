@@ -65,3 +65,13 @@ body:has(> .site-header + .panel) { padding: 0; }
   .site-nav a[href="join.html"] { inline-size: auto; }
   .site-nav a { display: block; padding: 12px; }
 }
+
+/* Guest by default: Practice becomes visible only after /api/me approves access. */
+.site-nav a[href="practice.html"] { display: none; }
+html.eagles-practice-enabled .site-nav a[href="practice.html"] { display: block; }
+/* The HTML for existing practice pages is public, but their UI stays hidden until checked. */
+html:not(.eagles-practice-enabled) body[data-practice-page] main,
+html:not(.eagles-practice-enabled) body#body2 .speaking-wrap,
+html:not(.eagles-practice-enabled) body.speaking-page .speaking-wrap,
+html:not(.eagles-practice-enabled) body.speaking-page #myh1 { visibility: hidden; }
+.practice-access-notice { max-width: 750px; margin: 5rem auto; padding: 1.5rem; text-align: center; }

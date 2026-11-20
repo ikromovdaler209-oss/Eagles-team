@@ -41,7 +41,7 @@ function state(profile) {
 function profileView(p) {
   if (!p) return null;
   const {firstName, lastName, email, groupName, approvalStatus, isActive, role} = p;
-  return {firstName, lastName, email, groupName, approvalStatus, isActive, role};
+  return {firstName, lastName, email, groupName, approvalStatus, isActive, role, canCreateTests: p.canCreateTests === true};
 }
 function learningSummary(p) {
   // Registration and profile edits are the dated events currently recorded by this service.

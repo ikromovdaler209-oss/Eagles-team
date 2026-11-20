@@ -78,4 +78,21 @@ $("deleteQuiz").addEventListener("click", remove);
 $("duplicateQuiz").addEventListener("click", () => {const copy = readEditor(); showEditor({...copy, title: `${copy.title} (copy)`, status:"draft"}); notice("Copy ready. Save to create it.");});
 $("previewQuiz").addEventListener("click", preview);
 $("closePreview").addEventListener("click", () => $("previewDialog").close());
-(async () => {try {const me = await request("/me"); if (me.status === "admin") $("adminLink").hidden = false; await load();} catch(e) {notice(`${e.message}. Sign in with an approved account that can create tests.`);}})();
+(async () => {
+  try {
+    const me = await request("/me");
+    const allowed = me.status === "admin" || (me.status === "approved" && me.profile?.canCreateTests === true);
+    if (!allowed) {
+      location.replace(me.status === "approved" ? "/practice.html" : "/student-dashboard.html");
+      return;
+    }
+    if (me.status === "admin") {
+      $("adminLink").hidden = false;
+      $("dashboardLink").href = "/admin.html";
+    }
+    $("qbWorkspace").hidden = false;
+    await load();
+  } catch (e) {
+    notice(`${e.message}. Sign in with an approved account that can create tests.`);
+  }
+})();

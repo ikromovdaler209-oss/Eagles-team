@@ -38,6 +38,7 @@
       renderStatus(data.status);
       const p = data.profile;
       email = p.email;
+      el("dashboardBuilderLink").hidden = p.canCreateTests !== true;
       el("welcome").textContent = p.firstName;
       el("profile").replaceChildren();
       for (const [label, value] of [["First name",p.firstName],["Last name",p.lastName],["Email",email],["Study group",p.groupName]]) {

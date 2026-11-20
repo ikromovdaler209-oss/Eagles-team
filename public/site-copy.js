@@ -1,4 +1,13 @@
 window.eaglesCopy = {
+  "Admin Panel": ["Панель администратора", "Administrator paneli"],
+  "My account": ["Мой кабинет", "Mening kabinetim"],
+  "Test Builder": ["Конструктор тестов", "Testlar konstruktori"],
+  "Live Quiz": ["Онлайн-тест", "Jonli test"],
+  "Join a live test with a PIN code. Available in the next update.": ["Подключение к онлайн-тесту по PIN-коду появится в следующем обновлении.", "PIN-kod orqali jonli testga qo‘shilish keyingi yangilanishda mavjud bo‘ladi."],
+  "Create and manage live tests.": ["Создавайте онлайн-тесты и управляйте ими.", "Jonli testlarni yarating va boshqaring."],
+  "Manage tests →": ["Управлять тестами →", "Testlarni boshqarish →"],
+  "Checking account access...": ["Проверяем доступ к кабинету...", "Hisobga kirish huquqi tekshirilmoqda..."],
+  "Unable to verify your account. Please refresh and try again.": ["Не удалось проверить аккаунт. Обновите страницу и попробуйте снова.", "Hisobni tekshirib bo‘lmadi. Sahifani yangilab, qayta urinib ko‘ring."],
   "LEARNING ZONE": ["ПРАКТИКА", "MASHG‘ULOTLAR"],
   "Choose your practice": ["Выберите направление", "Mashq turini tanlang"],
   "Improve your English skills, one step at a time.": ["Развивайте навыки английского шаг за шагом.", "Ingliz tili ko‘nikmalaringizni bosqichma-bosqich rivojlantiring."],
