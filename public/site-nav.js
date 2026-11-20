@@ -27,24 +27,48 @@
   });
   matchMedia('(max-width: 72em)').addEventListener('change', () => setOpen(false));
 
-  function showAccountLink(status) {
-    const link = nav.querySelector('a[href="join.html"]');
-    if (!link) return;
-    const href = status === 'admin' ? '/admin.html' : '/student-dashboard.html';
-    link.href = href;
-    link.textContent = translate('My account');
-    link.classList.add('account-cta');
-    link.removeAttribute('aria-current');
-    if (location.pathname === href) link.setAttribute('aria-current', 'page');
+  const accountLink = nav.querySelector('a[href="join.html"]');
+
+  // Read only a login hint, not a trusted role. Permissions still come from /api/me.
+  function hasSavedLogin() {
+    for (const storage of [localStorage, sessionStorage]) {
+      try {
+        if (storage.getItem('eaglesIdToken') || storage.getItem('eaglesRefreshToken')) return true;
+      } catch (_) { /* Storage can be restricted by the browser. */ }
+    }
+    return false;
   }
 
-  // The standard public nav is the guest state. Never trust a stored token to grant access.
-  // Verify the account status and permissions against the existing server endpoint.
+  function showAccountLink(status) {
+    if (!accountLink) return;
+    // Until /api/me confirms the role, point to the sign-in/account page.
+    const href = status === 'admin' ? '/admin.html'
+      : status === 'unverified' ? '/account.html' : '/student-dashboard.html';
+    accountLink.href = href;
+    accountLink.textContent = translate('My account');
+    accountLink.classList.add('account-cta');
+    accountLink.removeAttribute('aria-current');
+    if (location.pathname === href) accountLink.setAttribute('aria-current', 'page');
+  }
+
+  function showGuestLink() {
+    if (!accountLink) return;
+    accountLink.href = 'join.html';
+    accountLink.textContent = translate('Join Us');
+    accountLink.classList.remove('account-cta');
+    accountLink.removeAttribute('aria-current');
+    if (location.pathname.endsWith('/join.html')) accountLink.setAttribute('aria-current', 'page');
+  }
+
+  // The link is invisible in CSS until we choose the initial state. This avoids
+  // flashing "Join Us" on every page load while a stored login is being checked.
+  const savedLogin = hasSavedLogin();
+  if (savedLogin) showAccountLink('unverified');
+  nav.classList.add('account-nav-ready');
+
+  // Never trust a stored token for permissions; verify through the existing API.
   async function checkAccount() {
-    if (!localStorage.getItem('eaglesIdToken') && !localStorage.getItem('eaglesRefreshToken') &&
-        !sessionStorage.getItem('eaglesIdToken') && !sessionStorage.getItem('eaglesRefreshToken')) {
-      return null;
-    }
+    if (!savedLogin) return null;
     // Public pages do not load account-session.js. Reuse it rather than duplicating token refresh logic.
     if (typeof request !== 'function') {
       await new Promise((resolve, reject) => {
@@ -78,8 +102,11 @@
       showAccountLink(role);
       if (!permitted && restrictedPage) location.replace('/student-dashboard.html');
     } catch (error) {
-      // On a temporary 503/network failure, fail closed. Do not clear valid credentials.
-      if (error.code === 401 && restrictedPage) {
+      // An invalid login becomes a guest link. On a temporary outage, keep the
+      // neutral My account link; do not display Join Us or grant Practice access.
+      const signedOut = error.code === 401 || !hasSavedLogin();
+      if (signedOut) showGuestLink();
+      if (signedOut && restrictedPage) {
         location.replace('/account.html');
       } else if (restrictedPage) {
         const notice = gateMessage || document.createElement('p');

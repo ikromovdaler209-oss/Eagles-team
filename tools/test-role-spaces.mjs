@@ -22,10 +22,10 @@ for (const file of ['public/site-nav.js','public/quiz-builder.js','public/admin.
 
 async function scenario({status=null, canCreateTests=false, path='/Eagles-homepage.html', auth=true, error=null}) {
   const classes = new Set();
-  const links = [{href:'practice.html', label:'Practice'}, {href:'join.html', textContent:'Join Us', classList:{add(){}}, setAttribute(){},removeAttribute(){},remove(){const i=links.indexOf(this);if(i!==-1)links.splice(i,1);}}];
+  const links = [{href:'practice.html', label:'Practice'}, {href:'join.html', textContent:'Join Us', classList:{add(){},remove(){}}, setAttribute(){},removeAttribute(){},remove(){const i=links.indexOf(this);if(i!==-1)links.splice(i,1);}}];
   const attrs = {};
   const nav = {
-    classList:{ contains:c=>classes.has(c), toggle:(c,v)=>v?classes.add(c):classes.delete(c) },
+    classList:{ contains:c=>classes.has(c), add:c=>classes.add(c), toggle:(c,v)=>v?classes.add(c):classes.delete(c) },
     querySelector:sel => sel === 'a[href="join.html"]' ? links.find(x=>x.href==='join.html') : null,
     insertBefore(link, before) { links.splice(before?links.indexOf(before):links.length,0,link); }
   };
@@ -49,16 +49,22 @@ async function scenario({status=null, canCreateTests=false, path='/Eagles-homepa
     window:{eaglesTranslate:txt=>txt}
   };
   vm.runInNewContext(source,context);
+  const initialLink = {href:links[1].href, textContent:links[1].textContent};
+  const navReadyImmediately = classes.has('account-nav-ready');
   await new Promise(resolve=>setImmediate(resolve));
-  return {classes,links,redirect,gateMessage,builderCard};
+  return {classes,links,redirect,gateMessage,builderCard,initialLink,navReadyImmediately};
 }
 
 let r=await scenario({auth:false});
 assert.equal(r.classes.has('eagles-practice-enabled'),false);
+assert.deepEqual(r.initialLink,{href:'join.html',textContent:'Join Us'});
+assert.equal(r.navReadyImmediately,true);
 assert.deepEqual(r.links.map(x=>x.href),['practice.html','join.html']); // CSS hides Practice by default
 r=await scenario({auth:false,path:'/practice.html'});
 assert.equal(r.redirect,'/account.html');
 r=await scenario({status:'approved'});
+assert.deepEqual(r.initialLink,{href:'/account.html',textContent:'My account'}); // No guest label flash while request is in flight.
+assert.equal(r.navReadyImmediately,true);
 assert.equal(r.classes.has('eagles-practice-enabled'),true);
 assert.ok(r.links.some(x=>x.href==='/student-dashboard.html' && x.textContent==='My account'));
 assert.ok(!r.links.some(x=>x.href==='join.html'));
@@ -77,4 +83,8 @@ r=await scenario({status:'approved',path:'/practice.html',error:Object.assign(ne
 assert.equal(r.redirect,null);
 assert.match(r.gateMessage.textContent,/refresh/i);
 assert.equal(r.classes.has('eagles-practice-enabled'),false);
+assert.deepEqual(r.initialLink,{href:'/account.html',textContent:'My account'});
+assert.ok(r.links.some(x=>x.href==='/account.html' && x.textContent==='My account'));
+r=await scenario({status:'approved',error:Object.assign(new Error('Invalid session'),{code:401})});
+assert.ok(r.links.some(x=>x.href==='join.html' && x.textContent==='Join Us'));
 console.log('Role spaces: navigation, permissions, gates, and syntax checks PASS (mocked API).');

@@ -40,15 +40,29 @@ html { scrollbar-gutter: stable; }
   transition: transform .25s ease;
 }
 .site-nav a:is(:hover, :focus-visible, [aria-current])::after { transform: scaleX(1); }
+/* Hide the guest CTA until JS chooses guest or signed-in state (no label flash). */
+.site-nav:not(.account-nav-ready) a:is([href="join.html"], .account-cta) {
+  visibility: hidden;
+}
 .site-nav a:is([href="join.html"], .account-cta) {
   flex: none;
-  inline-size: 10rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  inline-size: auto;
+  min-inline-size: 7rem;
+  min-block-size: 36px;
+  padding: 8px 13px;
+  font-size: 0.9em;
   text-align: center;
+  text-decoration: none;
   background: #c81e2c;
   color: #fff;
-  border-radius: 10px;
+  border-radius: 8px;
 }
-.site-nav a:is([href="join.html"], .account-cta)::after { inset: auto 14px 5px; background: #ff8b95; }
+/* The navigation underline belongs to text links, not the CTA button. */
+.site-nav a:is([href="join.html"], .account-cta)::after { content: none; }
 .site-nav a:is([href="join.html"], .account-cta)[aria-current] { background: #ad1724; }
 @media (prefers-reduced-motion: reduce) {
   .site-nav a::after { transition: none; }
@@ -62,7 +76,7 @@ body:has(> .site-header + .panel) { padding: 0; }
   .site-toggle { display: block; }
   .site-nav { display: none; position: absolute; inset: calc(100% + 6px) 0 auto; padding: 10px; border-radius: 12px; background: #101010; box-shadow: 0 10px 20px #0003; max-height: 70vh; overflow: auto; }
   .site-nav.is-open { display: grid; }
-  .site-nav a:is([href="join.html"], .account-cta) { inline-size: auto; }
+  .site-nav a:is([href="join.html"], .account-cta) { min-block-size: 44px; }
   .site-nav a { display: block; padding: 12px; }
 }
 
