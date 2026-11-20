@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Live Quiz Lobby — Eagles Team</title>
+  <meta name="description" content="Join an Eagles Team live quiz using a PIN code.">
+  <link rel="stylesheet" href="practice.css"><script src="/site-nav-hint.js"></script><link rel="stylesheet" href="site-nav.css"><link rel="stylesheet" href="quiz-live.css">
+  <script src="site-copy.js" defer></script><script src="site-i18n.js" defer></script>
+</head>
+<body data-practice-page>
+  <header class="site-header">
+    <a class="site-brand" href="Eagles-homepage.html"><span class="site-mark" aria-hidden="true">E</span>Eagles-Community</a>
+    <button class="site-toggle" type="button" aria-controls="mainNav" aria-expanded="false" aria-label="Open menu">☰</button>
+    <nav id="mainNav" class="site-nav" aria-label="Main navigation">
+      <a href="Eagles-homepage.html">Home</a><a href="Eagles.courses.html">Courses</a>
+      <a href="Eagles-teachers.html">Teachers</a><a href="Eagles-about.html">About</a>
+      <a href="Eagles-contacts.html">Contacts</a><a href="practice.html" aria-current="page">Practice</a>
+      <a href="join.html">Join Us</a>
+    </nav>
+  </header>
+  <p id="practiceGate" class="practice-access-notice" role="status">Checking account access...</p>
+  <main class="live-shell">
+    <div class="live-heading"><p class="eyebrow">EAGLES TEAM · LIVE QUIZ</p><h1>Live Quiz Lobby</h1>
+      <p>Join a live classroom test with a six-digit PIN, or create a room from a published test.</p></div>
+    <p id="liveMessage" class="live-notice" role="status" aria-live="polite"></p>
+    <section class="live-layout" id="liveLanding" hidden>
+      <div class="live-panel" id="joinPanel"><h2>Join a room</h2>
+        <form id="joinForm"><label for="roomPin">Room PIN</label>
+          <input id="roomPin" inputmode="numeric" pattern="[0-9]{6}" minlength="6" maxlength="6" autocomplete="off" placeholder="6-digit PIN" required>
+          <button type="submit" id="joinButton">Join room</button></form>
+        <p class="live-help">Only approved Eagles Team accounts can join. A room is limited to 200 participants.</p>
+      </div>
+      <div class="live-panel" id="hostPanel" hidden><h2>Host a room</h2>
+        <label for="quizSelect">Published test</label><select id="quizSelect"></select>
+        <button type="button" id="createButton">Create room</button>
+        <p class="live-help">Only published tests you own can be launched. Admins may host any published test.</p>
+        <h3>My active rooms</h3><div id="myRooms" class="live-room-list"></div>
+      </div>
+    </section>
+    <section class="live-panel live-room" id="activeRoom" hidden>
+      <div class="live-room-header"><div><p class="eyebrow">WAITING ROOM</p><h2 id="activeTitle">Live Quiz</h2></div><span id="roomStatus" class="live-state">Lobby</span></div>
+      <div class="live-facts"><div><small>Room PIN</small><strong id="activePin">------</strong></div>
+        <div><small>Players</small><strong id="activeCount">0</strong></div>
+        <div><small>Questions</small><strong id="activeQuestions">0</strong></div></div>
+      <p id="activeAlias" class="live-help"></p>
+      <div id="hostRoomTools" hidden><h3>Players (anonymous aliases)</h3><ul id="playerList" class="live-players"></ul>
+        <p class="live-help">Start Quiz will be enabled in v1.3.3, when synchronized questions and server timers are implemented.</p>
+        <button type="button" disabled title="Available in v1.3.3">Start Quiz — coming soon</button>
+        <button type="button" id="closeRoom" class="live-danger">Close room</button></div>
+      <button type="button" id="leaveRoom" class="live-secondary" hidden>Leave room</button>
+      <a href="/practice.html" class="live-back">Back to Practice</a>
+    </section>
+  </main>
+  <script src="account-session.js" defer></script><script src="quiz-live.js" defer></script><script src="site-nav.js" defer></script>
+</body>
+</html>

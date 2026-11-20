@@ -80,9 +80,9 @@ body:has(> .site-header + .panel) { padding: 0; }
   .site-nav a { display: block; padding: 12px; }
 }
 
-/* Guest by default: Practice becomes visible only after /api/me approves access. */
+/* Guest by default. A previously verified hint avoids a navigation flicker; /api/me still enforces access. */
 .site-nav a[href="practice.html"] { display: none; }
-html.eagles-practice-enabled .site-nav a[href="practice.html"] { display: block; }
+html:is(.eagles-practice-enabled, .eagles-practice-hint) .site-nav a[href="practice.html"] { display: block; }
 /* The HTML for existing practice pages is public, but their UI stays hidden until checked. */
 html:not(.eagles-practice-enabled) body[data-practice-page] main,
 html:not(.eagles-practice-enabled) body#body2 .speaking-wrap,

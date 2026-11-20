@@ -34,7 +34,9 @@ function showEditor(quiz) {
   $("editor").hidden = false; $("editorHeading").textContent = currentId ? "Edit test" : "New test";
   $("quizTitle").value = quiz?.title || ""; $("quizDescription").value = quiz?.description || ""; $("quizStatus").value = quiz?.status || "draft";
   questions.replaceChildren(); for (const q of quiz?.questions || []) addQuestion(q); renumber();
-  $("deleteQuiz").hidden = !currentId; renderList();
+  $("deleteQuiz").hidden = !currentId;
+  $("launchLive").hidden = !(currentId && quiz?.status === "published");
+  renderList();
 }
 function renderList() {
   list.replaceChildren(); if (!quizzes.length) list.append(element("p", "No tests yet."));
@@ -76,7 +78,14 @@ $("addQuestion").addEventListener("click", () => addQuestion());
 $("saveQuiz").addEventListener("click", save);
 $("deleteQuiz").addEventListener("click", remove);
 $("duplicateQuiz").addEventListener("click", () => {const copy = readEditor(); showEditor({...copy, title: `${copy.title} (copy)`, status:"draft"}); notice("Copy ready. Save to create it.");});
+$("quizStatus").addEventListener("change", () => {
+  $("launchLive").hidden = !(currentId && $("quizStatus").value === "published");
+});
 $("previewQuiz").addEventListener("click", preview);
+$("launchLive").addEventListener("click", () => {
+  if (currentId && $("quizStatus").value === "published")
+    location.href = `/quiz-live.html?quiz=${encodeURIComponent(currentId)}`;
+});
 $("closePreview").addEventListener("click", () => $("previewDialog").close());
 (async () => {
   try {

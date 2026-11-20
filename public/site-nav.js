@@ -3,7 +3,7 @@
   const button = document.querySelector('.site-toggle');
   if (!nav || !button) return;
 
-  const restrictedPage = ['practice.html', 'Writing.html', 'speaking.html']
+  const restrictedPage = ['practice.html', 'Writing.html', 'speaking.html', 'quiz-live.html']
     .includes(decodeURIComponent(location.pathname.split('/').pop()));
   const gateMessage = document.getElementById('practiceGate');
   const translate = label => window.eaglesTranslate?.(label) || label;
@@ -60,10 +60,30 @@
     if (location.pathname.endsWith('/join.html')) accountLink.setAttribute('aria-current', 'page');
   }
 
+  // Previously verified access is only a presentation hint, never authorization.
+  // Restore it synchronously on each page to prevent Practice flashing in/out.
+  function practiceHint() {
+    for (const storage of [localStorage, sessionStorage]) {
+      try { if (storage.getItem('eaglesPracticeAccessHint') === '1') return true; }
+      catch (_) { /* Storage may be restricted. */ }
+    }
+    return false;
+  }
+  function savePracticeHint(allowed) {
+    for (const storage of [localStorage, sessionStorage]) {
+      try {
+        if (allowed) storage.setItem('eaglesPracticeAccessHint', '1');
+        else storage.removeItem('eaglesPracticeAccessHint');
+      } catch (_) { /* Storage may be restricted. */ }
+    }
+  }
   // The link is invisible in CSS until we choose the initial state. This avoids
   // flashing "Join Us" on every page load while a stored login is being checked.
   const savedLogin = hasSavedLogin();
-  if (savedLogin) showAccountLink('unverified');
+  if (savedLogin) {
+    showAccountLink('unverified');
+    if (practiceHint()) document.documentElement.classList.add('eagles-practice-hint');
+  } else savePracticeHint(false);
   nav.classList.add('account-nav-ready');
 
   // Never trust a stored token for permissions; verify through the existing API.
@@ -93,11 +113,16 @@
       const permitted = role === 'admin' || role === 'approved';
       if (permitted) {
         document.documentElement.classList.add('eagles-practice-enabled');
+        savePracticeHint(true);
         if (gateMessage) gateMessage.hidden = true;
         const builderCard = document.getElementById('practiceBuilderCard');
         if (builderCard && (role === 'admin' || me.profile?.canCreateTests === true)) {
           builderCard.hidden = false;
         }
+      }
+      if (!permitted) {
+        savePracticeHint(false);
+        document.documentElement.classList.remove('eagles-practice-hint', 'eagles-practice-enabled');
       }
       showAccountLink(role);
       if (!permitted && restrictedPage) location.replace('/student-dashboard.html');
@@ -105,6 +130,9 @@
       // An invalid login becomes a guest link. On a temporary outage, keep the
       // neutral My account link; do not display Join Us or grant Practice access.
       const signedOut = error.code === 401 || !hasSavedLogin();
+      // Do not retain Practice access while a server check has failed.
+      savePracticeHint(false);
+      document.documentElement.classList.remove('eagles-practice-hint', 'eagles-practice-enabled');
       if (signedOut) showGuestLink();
       if (signedOut && restrictedPage) {
         location.replace('/account.html');

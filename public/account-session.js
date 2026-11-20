@@ -57,6 +57,10 @@ async function firebaseAuth(action, email, password) {
     const code = data.error?.message?.split(/\s*:/)[0];
     throw new Error(messages[code] || "Authentication failed");
   }
+  // A new sign-in may belong to a different user: discard the old role hint.
+  for (const storage of [localStorage, sessionStorage]) {
+    try { storage.removeItem("eaglesPracticeAccessHint"); } catch (_) { /* unavailable */ }
+  }
   saveSession(data);
   return data.idToken;
 }
@@ -76,6 +80,9 @@ function saveSession(data) {
   }
 }
 function clearSession() {
+  for (const storage of [localStorage, sessionStorage]) {
+    try { storage.removeItem("eaglesPracticeAccessHint"); } catch (_) { /* unavailable */ }
+  }
   for (const key of AUTH_KEYS) {
     try { localStorage.removeItem(key); } catch (_) { /* unavailable */ }
     try { sessionStorage.removeItem(key); } catch (_) { /* unavailable */ }

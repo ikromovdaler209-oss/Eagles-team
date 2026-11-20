@@ -199,6 +199,8 @@ app.use(requireJson);
 // Firebase account and administrative API (Admin SDK bypasses Firestore client rules).
 app.use("/api", checkOrigin, rateLimit({ windowMs: 15 * 60 * 1000, limit: 120 }), require("./account-routes"));
 app.use("/api/quizzes", checkOrigin, rateLimit({ windowMs: 15 * 60 * 1000, limit: 120 }), require("./quiz-routes"));
+// Lobby status uses periodic reads; keep its limiter separate from account API.
+app.use("/api/live-sessions", checkOrigin, rateLimit({ windowMs: 15 * 60 * 1000, limit: 30000 }), require("./live-lobby-routes"));
 app.post(
     "/send-message",
     checkOrigin,
