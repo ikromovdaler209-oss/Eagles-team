@@ -69,6 +69,17 @@ const db={collection:path=>new Col(path),runTransaction:async fn=>{
   }
   return result;
 }};
+db.batch = () => {
+  const writes = [];
+  return {
+    set:(ref,value) => writes.push(["set",ref.path,value]),
+    update:(ref,value) => writes.push(["update",ref.path,value]),
+    commit:async () => {
+      for (const [op,key] of writes) if (op === "update") assert(docs.has(key));
+      for (const [op,key,value] of writes) docs.set(key,updateValues(op==="set"?{}:docs.get(key),value));
+    }
+  };
+};
 const approved={role:"student",approvalStatus:"approved",isActive:true,canCreateTests:false};
 const teacher={...approved,canCreateTests:true};
 const admin={...teacher,role:"admin"};
@@ -85,7 +96,8 @@ const source=readFileSync(new URL("../server/live-lobby-routes.js", import.meta.
 vm.runInNewContext(source,{
   require:id=>id==="express"?fakeExpress:id==="express-rate-limit"?(()=>async (_req,_res,next)=>next()):id==="node:crypto"?require("node:crypto"):
     id==="firebase-admin/firestore"?{Timestamp,FieldValue}:
-    id==="./firebase"?{auth:fakeAuth,db}:id==="./live-lobby-core"?core:require(id),
+    id==="./firebase"?{auth:fakeAuth,db}:id==="./live-lobby-core"?core:
+    id==="./quiz-results-store"?require("../server/quiz-results-store.js"):require(id),
   module:{exports:{}},console,Date,Promise
 },{filename:"live-lobby-routes.js"});
 async function call(method,path,uid,body={}) {

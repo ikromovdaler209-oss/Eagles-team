@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Live Quiz Statistics — Eagles Team</title>
+  <link rel="stylesheet" href="account.css"><link rel="stylesheet" href="quiz-builder.css"><link rel="stylesheet" href="quiz-statistics.css">
+  <script src="site-copy.js" defer></script><script src="site-i18n.js" defer></script>
+</head>
+<body>
+<main class="qb-shell">
+  <header class="qb-top"><div><p class="eyebrow">EAGLES TEAM · LIVE QUIZ</p>
+    <h1>Results &amp; Statistics</h1><p class="muted">Completed Live Quiz sessions and question statistics.</p>
+  </div><div class="qb-actions"><a href="/admin.html" id="statsAdminLink" hidden>Admin Page</a><a href="/quiz-builder.html">Test Builder</a><a href="/practice.html">Practice</a></div></header>
+  <p id="statsNotice" role="status" aria-live="polite">Checking account access...</p>
+  <div id="statsWorkspace" class="stats-layout" hidden>
+    <section class="qb-panel"><div class="qb-row"><h2>Completed sessions</h2><button type="button" id="statsRefresh">Refresh</button></div>
+      <div id="statsSessions" class="stats-session-list"></div>
+    </section>
+    <section class="qb-panel" id="statsDetails" hidden>
+      <h2 id="statsTitle">Session details</h2>
+      <p id="statsDate" class="muted"></p>
+      <div id="statsMetrics" class="stats-metrics"></div>
+      <h3>Question accuracy</h3><div id="statsQuestions" class="stats-questions"></div>
+      <section id="statsAdminOnly" hidden><h3>Individual results (admin only)</h3><div id="statsParticipants" class="stats-participants"></div>
+        <section id="statsAnswersBlock" hidden><h3 id="statsAnswersHeading">Student answers</h3><div id="statsAnswers"></div></section>
+      </section>
+    </section>
+  </div>
+</main>
+<script src="account-session.js" defer></script><script src="quiz-statistics.js" defer></script>
+</body>
+</html>

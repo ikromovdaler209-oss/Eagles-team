@@ -204,12 +204,13 @@ app.use("/api/me", checkOrigin, rateLimit({ windowMs: 15 * 60 * 1000, limit: 800
 // Account rate limiting must not also count live polling requests. Express
 // middleware mounted at /api otherwise matches every /api/live-sessions URL.
 app.use("/api", checkOrigin, rateLimit({ windowMs: 15 * 60 * 1000, limit: 120,
-    skip: req => /^\/(?:live-sessions|quizzes)(?:\/|$)/.test(req.path) ||
+    skip: req => /^\/(?:live-sessions|quizzes|quiz-results)(?:\/|$)/.test(req.path) ||
       (req.method === "GET" && req.path === "/me")
 }), require("./account-routes"));
 app.use("/api/quizzes", checkOrigin, rateLimit({ windowMs: 15 * 60 * 1000, limit: 120 }), require("./quiz-routes"));
 // Lobby status uses periodic reads; keep its limiter separate from account API.
 app.use("/api/live-sessions", checkOrigin, rateLimit({ windowMs: 15 * 60 * 1000, limit: 90000 }), require("./live-lobby-routes"));
+app.use("/api/quiz-results", checkOrigin, rateLimit({windowMs: 15 * 60 * 1000, limit: 600}), require("./quiz-results-routes"));
 app.post(
     "/send-message",
     checkOrigin,

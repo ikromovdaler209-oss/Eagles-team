@@ -69,6 +69,17 @@ const db={collection:path=>new Col(path),runTransaction:async fn=>{
   }
   return result;
 }};
+db.batch = () => {
+  const writes = [];
+  return {
+    set:(ref,value) => writes.push(["set",ref.path,value]),
+    update:(ref,value) => writes.push(["update",ref.path,value]),
+    commit:async () => {
+      for (const [op,key] of writes) if (op === "update") assert(docs.has(key));
+      for (const [op,key,value] of writes) docs.set(key,updateValues(op==="set"?{}:docs.get(key),value));
+    }
+  };
+};
 const approved={role:"student",approvalStatus:"approved",isActive:true,canCreateTests:false};
 const teacher={...approved,canCreateTests:true};
 const admin={...teacher,role:"admin"};
@@ -88,7 +99,8 @@ const source=readFileSync(new URL("../server/live-lobby-routes.js", import.meta.
 vm.runInNewContext(source,{
   require:id=>id==="express"?fakeExpress:id==="express-rate-limit"?(()=>async (_req,_res,next)=>next()):id==="node:crypto"?require("node:crypto"):
     id==="firebase-admin/firestore"?{Timestamp,FieldValue}:
-    id==="./firebase"?{auth:fakeAuth,db}:id==="./live-lobby-core"?core:require(id),
+    id==="./firebase"?{auth:fakeAuth,db}:id==="./live-lobby-core"?core:
+    id==="./quiz-results-store"?require("../server/quiz-results-store.js"):require(id),
   module:{exports:{}},console,Date,Promise
 },{filename:"live-lobby-routes.js"});
 async function call(method,path,uid,body={}) {
@@ -186,6 +198,9 @@ r = await call("POST", `${path}/answer`, "other", {questionIndex:1,selectedOptio
 r = await call("POST", `${path}/close`, "teacher"); assert.equal(r.statusCode, 200);
 r = await call("GET", path, "student"); assert.equal(r.body.room.status, "closed");
 assert.equal(r.body.myResult.accuracy, 50); // results survive closing a completed room
+assert.equal(docs.get(`quizResults/${roomId}_student`).accuracy,50);
+assert.equal(docs.get(`quizResults/${roomId}_other`).accuracy,0);
+assert.equal(docs.get(`liveSessions/${roomId}`).resultsSummary.participantCount,2);
 
 // Round expiration checks cannot be bypassed by changing a local countdown.
 r = await call("POST", "/", "admin", {quizId:"otherQuiz"}); assert.equal(r.statusCode, 201);

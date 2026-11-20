@@ -56,6 +56,8 @@
         location.replace("/student-dashboard.html"); return;
       }
       isHost = me.status === "admin" || me.profile?.canCreateTests === true;
+      $("liveHistoryLink").hidden = isHost;
+      $("liveHostStatsLink").hidden = !isHost;
       $("liveLanding").hidden = false;
       if (isHost) {
         $("hostPanel").hidden = false;

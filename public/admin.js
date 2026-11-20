@@ -30,7 +30,7 @@ async function load() {
       details.append(summary);
       const info = document.createElement("p");
       info.textContent = [p.firstName, p.lastName, p.email, p.groupName,
-        "No learning progress recorded.", "No test results yet.",
+        "No learning progress recorded.", "See Quiz statistics for completed test results.",
         ...p.activity.map(event => (event.type === "registered" ? "Registered" : "Profile updated") + " · " + new Date(event.date).toLocaleDateString("en"))].join(" · ");
       details.append(info);
       cell(row, details);

@@ -565,3 +565,30 @@ Object.assign(window.eaglesCopy, {
     "Hozircha harakatlar yo‘q."
   ]
 });
+
+// v1.3.4 Results & Statistics
+Object.assign(window.eaglesCopy, {
+  "Results & Statistics": ["Результаты и статистика", "Natijalar va statistika"],
+  "Completed Live Quiz sessions and question statistics.": ["Завершённые тесты и статистика по вопросам.", "Yakunlangan testlar va savollar statistikasi."],
+  "Completed sessions": ["Завершённые сессии", "Yakunlangan sessiyalar"],
+  "Loading results...": ["Загружаем результаты...", "Natijalar yuklanmoqda..."],
+  "No completed Live Quiz sessions yet.": ["Пока нет завершённых онлайн-тестов.", "Hozircha yakunlangan jonli testlar yo‘q."],
+  "Showing recent sessions only.": ["Показаны только последние сессии.", "Faqat oxirgi sessiyalar ko‘rsatilgan."],
+  "Session details": ["Детали сессии", "Sessiya tafsilotlari"],
+  "Question accuracy": ["Результаты по вопросам", "Savollar bo‘yicha aniqlik"],
+  "Individual results (admin only)": ["Личные результаты (только админ)", "Shaxsiy natijalar (faqat administrator)"],
+  "Participants": ["Участники", "Ishtirokchilar"],
+  "participants": ["участников", "ishtirokchi"],
+  "Average accuracy": ["Средний процент", "O‘rtacha aniqlik"],
+  "Tests taken": ["Пройдено тестов", "Topshirilgan testlar"],
+  "Best result": ["Лучший результат", "Eng yaxshi natija"],
+  "Latest result": ["Последний результат", "Oxirgi natija"],
+  "Recent quizzes": ["Последние тесты", "Oxirgi testlar"],
+  "Loading test results...": ["Загружаем результаты тестов...", "Test natijalari yuklanmoqda..."],
+  "No test results yet.": ["Результатов тестов пока нет.", "Hozircha test natijalari yo‘q."],
+  "Unable to load test results. Try Refresh.": ["Не удалось загрузить результаты. Нажмите «Обновить».", "Natijalarni yuklab bo‘lmadi. Yangilang."],
+  "Student answers": ["Ответы студента", "O‘quvchi javoblari"],
+  "Selected answer": ["Выбранный ответ", "Tanlangan javob"],
+  "View quiz history →": ["Посмотреть историю тестов →", "Testlar tarixini ko‘rish →"],
+  "Results & Statistics →": ["Результаты и статистика →", "Natijalar va statistika →"]
+});

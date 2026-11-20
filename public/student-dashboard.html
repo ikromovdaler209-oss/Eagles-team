@@ -40,7 +40,19 @@
         </form></details>
       </section>
       <section><h2>Learning progress</h2><p>No learning progress recorded.</p></section>
-      <section><h2>Test results</h2><p>No test results yet.</p></section>
+      <section class="quiz-history-section"><h2>Test results</h2>
+        <p id="quizHistoryState" role="status">Loading test results...</p>
+        <div id="quizHistoryContent" hidden>
+          <div class="quiz-summary-grid">
+            <div><strong id="quizTestsTaken">0</strong><small>Tests taken</small></div>
+            <div><strong id="quizAvgAccuracy">—</strong><small>Average accuracy</small></div>
+            <div><strong id="quizBestAccuracy">—</strong><small>Best result</small></div>
+            <div><strong id="quizLatestAccuracy">—</strong><small>Latest result</small></div>
+          </div>
+          <h3>Recent quizzes</h3>
+          <ul class="quiz-history-list" id="quizHistoryList"></ul>
+        </div>
+      </section>
       <section><h2>Practice</h2><p><a href="practice.html">Open Practice Hub →</a></p><p><a href="quiz-builder.html" id="dashboardBuilderLink" hidden>Create tests →</a></p><ul>
         <li><a href="Writing.html">Writing</a></li><li><a href="speaking.html">Speaking</a></li>
         <li><span>Reading</span> · <span>Coming soon</span></li><li><span>Listening</span> · <span>Coming soon</span></li>

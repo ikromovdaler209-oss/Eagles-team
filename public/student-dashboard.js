@@ -26,6 +26,34 @@
     if (error.code === 403) renderStatus(error.status);
     el("feedback").textContent = t(Object.hasOwn(window.eaglesCopy, error.message) ? error.message : "Request failed");
   }
+  const formatAccuracy = value => value === null || value === undefined ? "—" : `${value}%`;
+  async function loadQuizHistory(rev) {
+    const state = el("quizHistoryState"), content = el("quizHistoryContent"), list = el("quizHistoryList");
+    state.textContent = t("Loading test results...");
+    content.hidden = true;
+    try {
+      const {summary, results, totalResults} = await request("/quiz-results/mine");
+      if (rev !== revision) return;
+      el("quizTestsTaken").textContent = String(summary.testsTaken);
+      el("quizAvgAccuracy").textContent = formatAccuracy(summary.averageAccuracy);
+      el("quizBestAccuracy").textContent = formatAccuracy(summary.bestAccuracy);
+      el("quizLatestAccuracy").textContent = formatAccuracy(summary.latestAccuracy);
+      list.replaceChildren();
+      for (const item of results) {
+        const li = document.createElement("li");
+        const title = document.createElement("strong"); title.textContent = item.quizTitle;
+        const details = document.createElement("span");
+        const when = item.completedAt ? new Date(item.completedAt).toLocaleDateString(document.documentElement.lang) : "";
+        details.textContent = `${item.accuracy}% · ${item.correct}/${item.total} ${t("correct")} · ${item.wrong} ${t("wrong")} · ${item.skipped} ${t("skipped")} · ${when}`;
+        li.append(title, details); list.append(li);
+      }
+      state.textContent = totalResults ? "" : t("No test results yet.");
+      content.hidden = !totalResults;
+    } catch (error) {
+      if (rev !== revision) return;
+      state.textContent = t("Unable to load test results. Try Refresh.");
+    }
+  }
   async function load() {
     const rev = ++revision;
     renderStatus("loading");
@@ -56,6 +84,7 @@
         el("activity").append(li);
       }
       if (!data.activity.length) el("activity").textContent = t("No recent activity.");
+      await loadQuizHistory(rev);
     } catch (error) {
       if (rev !== revision) return;
       if (error.code === 403) return renderStatus(error.status);

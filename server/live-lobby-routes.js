@@ -5,6 +5,7 @@ const rateLimit = require("express-rate-limit");
 const {Timestamp, FieldValue} = require("firebase-admin/firestore");
 const {auth, db} = require("./firebase");
 const {ROOM_LIFETIME_MS, MAX_PARTICIPANTS, validId, validPin, canJoin, canHost, randomPin, randomAlias, effectiveStatus, publicSession} = require("./live-lobby-core");
+const {ensureArchived} = require("./quiz-results-store");
 const router = express.Router();
 router.use((_req, res, next) => { res.set("Cache-Control", "no-store"); next(); });
 
@@ -63,7 +64,7 @@ router.post("/", async (req, res, next) => {
           return {error: 409, message: "Publish a test with questions first"};
         if (occupied.exists) return {collision: true};
         tx.create(roomRef, {pin, quizId: quizRef.id, quizTitle: data.title, questionCount: data.questions.length,
-          hostUid: req.user.uid, status: "lobby", participantCount: 0, aliases: [], createdAt: FieldValue.serverTimestamp(), expiresAt});
+          hostUid: req.user.uid, quizCreatorUid: data.creatorUid, status: "lobby", participantCount: 0, aliases: [], createdAt: FieldValue.serverTimestamp(), expiresAt});
         tx.create(pinRef, {roomId: roomRef.id, expiresAt});
         // Freeze the test for later gameplay. Never expose this document through a participant endpoint.
         tx.create(snapshotRef, {questions: data.questions, capturedAt: FieldValue.serverTimestamp()});
@@ -127,6 +128,9 @@ router.get("/:id", validRoom, async (req, res, next) => {
     const isHost = data.hostUid === req.user.uid || req.profile.role === "admin";
     const member = isHost ? null : await roomRef.collection("participants").doc(req.user.uid).get();
     if (!isHost && !member.exists) return res.status(403).json({error: "Not a member of this room"});
+    // Only a host or participant can trigger recovery of an unfinished archive.
+    if (data.finishedAt && !data.resultsArchivedAt && ["finished", "closed"].includes(data.status))
+      await ensureArchived(db, roomRef.id);
     const now = Date.now();
     const room = publicSession(doc.id, data, isHost, member?.get("alias") || null, now);
     const response = {room, serverTime: new Date(now).toISOString()};
@@ -280,6 +284,8 @@ router.post("/:id/advance", validRoom, async (req, res, next) => {
       if (!room.exists) return {status: 404, error: "Room not found"};
       if (!hostOf(room, req)) return {status: 403, error: "Host access required"};
       const now = Date.now();
+      if (["finished", "closed"].includes(room.get("status")) && room.get("finishedAt"))
+        return {ok: true, finished: true}; // retry archival after a transient write failure
       if (room.get("status") !== "question" || effectiveStatus(room.data(), now) !== "review")
         return {status: 409, error: "Wait until the question timer ends"};
       const questions = quiz.get("questions");
@@ -298,6 +304,7 @@ router.post("/:id/advance", validRoom, async (req, res, next) => {
       return {ok: true, finished: false};
     });
     if (result.status) return res.status(result.status).json({error: result.error});
+    if (result.finished) await ensureArchived(db, req.params.id);
     res.json(result);
   } catch (err) { next(err); }
 });
