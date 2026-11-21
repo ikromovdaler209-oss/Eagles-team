@@ -7,10 +7,11 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Speaking-Questions</title>
+    <title>IELTS Speaking Practice | Eagles Team</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="Eagles-front.css">
+    <link rel="stylesheet" href="speaking-recording.css">
 <script src="/site-nav-hint.js"></script><link rel="stylesheet" href="site-nav.css">
 </head>
 <body class="speaking-page">
@@ -27,9 +28,11 @@
         <a href="join.html">Join Us</a>
     </nav>
 </header>
-    <h1 id="myh1"> <span class="logo-speaking"></span> Eagles-Community</h1>
+    <div class="speaking-topline"><a href="practice.html">← Back to Practice</a><span>IELTS · SPEAKING</span></div>
     <div class="speaking-wrap">
+        <p class="speaking-eyebrow">PRACTICE YOUR VOICE</p>
         <h1 id="hh1">Speaking questions</h1>
+        <p class="speaking-lead">Choose a part, get a question, and record an answer for review.</p>
  
         <div class="part-tabs">
             <input type="radio" id="radio1" name="part" class="radio" checked>
@@ -47,8 +50,32 @@
         </div>
  
         <button id="btn10" class="find-btn" type="button">Find question</button>
-    </div>
+        <section class="speaking-recorder" id="speakingRecorder" aria-labelledby="recordTitle" hidden>
+          <div class="speaking-recorder-heading">
+            <div><p class="speaking-eyebrow">VOICE ANSWER</p><h2 id="recordTitle">Record your answer</h2></div>
+            <span class="speaking-recorder-clock" id="recordClock" aria-live="off">00:00 / 03:00</span>
+          </div>
+          <p class="speaking-helper">Recording starts only after you press Record. Listen before sending your answer.</p>
+          <div class="speaking-microphone" id="micState" aria-hidden="true"><span class="speaking-mic-symbol">●</span><span id="micLabel">Ready to record</span></div>
+          <div class="speaking-controls">
+            <button id="startRecording" type="button" class="speaking-btn speaking-primary" disabled>Record answer</button>
+            <button id="stopRecording" type="button" class="speaking-btn" disabled>Stop recording</button>
+            <button id="discardRecording" type="button" class="speaking-btn speaking-subtle" disabled>Record again</button>
+          </div>
+          <audio id="recordingPreview" controls preload="none" hidden aria-label="Listen to your recorded answer"></audio>
+          <label class="speaking-consent"><input type="checkbox" id="speakingConsent"><span>I agree to send my voice recording to Eagles Team staff for review.</span></label>
+          <button type="button" id="submitRecording" class="speaking-btn speaking-primary speaking-submit" disabled>Send for review →</button>
+          <p id="speakingStatus" role="status" aria-live="polite">Checking account access...</p>
+        </section>
+      </div>
+      <section class="speaking-history" id="speakingHistory" hidden aria-labelledby="speakingHistoryTitle">
+        <div class="speaking-history-head"><div><p class="speaking-eyebrow">YOUR PROGRESS</p><h2 id="speakingHistoryTitle">My speaking answers</h2></div><button id="reloadSpeakingHistory" type="button" class="speaking-btn speaking-subtle">Refresh</button></div>
+        <p id="speakingHistoryState" role="status"></p>
+        <div id="speakingHistoryList" class="speaking-history-list"></div>
+      </section>
+    <script src="account-session.js" defer></script>
     <script src="project.js" defer></script>
+    <script src="speaking-recording.js" defer></script>
 <script src="site-nav.js" defer></script>
 </body>
 </html>

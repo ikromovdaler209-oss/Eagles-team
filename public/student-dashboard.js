@@ -91,6 +91,25 @@
       list.replaceChildren(...entries.reverse());
     } catch { if (rev === revision) summary.textContent = t("Unable to load test results. Try Refresh."); }
   }
+  async function loadSpeakingHistory(rev) {
+    const summary=el("speakingSummary"), list=el("speakingDashboardHistory");
+    if(!summary||!list)return;
+    summary.textContent=t("Loading speaking answers...");list.replaceChildren();
+    try {
+      const {submissions=[]}=await request("/speaking/mine");
+      if(rev!==revision)return;
+      const reviewed=submissions.filter(x=>x.status==="reviewed");
+      summary.textContent=submissions.length?`${submissions.length} ${t("submissions")} · ${reviewed.length} ${t("reviewed")}`:t("No speaking answers submitted yet.");
+      for(const row of submissions.slice(0,8)) {
+        const li=document.createElement("li");
+        const title=document.createElement("strong");title.textContent=`Part ${row.part} · ${row.prompt}`;
+        const detail=document.createElement("span");
+        detail.textContent=(row.status==="reviewed"?`${t("Practice band estimate")}: ${row.review?.overall ?? "—"}`:t("Pending review"))+
+          (row.createdAt?` · ${new Date(row.createdAt).toLocaleDateString(document.documentElement.lang)}`:"");
+        li.append(title,detail);list.append(li);
+      }
+    } catch {if(rev===revision)summary.textContent=t("Unable to load speaking answers.");}
+  }
   async function load() {
     const rev = ++revision;
     renderStatus("loading");
@@ -125,7 +144,7 @@
         el("activity").append(li);
       }
       if (!data.activity.length) el("activity").textContent = t("No recent activity.");
-      await Promise.all([loadQuizHistory(rev),loadReadingHistory(rev)]);
+      await Promise.all([loadQuizHistory(rev),loadReadingHistory(rev),loadSpeakingHistory(rev)]);
     } catch (error) {
       if (rev !== revision) return;
       if (error.code === 403) return renderStatus(error.status);

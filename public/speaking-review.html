@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Speaking Reviews | Eagles Team</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="account.css"><script src="/site-nav-hint.js"></script>
+  <link rel="stylesheet" href="site-nav.css"><link rel="stylesheet" href="speaking-review.css">
+</head>
+<body class="speaking-review-page">
+  <header class="site-header">
+    <a class="site-brand" href="Eagles-homepage.html"><span class="site-mark" aria-hidden="true">E</span>Eagles-Community</a>
+    <button class="site-toggle" type="button" aria-controls="mainNav" aria-expanded="false" aria-label="Open menu">☰</button>
+    <nav id="mainNav" class="site-nav" aria-label="Main navigation">
+      <a href="Eagles-homepage.html">Home</a><a href="Eagles.courses.html">Courses</a><a href="Eagles-teachers.html">Teachers</a>
+      <a href="Eagles-about.html">About</a><a href="Eagles-contacts.html">Contacts</a>
+      <a href="practice.html">Practice</a><a href="join.html">Join Us</a>
+    </nav>
+  </header>
+  <main class="speaking-review-shell">
+    <div class="speaking-review-hero"><div><a class="speaking-review-back" href="admin.html">← Back to Administration</a>
+      <p class="speaking-review-kicker">EAGLES TEAM · ADMIN</p><h1>Speaking reviews</h1>
+      <p>Listen to student recordings, assess IELTS Speaking criteria, and leave constructive feedback.</p></div>
+      <button type="button" id="refreshSpeakingQueue" class="speaking-review-btn">Refresh queue</button></div>
+    <p id="speakingQueueState" role="status">Checking administrator access...</p>
+    <section id="speakingReviewWorkspace" hidden>
+      <div class="speaking-review-metric"><span>Awaiting review</span><strong id="speakingQueueCount">0</strong></div>
+      <div id="speakingQueueList" class="speaking-review-list"></div>
+    </section>
+  </main>
+  <script src="account-session.js" defer></script><script src="speaking-review.js" defer></script><script src="site-nav.js" defer></script>
+</body>
+</html>
