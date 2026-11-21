@@ -69,6 +69,28 @@
       state.textContent = t("Unable to load test results. Try Refresh.");
     }
   }
+  async function loadReadingHistory(rev) {
+    const summary = el("readingSummary"), list = el("readingHistory");
+    list.replaceChildren();
+    summary.textContent = t("Loading test results...");
+    try {
+      const rows = await request("/reading/mine");
+      if (rev !== revision) return;
+      if (!rows.length) { summary.textContent = t("No test results yet."); return; }
+      const values = rows.map(r => r.accuracy);
+      const mean = Math.round(values.reduce((a,b) => a+b,0) / values.length);
+      summary.textContent = t("Attempts")+" · "+rows.length+" · "+t("Average")+" "+mean+"% · "+t("Best result")+" "+Math.max(...values)+"%";
+      const previous = new Map(), entries = [];
+      for (const r of [...rows].reverse()) {
+        const delta = previous.has(r.testId) ? Math.round((r.accuracy-previous.get(r.testId))*10)/10 : null;
+        previous.set(r.testId,r.accuracy);
+        const li = document.createElement("li");
+        li.textContent = r.title+" · "+new Date(r.completed).toLocaleDateString(document.documentElement.lang)+" · "+r.correct+"/"+r.total+" · "+r.accuracy+"%"+(delta === null ? "" : " ("+(delta>0?"+":"")+delta+" "+t("percentage points")+")");
+        entries.push(li);
+      }
+      list.replaceChildren(...entries.reverse());
+    } catch { if (rev === revision) summary.textContent = t("Unable to load test results. Try Refresh."); }
+  }
   async function load() {
     const rev = ++revision;
     renderStatus("loading");
@@ -103,7 +125,7 @@
         el("activity").append(li);
       }
       if (!data.activity.length) el("activity").textContent = t("No recent activity.");
-      await loadQuizHistory(rev);
+      await Promise.all([loadQuizHistory(rev),loadReadingHistory(rev)]);
     } catch (error) {
       if (rev !== revision) return;
       if (error.code === 403) return renderStatus(error.status);

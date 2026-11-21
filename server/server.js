@@ -118,6 +118,7 @@ app.use(
 
 // Quiz Builder supports up to 100 questions, which can exceed the general
 // 10 KB JSON ceiling. Other endpoints retain their smaller request limit.
+app.use("/api/reading", express.json({limit: "384kb"}));
 app.use("/api/quizzes", express.json({limit: "768kb"}));
 app.use(express.json({
     limit: "10kb"
@@ -207,9 +208,10 @@ app.use("/api/me", checkOrigin, rateLimit({ windowMs: 15 * 60 * 1000, limit: 800
 // Account rate limiting must not also count live polling requests. Express
 // middleware mounted at /api otherwise matches every /api/live-sessions URL.
 app.use("/api", checkOrigin, rateLimit({ windowMs: 15 * 60 * 1000, limit: 120,
-    skip: req => /^\/(?:live-sessions|quizzes|quiz-results)(?:\/|$)/.test(req.path) ||
+    skip: req => /^\/(?:live-sessions|quizzes|quiz-results|reading)(?:\/|$)/.test(req.path) ||
       (req.method === "GET" && req.path === "/me")
 }), require("./account-routes"));
+app.use("/api/reading", checkOrigin, require("./reading-routes"));
 app.use("/api/quizzes", checkOrigin, rateLimit({ windowMs: 15 * 60 * 1000, limit: 120 }), require("./quiz-routes"));
 // Lobby status uses periodic reads; keep its limiter separate from account API.
 app.use("/api/live-sessions", checkOrigin, rateLimit({ windowMs: 15 * 60 * 1000, limit: 90000 }), require("./live-lobby-routes"));

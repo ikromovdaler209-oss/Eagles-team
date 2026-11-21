@@ -18,3 +18,8 @@
 .live-review h3{margin:0 0 10px;font-size:21px}.live-review p{margin:7px 0;line-height:1.5}
 .live-game #answerNotice{min-height:22px}
 @media(max-width:560px){.live-answers{grid-template-columns:1fr}.live-answers button{min-height:60px}}
+
+.live-back{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;border:1px solid #c9cbd2;border-radius:9px;color:#852134;text-decoration:none}
+.live-back:hover{background:#fff3f4}.live-shell :is(a,button):focus-visible{outline:3px solid #386598;outline-offset:3px}
+.live-help:has(#liveHistoryLink){display:flex;flex-wrap:wrap;gap:8px}
+.live-help :is(#liveHistoryLink,#liveHostStatsLink){display:inline-flex;align-items:center;min-height:44px;padding:0 12px;color:#852134;font-weight:650;text-decoration:none;border-radius:8px;background:#fff4f5}

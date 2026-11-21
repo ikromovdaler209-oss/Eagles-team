@@ -1685,6 +1685,7 @@ select {
 }
  
 .teacher-back {
+    min-height: 44px;
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -2097,4 +2098,20 @@ select {
     #hh1, #myh1 { font-size: clamp(22px, 7vw, 32px); }
     .question-box { padding: 18px 14px; }
     .head2, .card-title, .teacher-name { overflow-wrap: anywhere; }
+}
+
+/* Navigational calls to action share one keyboard and touch target. */
+a:is(.btn2,.btn3,.zayavka) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-height: 44px;
+    max-width: 100%;
+    text-align: center;
+    text-decoration: none;
+}
+a:is(.btn2,.btn3,.zayavka,.teacher-back):focus-visible {
+    outline: 3px solid #386598;
+    outline-offset: 3px;
 }

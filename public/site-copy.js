@@ -605,3 +605,50 @@ Object.assign(window.eaglesCopy, {
   "View quiz history →": ["Посмотреть историю тестов →", "Testlar tarixini ko‘rish →"],
   "Results & Statistics →": ["Результаты и статистика →", "Natijalar va statistika →"]
 });
+
+Object.assign(window.eaglesCopy, {
+  "IELTS Academic Reading":["Академическое чтение IELTS","IELTS akademik o‘qish"],
+  "IELTS Reading Results":["Результаты IELTS Reading","IELTS Reading natijalari"],
+  "Reading tests":["Тесты по чтению","O‘qish testlari"],
+  "Start or resume":["Начать или продолжить","Boshlash yoki davom etish"],
+  "Manage Reading tests":["Управление тестами по чтению","O‘qish testlarini boshqarish"],
+  "New Reading test":["Новый тест по чтению","Yangi o‘qish testi"],
+  "Reading editor":["Редактор теста по чтению","O‘qish testi muharriri"],
+  "Reading statistics":["Статистика чтения","O‘qish statistikasi"],
+  "Short practice":["Короткая тренировка","Qisqa mashq"],
+  "Academic exam":["Академический экзамен","Akademik imtihon"],
+  "Mode":["Режим","Rejim"],"Minutes":["Минуты","Daqiqa"],"minutes":["мин","daqiqa"],
+  "Questions":["Вопросы","Savollar"],"questions":["вопр.","savol"],"Passage":["Текст","Matn"],
+  "Passage title":["Заголовок текста","Matn sarlavhasi"],"Add passage":["Добавить текст","Matn qo‘shish"],
+  "Remove passage":["Удалить текст","Matnni olib tashlash"],"Remove passage?":["Удалить текст и его вопросы?","Matn va savollari olib tashlansinmi?"],
+  "Remove question?":["Удалить вопрос?","Savol olib tashlansinmi?"],
+  "Question type":["Тип задания","Savol turi"],"Multiple choice":["Выбор ответа","Javobni tanlash"],
+  "True / False / Not Given":["Верно / неверно / не указано","To‘g‘ri / noto‘g‘ri / berilmagan"],
+  "Yes / No / Not Given":["Да / нет / не указано","Ha / yo‘q / berilmagan"],
+  "Matching headings":["Подбор заголовков","Sarlavhalarni moslashtirish"],
+  "Matching information":["Поиск информации","Ma’lumotlarni moslashtirish"],
+  "Matching features":["Сопоставление признаков","Xususiyatlarni moslashtirish"],
+  "Sentence completion":["Дополнение предложений","Gapni to‘ldirish"],
+  "Summary completion":["Заполнение пропусков в резюме","Qisqacha mazmunni to‘ldirish"],
+  "Short answer":["Краткий ответ","Qisqa javob"],"Your answer":["Ваш ответ","Javobingiz"],
+  "Choose":["Выберите","Tanlang"],"Options, one per line":["Варианты, по одному на строку","Har bir variantni alohida qatorga yozing"],
+  "Accepted answers, one per line":["Допустимые ответы, по одному на строку","Qabul qilinadigan javoblar, har qatorda bittadan"],
+  "Return to editor":["Вернуться в редактор","Muharrirga qaytish"],"Leave the editor?":["Выйти из редактора? Несохранённые правки будут потеряны.","Muharrirdan chiqilsinmi? Saqlanmagan o‘zgarishlar yo‘qoladi."],
+  "Finish test":["Завершить тест","Testni yakunlash"],"Submit this attempt?":["Завершить попытку и проверить ответы?","Urinishni yakunlab javoblar tekshirilsinmi?"],
+  "Saving…":["Сохранение…","Saqlanmoqda…"],"Incorrect":["Неверно","Noto‘g‘ri"],"Unanswered":["Без ответа","Javobsiz"],
+  "Attempts":["Попытки","Urinishlar"],"Average":["Средний результат","O‘rtacha natija"],
+  "Missed or incorrect":["Пропущено или неверно","Javobsiz yoki noto‘g‘ri"],"percentage points":["п. п.","foiz bandi"],
+  "Unable to load or save. Try again.":["Не удалось загрузить или сохранить данные. Повторите попытку.","Yuklash yoki saqlash amalga oshmadi. Qayta urining."],
+  "Check the test fields":["Проверьте заголовки, вопросы и ключи ответов.","Sarlavhalar, savollar va javob kalitlarini tekshiring."],
+  "Test changed. Reopen the editor.":["Тест изменён. Откройте редактор заново.","Test o‘zgardi. Muharrirni qayta oching."],
+  "Attempt changed in another tab. Reload.":["Попытка изменена в другой вкладке. Обновите страницу.","Urinish boshqa varaqda o‘zgardi. Sahifani yangilang."],
+  "Reading service unavailable":["Сервис чтения временно недоступен.","O‘qish xizmati vaqtincha ishlamayapti."],
+  "Invalid answers":["Проверьте формат ответов.","Javoblar formatini tekshiring."],"Attempt not found":["Попытка не найдена.","Urinish topilmadi."]
+});
+Object.assign(window.eaglesCopy,{
+  "Answered":["Отвечено","Javob berilgan"],"Correct":["Верно","To‘g‘ri"],"Total questions":["Всего вопросов","Jami savollar"],
+  "Edit":["Редактировать","Tahrirlash"],"Preview":["Предпросмотр","Oldindan ko‘rish"],"Publish":["Опубликовать","E’lon qilish"],
+  "Save draft":["Сохранить черновик","Qoralamani saqlash"],"Title":["Название","Sarlavha"],"Add question":["Добавить вопрос","Savol qo‘shish"],
+  "Remove question":["Удалить вопрос","Savolni olib tashlash"],"draft":["Черновик","Qoralama"],"published":["Опубликован","E’lon qilingan"],
+  "Saved":["Сохранено","Saqlandi"]
+});

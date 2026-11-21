@@ -334,3 +334,4 @@ router.post("/:id/advance", validRoom, async (req, res, next) => {
 });
 
 module.exports = router;
+module.exports.authorize = authorize;
