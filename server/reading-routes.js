@@ -126,12 +126,17 @@ router.get("/statistics",async (req,res) => {
   const groups = new Map();
   for (const a of rows) {
     const key = a.testId + ":" + a.version;
-    const g = groups.get(key) || {title:a.title,version:a.version,count:0,sum:0,prompts:a.result.prompts,misses:Array(a.result.total).fill(0)};
+    const g = groups.get(key) || {title:a.title,version:a.version,count:0,sum:0,students:new Set(),prompts:a.result.prompts,misses:Array(a.result.total).fill(0)};
+    g.students.add(a.uid);
     g.count++; g.sum += a.result.accuracy;
     a.result.marks.forEach((m,i) => { if (m !== "correct") g.misses[i]++; });
     groups.set(key,g);
   }
-  const groupsView = [...groups.values()].map(({sum,...g}) => ({...g,average:Math.round(sum/g.count)}));
+  const groupsView = [...groups.values()].map(({sum,students,...g}) => {
+    if (!admin && students.size < 3)
+      return {title:g.title, version:g.version, count:g.count, privacyLimited:true};
+    return {...g,average:Math.round(sum/g.count)};
+  });
   const people = [];
   if (admin) {
     const ids = [...new Set(rows.map(a => a.uid))], names = new Map();

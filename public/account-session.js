@@ -1,5 +1,5 @@
 const API_KEY = "AIzaSyBy_OdMjVSNgUnCwH5B0frP2OL1R1st_eM";
-const AUTH_KEYS = ["eaglesIdToken", "eaglesRefreshToken", "eaglesTokenExpiresAt"];
+const AUTH_KEYS = ["eaglesIdToken", "eaglesRefreshToken", "eaglesTokenExpiresAt", "eaglesLoginEpoch"];
 
 // Keep Firebase REST credentials across browser restarts; never persist passwords.
 // The legacy sessionStorage values are read for a one-time, non-disruptive migration.
@@ -61,11 +61,13 @@ async function firebaseAuth(action, email, password) {
   for (const storage of [localStorage, sessionStorage]) {
     try { storage.removeItem("eaglesPracticeAccessHint"); } catch (_) { /* unavailable */ }
   }
-  saveSession(data);
+  saveSession(data, true);
   return data.idToken;
 }
-function saveSession(data) {
+function saveSession(data, newLogin = false) {
   const values = [];
+  // Identifies a browser sign-in across token rotations. Never used for authorization.
+  if (newLogin) values.push(["eaglesLoginEpoch", String(Date.now()) + "-" + Math.random()]);
   if (data.idToken) values.push(["eaglesIdToken", data.idToken]);
   if (data.refreshToken) values.push(["eaglesRefreshToken", data.refreshToken]);
   if (data.expiresIn) values.push(["eaglesTokenExpiresAt", String(Date.now() + Number(data.expiresIn) * 1000)]);
@@ -90,23 +92,31 @@ function clearSession() {
 }
 let refreshInFlight;
 async function refreshSession() {
-  if (refreshInFlight) return refreshInFlight;
+
   const refreshToken = storedAuthValue("eaglesRefreshToken");
   if (!refreshToken) throw new Error("Authentication required");
-  refreshInFlight = (async () => {
+  if (refreshInFlight?.token === refreshToken) return refreshInFlight.promise;
+  function checkSession() {
+    if (storedAuthValue("eaglesRefreshToken") !== refreshToken) throw new Error("Session changed");
+  }
+  const promise = (async () => {
     const response = await fetch(`https://securetoken.googleapis.com/v1/token?key=${API_KEY}`, {
       method: "POST", headers: {"Content-Type":"application/x-www-form-urlencoded"},
       body: new URLSearchParams({grant_type: "refresh_token", refresh_token: refreshToken})
     });
+    checkSession();
     if (!response.ok) {
       if ([400, 401].includes(response.status)) clearSession();
       throw new Error(response.status >= 500 ? "Authentication service unavailable" : "Invalid session");
     }
     const data = await response.json();
+    checkSession();
     saveSession({idToken: data.id_token, refreshToken: data.refresh_token, expiresIn: data.expires_in});
     return data.id_token;
   })();
-  try { return await refreshInFlight; } finally { refreshInFlight = null; }
+  refreshInFlight = {token: refreshToken, promise};
+  try { return await promise; }
+  finally { if (refreshInFlight?.promise === promise) refreshInFlight = null; }
 }
 async function request(path, options = {}) {
   const expiry = Number(storedAuthValue("eaglesTokenExpiresAt") || 0);
@@ -115,10 +125,20 @@ async function request(path, options = {}) {
   return sendRequest(path, options, true);
 }
 async function sendRequest(path, options, retry) {
+  const epoch = storedAuthValue("eaglesLoginEpoch");
+  const token = storedAuthValue("eaglesIdToken");
+  const refreshToken = storedAuthValue("eaglesRefreshToken");
   const response = await fetch(`/api${path}`, {
-    ...options, headers: { "Content-Type": "application/json", Authorization: `Bearer ${storedAuthValue("eaglesIdToken") || ""}`, ...options.headers }
+    ...options, headers: { "Content-Type": "application/json", Authorization: `Bearer ${token || ""}`, ...options.headers }
   });
   const data = await response.json().catch(() => ({}));
+  if (storedAuthValue("eaglesLoginEpoch") !== epoch || ((token || refreshToken) && !hasAuthSession()))
+    throw new Error("Session changed");
+  // Another request may already have refreshed the credentials for this login.
+  if (response.status === 401 && storedAuthValue("eaglesIdToken") !== token) {
+    if (retry) return sendRequest(path, options, false);
+    throw new Error("Session changed");
+  }
   if (response.status === 401 && retry && storedAuthValue("eaglesRefreshToken")) {
     await refreshSession();
     return sendRequest(path, options, false);

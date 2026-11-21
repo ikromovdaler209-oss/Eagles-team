@@ -116,7 +116,7 @@ router.post("/join", joinLimiter, async (req, res, next) => {
         return {roomId: roomRef.id, alias: member.get("alias")};
       if (isExpired(room.data()) && room.get("status") === "lobby") return {status: 410, error: "Room expired"};
       if (room.get("status") !== "lobby") return {status: 409, error: "Room is not accepting players"};
-      if (room.get("hostUid") === req.user.uid) return {status: 403, error: "Host cannot join as a player"};
+      if (room.get("hostUid") === req.user.uid || req.profile.role === "admin") return {status: 403, error: "Host cannot join as a player"};
       if ((room.get("participantCount") || 0) >= MAX_PARTICIPANTS) return {status: 409, error: "Room is full"};
       const alias = randomAlias();
       tx.create(memberRef, {alias, joinedAt: FieldValue.serverTimestamp()});

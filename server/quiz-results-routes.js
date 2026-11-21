@@ -78,12 +78,17 @@ router.get("/sessions", async (req, res, next) => {
       ]);
       docs = [...new Map([...byCreator.docs, ...byHost.docs].map(doc => [doc.id, doc])).values()];
     }
-    // Materialize a completed room if its host lost the response to /advance.
+    const all = [];
     for (const doc of docs) {
-      if (isCompleted(doc.data()) && !doc.get("resultsArchivedAt")) await ensureArchived(db, doc.id);
+      if (!isCompleted(doc.data()) || !canViewSummary(doc.data(), req)) continue;
+      if (doc.get("resultsArchivedAt")) {
+        all.push(publicSummary(doc, admin(req)));
+      } else {
+        await ensureArchived(db, doc.id);
+        const archived = await db.collection("liveSessions").doc(doc.id).get();
+        all.push(publicSummary(archived, admin(req)));
+      }
     }
-    const all = await Promise.all(docs.filter(doc => isCompleted(doc.data()) && canViewSummary(doc.data(), req))
-      .map(async doc => publicSummary(await db.collection("liveSessions").doc(doc.id).get(), admin(req))));
     all.sort((a,b) => (b.completedAt || "").localeCompare(a.completedAt || ""));
     res.json({sessions: all.slice(0, 100), limited: docs.length >= 150});
   } catch (err) {next(err);}

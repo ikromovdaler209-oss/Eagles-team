@@ -2,7 +2,9 @@
 const express = require("express");
 const { auth, db } = require("./firebase");
 const { FieldValue } = require("firebase-admin/firestore");
+const {validId} = require("./live-lobby-core");
 const router = express.Router();
+router.param("id", (_req,res,next,id) => validId(id) ? next() : res.status(400).json({error:"Invalid test ID"}));
 router.use((_req, res, next) => { res.set("Cache-Control", "no-store"); next(); });
 
 async function authenticate(req, res, next) {

@@ -54,7 +54,9 @@ const ReadingEditor=(()=>{
   async function stats(){
     const {groups,people}=await api("/statistics");root.replaceChildren(el("h2",t("Reading statistics")),button("Manage Reading tests",open));
     if(!groups.length)root.append(el("p",t("No test results yet.")));
-    for(const g of groups){const card=box("paper");card.append(el("h3",g.title+" · v"+g.version),el("p",t("Attempts")+" · "+g.count+" · "+t("Average")+" "+g.average+"%"));
+    for(const g of groups){const card=box("paper");card.append(el("h3",g.title+" · v"+g.version),el("p",t("Attempts")+" · "+g.count));
+      if(g.privacyLimited){card.append(el("p",t("Statistics appear after three different students complete this test.")));root.append(card);continue;}
+      card.append(el("p",t("Average")+" "+g.average+"%"));
       const list=el("ul");
       const ranked=g.misses.map((n,i)=>({n,i})).sort((a,b)=>b.n-a.n);
       for(const {n,i} of ranked) list.append(el("li",(i+1)+". "+g.prompts[i]+" · "+t("Missed or incorrect")+" "+n+"/"+g.count+" ("+Math.round(100*n/g.count)+"%)"));card.append(list);root.append(card);}

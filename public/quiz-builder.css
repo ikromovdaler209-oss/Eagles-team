@@ -6,3 +6,7 @@
 .qb-actions a{border:1px solid #60646e;border-radius:9px;padding:.6rem .9rem;color:#f8f8fa;background:#292c34;text-decoration:none}
 .qb-actions a:hover{background:#3c404b}.qb-shell :is(button,a):focus-visible{outline:3px solid #f5aaae;outline-offset:3px}
 .qb-shell button:active:not(:disabled){transform:translateY(1px)}.qb-shell .qb-list button{display:block;overflow-wrap:anywhere}
+
+.qb-shell label.qb-option{display:flex;align-items:center}
+.qb-shell .qb-option input{margin-top:0}
+#previewDialog{box-sizing:border-box;overflow-wrap:anywhere}

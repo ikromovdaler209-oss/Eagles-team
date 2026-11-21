@@ -39,7 +39,22 @@ const dbDocs=new Map();
 const stored=(path)=>dbDocs.get(path);
 function snap(path){const d=stored(path);return {id:path.split("/").at(-1),exists:!!d,data:()=>d,get:key=>d?.[key]};}
 class Ref{constructor(path){this.path=path;}get(){return Promise.resolve(snap(this.path));}}
-class Col{constructor(name,filter=null,cap=10000){this.name=name;this.filter=filter;this.cap=cap;}doc(id){return new Ref(this.name+"/"+id);}where(k,op,v){assert.equal(op,"==");return new Col(this.name,[k,v],this.cap);}limit(n){return new Col(this.name,this.filter,n);}async get(){return{docs:[...dbDocs.keys()].filter(key=>key.startsWith(this.name+"/")&&!key.substring(this.name.length+1).includes("/")).map(snap).filter(s=>!this.filter||s.get(this.filter[0])===this.filter[1]).slice(0,this.cap)}}}
+class Col {
+  constructor(name,filters=[],order=null,cap=10000){Object.assign(this,{name,filters,order,cap});}
+  doc(id){return new Ref(this.name+"/"+id);}
+  where(k,op,v){return new Col(this.name,[...this.filters,[k,op,v]],this.order,this.cap);}
+  orderBy(k,dir){return new Col(this.name,this.filters,[k,dir],this.cap);}
+  limit(n){return new Col(this.name,this.filters,this.order,n);}
+  async get(){
+    const rows=[...dbDocs.keys()].filter(key=>key.startsWith(this.name+"/")&&!key.substring(this.name.length+1).includes("/"))
+      .map(snap).filter(s=>this.filters.every(([key,op,v])=>op==="in"?v.includes(s.get(key)):s.get(key)===v));
+    if(this.order){
+      const [key,dir]=this.order;
+      rows.sort((a,b)=>(a.get(key).toDate()-b.get(key).toDate())*(dir==="asc"?1:-1));
+    }
+    return {docs:rows.slice(0,this.cap)};
+  }
+}
 const db={collection:name=>new Col(name),async runTransaction(cb){const writes=[];const tx={get:ref=>ref.get(),create:(ref,values)=>writes.push(["create",ref.path,values]),update:(ref,values)=>writes.push(["update",ref.path,values])};const result=await cb(tx);for(const [op,path,values] of writes){if(op==="create")assert(!dbDocs.has(path));dbDocs.set(path,{...stored(path),...values});}return result;}};
 const methods=new Map();
 const router={use(){},param(){}};
@@ -71,8 +86,10 @@ assert.equal((await call("get","/mine",{who:other})).payload.submissions.length,
 assert.equal((await call("get","/review-queue",{role:"student"})).status,403);
 assert.equal((await call("put","/submissions/:id/audio",{body:dummyWebm,mime:"audio/webm;codecs=opus"})).status,201);
 assert.equal(stored("speakingSubmissions/"+id).status,"pending_review");
-assert.equal((await call("put","/submissions/:id/audio",{body:dummyWebm})).status,409);
+assert.equal((await call("put","/submissions/:id/audio",{body:dummyWebm})).status,200);
 assert.equal((await call("get","/submissions/:id/audio",{who:other})).status,403);
+assert.equal((await call("post","/submissions",{body:{id,part:1,prompt:"A different prompt",durationSeconds:12,consent:true}})).status,409);
+assert(!core.validMeta({id:[id],part:1,prompt:"Describe your town",durationSeconds:12,consent:true}));
 const playback=await call("get","/submissions/:id/audio",{who:uid});
 assert.match(playback.payload.url,/type=authenticated/);
 assert.match(playback.payload.url,/expires_at=/);
@@ -85,6 +102,16 @@ assert.equal((await call("patch","/submissions/:id/review",{who:admin,role:"admi
 assert.equal((await call("get","/mine",{})).payload.submissions[0].review.overall,6.5);
 assert.equal((await call("get","/review-queue",{who:admin,role:"admin"})).payload.submissions.length,0);
 assert(!JSON.stringify((await call("get","/mine",{})).payload).includes("external-asset"));
+stored("speakingSubmissions/"+id).audioDeletedAt=new Date();
+assert.equal((await call("get","/submissions/:id/audio",{})).status,410);
+const retained=(await call("get","/mine",{})).payload.submissions[0];
+assert.equal(retained.audioAvailable,false);
+assert.equal(retained.review.feedback,"Clear ideas");
+for(let i=0;i<110;i++){
+  dbDocs.set("speakingSubmissions/history-"+i,{uid,part:1,prompt:"History "+i,status:"reviewed",createdAt:{toDate:()=>new Date(2030000000000+i)}});
+}
+const page=(await call("get","/mine",{})).payload.submissions;
+assert.equal(page.length,100);assert.equal(page[0].prompt,"History 109");
 for(const file of ["speaking-recording.css","speaking-recording.js","speaking-review.html","speaking-review.css","speaking-review.js"]){assert(existsSync(new URL("../public/"+file,import.meta.url)));}
 for(const html of ["speaking.html","speaking-review.html","admin.html","student-dashboard.html"]){const code=readFileSync(new URL("../public/"+html,import.meta.url),"utf8");assert(!/<a\b[^>]*>\s*<button\b/i.test(code),html);}
 console.log("Speaking: formats, metadata, role guards, idempotency, upload, review, signed access and dashboard links PASS (mocked Firebase/Cloudinary)");

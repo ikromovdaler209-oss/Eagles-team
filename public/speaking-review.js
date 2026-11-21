@@ -19,7 +19,9 @@
       try {const {url}=await request(`/speaking/submissions/${encodeURIComponent(entry.id)}/audio`);audio.src=url;audio.hidden=false;audio.load();}
       catch(e){state.textContent=e.message||"Unable to play recording";}
       finally {listen.disabled=false;}
-    });card.append(listen,audio);
+    });
+    if(entry.audioAvailable===false)card.append(node("p","","Audio is no longer available"));
+    else card.append(listen,audio);
     const form=node("form","speaking-review-form");
     const grid=node("div","speaking-review-criteria");
     const controls={};
@@ -51,14 +53,23 @@
     });
     return card;
   }
+  let queueRevision=0;
   async function load() {
+    const revision=++queueRevision;
     state.textContent="Loading pending submissions…";
     try {
       const {submissions=[]}=await request("/speaking/review-queue");
+      if(revision!==queueRevision)return;
       list.replaceChildren(...submissions.map(entryCard));
       $("speakingQueueCount").textContent=String(submissions.length);
       state.textContent=submissions.length?"":"No pending Speaking answers.";
-    }catch(e){state.textContent=e.message||"Unable to load reviews.";}
+    }catch(e){
+      if(revision!==queueRevision)return;
+      list.replaceChildren();
+      $("speakingQueueCount").textContent="—";
+      state.textContent=e.message||"Unable to load reviews.";
+      if(e.code===401||e.code===403)location.replace("/account.html");
+    }
   }
   $("refreshSpeakingQueue").addEventListener("click",load);
   (async()=>{

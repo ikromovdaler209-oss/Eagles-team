@@ -60,6 +60,7 @@ assert.equal(late.result.correct,2);assert.equal(late.result.skipped,1);
 assert.deepEqual((await call("get","/mine",null))[0],late.result);
 assert.equal((await call("get","/mine",null,"bob")).length,0);
 const stats=await call("get","/statistics",null,"author");assert.equal(stats.groups[0].count,1);assert(!JSON.stringify(stats).includes("alice"));assert.equal(stats.people.length,0);
+assert.equal(stats.groups[0].privacyLimited,true);assert.equal(stats.groups[0].misses,undefined);assert.equal(stats.groups[0].average,undefined);
 assert.equal((await call("get","/statistics",null,"admin")).people[0].student,"alice");
 const second=await start();assert.notEqual(second.id,a.id);
 const submitted=await call("put","/attempt/:id",second.id,"alice",{submit:true,revision:0,answers:["","",""]});

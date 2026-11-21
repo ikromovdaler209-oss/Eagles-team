@@ -141,6 +141,7 @@ const snapshot=docs.get(`liveSessions/${roomId}/private/quiz`);
 assert.equal(snapshot.questions[0].correctOption,2);
 assert.equal(docs.get(`liveSessions/${roomId}`).participantCount,0);
 assert.deepEqual(Array.from(docs.get(`liveSessions/${roomId}`).aliases),[]);
+r=await call("POST","/join","admin",{pin});assert.equal(r.statusCode,403);
 r=await call("POST","/join","student",{pin});assert.equal(r.statusCode,200);const alias=r.body.alias;
 r=await call("POST","/join","student",{pin});assert.equal(r.body.alias,alias);
 assert.equal(docs.get(`liveSessions/${roomId}`).participantCount,1);

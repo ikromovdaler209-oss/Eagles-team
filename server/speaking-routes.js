@@ -24,13 +24,21 @@ router.use(authorize,rateLimit({windowMs:15*60*1000,limit:130,keyGenerator:req=>
 function isAdmin(req) { return req.profile?.role === "admin"; }
 function isStudent(req) { return req.profile?.role === "student"; }
 function fail(res, status, error) {return res.status(status).json({error});}
-function errorHandler(next) {return err => next(err);}
 router.param("id", (req,res,next,id) => ID_RE.test(id) ? next() : fail(res,400,"Invalid recording ID"));
 router.get("/config",(req,res)=>res.json({recordingAvailable:configured(),maxSeconds:180,maxBytes:MAX_AUDIO_BYTES}));
+// Existing projects keep their bounded legacy view while the optional indexes build.
+async function orderedPage(query, legacyQuery) {
+  try { return await query.limit(100).get(); }
+  catch(err) {
+    if (err.code!==9 && err.code!=="failed-precondition") throw err;
+    return legacyQuery.limit(100).get();
+  }
+}
 router.get("/mine",async(req,res,next)=>{
   if(!isStudent(req)) return fail(res,403,"Student account required");
   try {
-    const docs = await submissions.where("uid","==",req.user.uid).limit(100).get();
+    const owned = submissions.where("uid","==",req.user.uid);
+    const docs = await orderedPage(owned.where("status","in",["pending_review","reviewed"]).orderBy("createdAt","desc"),owned);
     const rows = docs.docs.map(d=>publicSubmission(d.id,d.data())).filter(d=>d.status!=="uploading");
     rows.sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt)));
     res.json({submissions:rows});
@@ -53,6 +61,7 @@ router.post("/submissions",async(req,res,next)=>{
       return {...value};
     });
     if(data.uid!==req.user.uid) return fail(res,403,"Access denied");
+    if(data.part!==part || data.prompt!==prompt.trim() || data.durationSeconds!==durationSeconds) return fail(res,409,"Submission details have changed");
     res.status(data.status==="uploading"?201:200).json({submission:publicSubmission(id,data)});
   }catch(err){next(err);}
 });
@@ -67,14 +76,18 @@ router.put("/submissions/:id/audio", uploadSlot, express.raw({type:["audio/webm"
     if(!snap.exists) return fail(res,404,"Submission not found");
     const current=snap.data();
     if(current.uid!==req.user.uid) return fail(res,403,"Access denied");
+    if(["pending_review","reviewed"].includes(current.status)) return res.json({ok:true,status:current.status});
     if(current.status!=="uploading") return fail(res,409,"Recording has already been submitted");
     const stored=await uploadAudio(req.body,mime,req.user.uid,req.params.id);
-    await db.runTransaction(async tx=>{
+    const status=await db.runTransaction(async tx=>{
       const latest=await tx.get(ref);
-      if(!latest.exists || latest.get("uid")!==req.user.uid || latest.get("status")!=="uploading") return;
+      if(!latest.exists || latest.get("uid")!==req.user.uid) return null;
+      if(latest.get("status")!=="uploading") return latest.get("status");
       tx.update(ref,{asset:stored,status:"pending_review",submittedAt:FieldValue.serverTimestamp()});
+      return "pending_review";
     });
-    res.status(201).json({ok:true,status:"pending_review"});
+    if(!["pending_review","reviewed"].includes(status)) return fail(res,409,"Submission changed");
+    res.status(201).json({ok:true,status});
   }catch(err){
     console.warn("[speaking-upload]",err.status||"storage-error");
     if(err.status)return fail(res,err.status,err.message);
@@ -84,7 +97,8 @@ router.put("/submissions/:id/audio", uploadSlot, express.raw({type:["audio/webm"
 router.get("/review-queue",async(req,res,next)=>{
   if(!isAdmin(req)) return fail(res,403,"Admin access required");
   try {
-    const docs=await submissions.where("status","==","pending_review").limit(100).get();
+    const pending=submissions.where("status","==","pending_review");
+    const docs=await orderedPage(pending.orderBy("createdAt","asc"),pending);
     const rows=docs.docs.map(d=>publicSubmission(d.id,d.data(),"admin"));
     rows.sort((a,b)=>String(a.createdAt).localeCompare(String(b.createdAt)));
     res.json({submissions:rows});
@@ -96,6 +110,7 @@ router.get("/submissions/:id/audio",async(req,res,next)=>{
     if(!snap.exists) return fail(res,404,"Submission not found");
     const entry=snap.data();
     if(!isAdmin(req) && entry.uid!==req.user.uid) return fail(res,403,"Access denied");
+    if(entry.audioDeletedAt) return fail(res,410,"Audio is no longer available");
     if(!entry.asset || !["pending_review","reviewed"].includes(entry.status)) return fail(res,409,"Audio is not ready");
     res.json({url:privateDownloadUrl(entry.asset),expiresIn:300});
   } catch(err){next(err);}

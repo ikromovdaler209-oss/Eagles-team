@@ -36,6 +36,7 @@ function session(local, tab = storage(), opts = {}) {
       return response(200, {idToken:'signed-in-token',refreshToken:'signed-in-refresh',expiresIn:'3600'});
     if (url.startsWith('https://securetoken.googleapis.com/')) {
       refreshed++;
+      if(opts.wait) await opts.wait;
       if (opts.badRefresh) return response(400, {error:'INVALID_REFRESH_TOKEN'});
       return response(200, {id_token:'refreshed-token',refresh_token:'refreshed-refresh',expires_in:'3600'});
     }
@@ -103,4 +104,12 @@ for (const key of ['eaglesIdToken','eaglesRefreshToken','eaglesTokenExpiresAt'])
   assert.equal(a.tab.getItem(key),null);
 }
 assert.equal(vm.runInContext('hasAuthSession()',a.ctx),false);
+let finishRefresh;
+const delayed=session(storage({eaglesRefreshToken:"old",eaglesIdToken:"old-id"}),storage(),
+  {wait:new Promise(resolve=>{finishRefresh=resolve;})});
+const pending=vm.runInContext("refreshSession()",delayed.ctx);
+vm.runInContext("clearSession()",delayed.ctx);
+finishRefresh();
+await assert.rejects(pending,/Session changed/);
+assert.equal(delayed.local.getItem("eaglesIdToken"),null);
 console.log('Persistent login: sign-in, reload, refresh, migration, outage, expiry, logout PASS (mocked API).');

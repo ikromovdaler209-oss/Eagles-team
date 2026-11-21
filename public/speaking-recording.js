@@ -9,7 +9,7 @@
   const mic = $("micState"), micLabel = $("micLabel"), clock = $("recordClock");
   let recorder, stream, chunks=[], audioBlob=null, blobUrl=null, currentPrompt="", currentPart=1;
   let started=0, durationSeconds=0, timer=null, loading=false, accessible=false, storageReady=false;
-  let submissionId=null;
+  let submissionId=null, recordingBusy=false, micGeneration=0;
   const MAX_SECONDS=180, MAX_BYTES=12*1024*1024;
   const time = n => `${String(Math.floor(n/60)).padStart(2,"0")}:${String(n%60).padStart(2,"0")}`;
   const setStatus = message => {status.textContent=t(message);};
@@ -20,12 +20,12 @@
   }
   function update() {
     const recording=recorder?.state==="recording";
-    record.disabled=!accessible||!currentPrompt||recording||loading;
+    record.disabled=!accessible||!currentPrompt||recordingBusy||!!audioBlob||loading;
     stop.disabled=!recording;
     discard.disabled=!audioBlob||recording||loading;
     submit.disabled=!audioBlob||recording||loading||!storageReady||!consent.checked;
-    pick.disabled=recording||!!audioBlob||loading;
-    radios.forEach(r=>{r.disabled=recording||!!audioBlob||loading;});
+    pick.disabled=recordingBusy||!!audioBlob||loading;
+    radios.forEach(r=>{r.disabled=recordingBusy||!!audioBlob||loading;});
   }
   function resetAudio() {
     audioBlob=null;durationSeconds=0;submissionId=null;consent.checked=false;
@@ -49,17 +49,22 @@
   pick.addEventListener("click",listenForPrompt);
   radios.forEach(r=>r.addEventListener("change",()=>{if(!audioBlob) {currentPrompt="";update();}}));
   record.addEventListener("click",async()=>{
+    if(record.disabled || recordingBusy)return;
     const mime=mimeOption();
     if(!mime){setStatus("Your browser does not support audio recording. Try Safari or Chrome with HTTPS.");return;}
+    const generation=++micGeneration;
+    recordingBusy=true;update();
     try {
-      stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true},video:false});
+      const acquired=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true},video:false});
+      if(generation!==micGeneration){acquired.getTracks().forEach(track=>track.stop());return;}
+      stream=acquired;
       recorder=new MediaRecorder(stream,{mimeType:mime,audioBitsPerSecond:64000});
       chunks=[];
       recorder.ondataavailable=event=>{if(event.data.size)chunks.push(event.data);};
-      recorder.onerror=()=>{setStatus("Microphone recording failed. Try again.");releaseMic();update();};
+      recorder.onerror=()=>{recorder.onstop=null;recordingBusy=false;setStatus("Microphone recording failed. Try again.");releaseMic();update();};
       recorder.onstop=()=>{
         const seconds=Math.round((Date.now()-started)/1000);
-        releaseMic();
+        recordingBusy=false;releaseMic();
         durationSeconds=Math.min(MAX_SECONDS,seconds);
         const result=new Blob(chunks,{type:recorder.mimeType});
         chunks=[];
@@ -81,7 +86,8 @@
       },250);
       setStatus("Recording… Your microphone is active.");update();
     } catch(err) {
-      releaseMic();
+      if(generation!==micGeneration)return;
+      recordingBusy=false;releaseMic();
       setStatus(err?.name==="NotAllowedError"?"Microphone permission denied. Allow microphone access in your browser settings.":"Unable to access the microphone. Check HTTPS and microphone permissions.");
       update();
     }
@@ -90,7 +96,7 @@
   discard.addEventListener("click",()=>{resetAudio();setStatus("Recording discarded. You can record again or choose a different question.");});
   consent.addEventListener("change",update);
   submit.addEventListener("click",async()=>{
-    if(!audioBlob||!storageReady||loading)return;
+    if(!audioBlob||!storageReady||loading||!consent.checked)return;
     loading=true;update();setStatus("Uploading your answer securely…");
     try {
       submissionId ||= crypto.randomUUID();
@@ -122,6 +128,7 @@
           item.append(block("p","",`${t("Practice band estimate")}: ${row.review.overall} · Fluency ${c.fluency} · Vocabulary ${c.lexical} · Grammar ${c.grammar} · Pronunciation ${c.pronunciation}`));
           if(row.review.feedback)item.append(block("p","speaking-feedback",row.review.feedback));
         }
+        if(row.audioAvailable===false){item.append(block("p","",t("Audio is no longer available")));list.append(item);continue;}
         const play=block("button","speaking-btn speaking-subtle",t("Listen to answer"));play.type="button";
         const player=document.createElement("audio");player.controls=true;player.hidden=true;player.preload="none";
         play.addEventListener("click",async()=>{
@@ -137,22 +144,27 @@
   }
   $("reloadSpeakingHistory").addEventListener("click",history);
   window.addEventListener("beforeunload",event=>{
-    if(recorder?.state==="recording"||loading){event.preventDefault();event.returnValue="";}
+    if(recordingBusy||audioBlob||loading){event.preventDefault();event.returnValue="";}
   });
-  window.addEventListener("pagehide",releaseMic);
+  window.addEventListener("pagehide",()=>{
+    micGeneration++;
+    if(recorder){recorder.onstop=null;if(recorder.state==="recording")recorder.stop();}
+    recordingBusy=false;releaseMic();update();
+  });
   async function init(){
     $("speakingRecorder").hidden=false;
-    if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia){setStatus("Microphone requires HTTPS and a supported browser.");return;}
-    if(!mimeOption()){setStatus("This browser cannot record audio in a supported format.");return;}
     try {
       const me=await request("/me");
       if(me.status!=="approved"){setStatus("Approved student account required to record answers.");return;}
+      $("speakingHistory").hidden=false;
+      await history();
+      if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia){setStatus("Microphone requires HTTPS and a supported browser.");return;}
+      if(!mimeOption()){setStatus("This browser cannot record audio in a supported format.");return;}
       accessible=true;
-      $("speakingRecorder").hidden=false;$("speakingHistory").hidden=false;
+      $("speakingRecorder").hidden=false;
       const config=await request("/speaking/config");
       storageReady=config.recordingAvailable===true;
       setStatus(storageReady?"Choose a question and record your answer.":"Recording preview is available, but sending requires audio storage setup.");
-      await history();
     } catch(err) {setStatus(err.message||"Unable to check account access.");$("speakingRecorder").hidden=false;}
     finally {update();}
   }

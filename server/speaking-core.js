@@ -13,7 +13,7 @@ function normalizeMime(value) { return String(value || "").split(";")[0].trim().
 function validMeta(input) {
   if (!input || typeof input !== "object" || Array.isArray(input)) return false;
   if (Object.keys(input).some(key => !["id", "part", "prompt", "durationSeconds", "consent"].includes(key))) return false;
-  return input.consent === true && ID_RE.test(input.id) && [1,2,3].includes(input.part) &&
+  return input.consent === true && typeof input.id === "string" && ID_RE.test(input.id) && [1,2,3].includes(input.part) &&
     typeof input.prompt === "string" && input.prompt.trim().length >= 8 && input.prompt.trim().length <= 500 &&
     Number.isInteger(input.durationSeconds) && input.durationSeconds >= 2 && input.durationSeconds <= MAX_SECONDS;
 }
@@ -45,6 +45,7 @@ function privateDownloadUrl(asset, env = process.env, now = Math.floor(Date.now(
 }
 function publicSubmission(id, data, role = "student") {
   const base = {id, part:data.part, prompt:data.prompt, durationSeconds:data.durationSeconds, status:data.status,
+    audioAvailable:Boolean(data.asset && !data.audioDeletedAt),
     createdAt:data.createdAt?.toDate?.()?.toISOString() || null,
     reviewedAt:data.reviewedAt?.toDate?.()?.toISOString() || null,
     review:data.review ? {feedback:data.review.feedback || "", criteria:data.review.criteria, overall:data.review.overall} : null};

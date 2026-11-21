@@ -6,7 +6,8 @@
   let roomId = null;
   let updateTimer = null;
   let clockTimer = null;
-  let updating = false;
+  let roomRevision = 0;
+  let updatingRevision = null;
   let isHost = false;
   let busy = false;
   let answerPending = false;
@@ -29,6 +30,7 @@
     $("createButton").disabled = value || !$("quizSelect").value;
   }
   function selectRoom(id) {
+    roomRevision++;
     roomId = id;
     const url = new URL(location.href);
     if (id) url.searchParams.set("room", id);
@@ -93,8 +95,9 @@
     gameQuestionIndex = null;
     $("liveLanding").hidden = true;
     $("activeRoom").hidden = false;
-    await updateRoom();
-    if (!roomId || ["closed","expired","finished"].includes(currentRoom?.status)) return;
+    const revision = roomRevision;
+    const terminalError = await updateRoom();
+    if (terminalError || revision !== roomRevision || !roomId || ["closed","expired","finished"].includes(currentRoom?.status)) return;
     updateTimer = setInterval(() => { if (!document.hidden) updateRoom(); }, 4000);
     clockTimer = setInterval(updateClock, 250);
   }
@@ -185,10 +188,12 @@
     updateClock();
   }
   async function updateRoom() {
-    if (!roomId || updating) return;
-    updating = true;
+    const revision = roomRevision;
+    if (!roomId || updatingRevision === revision) return;
+    updatingRevision = revision;
     try {
       const result = await request(`/live-sessions/${encodeURIComponent(roomId)}`);
+      if (revision !== roomRevision) return;
       if (result.serverTime) clockOffset = Date.now() - Date.parse(result.serverTime);
       const r = result.room;
       currentRoom = r;
@@ -206,8 +211,14 @@
       renderGame(r, result);
       if (["closed", "expired", "finished"].includes(r.status)) stopUpdates();
       notice(["closed", "expired"].includes(r.status) ? "This room is no longer accepting players." : "");
-    } catch (err) { notice(err.message); if ([401, 403, 404].includes(err.code)) stopUpdates(); }
-    finally { updating = false; }
+    } catch (err) {
+      if (revision !== roomRevision) return;
+      notice(err.message);
+      if ([401, 403, 404].includes(err.code)) {
+        stopUpdates();
+        return true;
+      }
+    } finally { if (updatingRevision === revision) updatingRevision = null; }
   }
   async function submitAnswer(questionIndex, selectedOption) {
     if (answerPending || currentAnswer || currentRoom?.status !== "question") return;

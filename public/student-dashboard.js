@@ -106,7 +106,12 @@
         const detail=document.createElement("span");
         detail.textContent=(row.status==="reviewed"?`${t("Practice band estimate")}: ${row.review?.overall ?? "—"}`:t("Pending review"))+
           (row.createdAt?` · ${new Date(row.createdAt).toLocaleDateString(document.documentElement.lang)}`:"");
-        li.append(title,detail);list.append(li);
+        li.append(title,detail);
+        if(row.review?.feedback){
+          const feedback=document.createElement("p");
+          feedback.textContent=row.review.feedback;li.append(feedback);
+        }
+        list.append(li);
       }
     } catch {if(rev===revision)summary.textContent=t("Unable to load speaking answers.");}
   }
