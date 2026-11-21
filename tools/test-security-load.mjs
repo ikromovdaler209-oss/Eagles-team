@@ -47,6 +47,7 @@ class Col {
   doc(id){return new Doc(`${this.path}/${id}`);}
   where(k,_op,v){return new Col(this.path,[k,v],this.max);}
   limit(n){return new Col(this.path,this.filter,n);}
+  count(){return {get:async()=>{const rows=await this.get();return {data:()=>({count:rows.docs.length})};}};}
   async get(){
     const arr=[...docs.keys()].filter(k=>k.startsWith(`${this.path}/`)&&k.split("/").length===this.path.split("/").length+1)
       .map(k=>new Snapshot(k)).filter(d=>!this.filter||d.get(this.filter[0])===this.filter[1]).slice(0,this.max);
@@ -163,9 +164,6 @@ for (const size of [10, 30, 50, 100]) {
   // Replaying an answer must never increment the counters twice.
   response = await call("POST", `/${roomId}/answer`, ids[0], {questionIndex:0,selectedOption:2});
   assert.equal(response.body.alreadySubmitted, true);
-  docs.get(`liveSessions/${roomId}`).questionEndsAt = Timestamp.fromMillis(Date.now()-1);
-  response = await call("POST", `/${roomId}/advance`, "teacher");
-  assert.equal(response.statusCode, 200);
   assert.equal(docs.get(`liveSessions/${roomId}`).currentQuestionIndex, 1);
   const answering = ids.slice(0, size/2);
   const second = await Promise.all(answering.map(uid => call("POST", `/${roomId}/answer`, uid,

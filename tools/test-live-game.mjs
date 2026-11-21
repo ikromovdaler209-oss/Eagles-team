@@ -47,6 +47,7 @@ class Col {
   doc(id){return new Doc(`${this.path}/${id}`);}
   where(k,_op,v){return new Col(this.path,[k,v],this.max);}
   limit(n){return new Col(this.path,this.filter,n);}
+  count(){return {get:async()=>{const rows=await this.get();return {data:()=>({count:rows.docs.length})};}};}
   async get(){
     const arr=[...docs.keys()].filter(k=>k.startsWith(`${this.path}/`)&&k.split("/").length===this.path.split("/").length+1)
       .map(k=>new Snapshot(k)).filter(d=>!this.filter||d.get(this.filter[0])===this.filter[1]).slice(0,this.max);
@@ -165,6 +166,7 @@ r = await call("POST", `${path}/answer`, "student", {questionIndex:0,selectedOpt
 assert.equal(r.body.alreadySubmitted, false);
 r = await call("POST", `${path}/answer`, "student", {questionIndex:0,selectedOption:0}); assert.equal(r.statusCode, 200);
 assert.equal(r.body.alreadySubmitted, true);
+assert.equal(docs.get(`liveSessions/${roomId}`).currentQuestionIndex,0);
 r = await call("POST", `${path}/answer`, "other", {questionIndex:0,selectedOption:0}); assert.equal(r.statusCode, 200);
 assert.equal(docs.get(`liveSessions/${roomId}/answers/0_student`).correct, true);
 assert.equal(docs.get(`liveSessions/${roomId}/answers/0_other`).correct, false);
@@ -172,26 +174,11 @@ assert(!Object.hasOwn(docs.get(`liveSessions/${roomId}`), "currentAnswerCount"))
 assert.equal(docs.get(`liveSessions/${roomId}/participants/student`).correctCount, 1);
 assert.equal(docs.get(`liveSessions/${roomId}/participants/student`).answeredCount, 1);
 r = await call("GET", path, "student");
-assert.equal(r.body.myAnswer.selectedOption, 2);
-assert(!JSON.stringify(r.body).includes('"correctOption"'));
-r = await call("GET", path, "teacher");
-assert(!r.body.myAnswer);
-assert(!JSON.stringify(r.body).includes('"uid"'));
-r = await call("POST", `${path}/advance`, "teacher"); assert.equal(r.statusCode, 409);
-// Simulate the server-owned deadline crossing without waiting 30 seconds.
-const room = docs.get(`liveSessions/${roomId}`);
-room.questionEndsAt = Timestamp.fromMillis(Date.now() - 10);
-r = await call("POST", `${path}/answer`, "admin", {questionIndex:0,selectedOption:2}); assert.equal(r.statusCode, 403);
-r = await call("GET", path, "student"); assert.equal(r.body.room.status, "review");
-assert.equal(r.body.review.correctOption, 2);
-assert.equal(r.body.myAnswer.isCorrect, true);
-r = await call("GET", path, "other"); assert.equal(r.body.myAnswer.isCorrect, false);
-r = await call("POST", `${path}/advance`, "student"); assert.equal(r.statusCode, 403);
-// Continue to the second question of the frozen test.
-r = await call("POST", `${path}/advance`, "teacher"); assert.equal(r.statusCode, 200);
-assert.equal(r.body.finished, false);
+assert.equal(r.body.myAnswer, undefined);
+assert.equal(r.body.lastCompletedRound.answer,"3");
+assert.equal(r.body.room.status,"question");
+r = await call("POST", `${path}/advance`, "teacher"); assert.equal(r.statusCode,409);
 r = await call("GET", path, "student");
-assert.equal(r.body.room.status, "question");
 assert.equal(r.body.room.questionIndex, 1);
 assert.equal(r.body.room.question.text, "Second question");
 assert(!JSON.stringify(r.body).includes('"correctOption"'));
@@ -220,6 +207,11 @@ docs.get(`liveSessions/${lateRoom}`).questionEndsAt = Timestamp.fromMillis(Date.
 r = await call("POST", `/${lateRoom}/answer`, "other", {questionIndex:0,selectedOption:0});
 assert.equal(r.statusCode, 409);
 assert.equal(docs.has(`liveSessions/${lateRoom}/answers/0_other`), false);
+r = await call("GET", `/${lateRoom}`, "other");
+assert.equal(r.body.room.status, "review");
+assert.equal(r.body.review.correctOption, 0);
+r = await call("POST", `/${lateRoom}/advance`, "other");
+assert.equal(r.statusCode, 403);
 // A transient archive write failure must not make the finished room look broken.
 const originalBatch = db.batch;
 let unavailableBatches = 2;
@@ -251,6 +243,13 @@ r = await call("GET", `/${lateRoom}`, "other");
 assert.equal(r.statusCode, 200);
 assert(docs.get(`liveSessions/${lateRoom}`).resultsArchivedAt);
 assert.equal(docs.get(`quizResults/${lateRoom}_other`).accuracy, 0);
+r = await call("POST", "/", "admin", {quizId:"otherQuiz"});
+const solo = r.body.roomId;
+await call("POST", "/join", "student", {pin:r.body.pin});
+await call("POST", `/${solo}/start`, "admin");
+await call("POST", `/${solo}/answer`, "student", {questionIndex:0,selectedOption:0});
+assert.equal(docs.get(`liveSessions/${solo}`).status,"finished");
+assert.equal(docs.get(`quizResults/${solo}_student`).accuracy,100);
 console.log("Live Quiz v1.3.3 simulated gameplay: PASS (roles, start, privacy, deadlines, duplicate answers, review, finish, reconnect, no points)");
 for (const f of ["server/live-lobby-routes.js", "server/live-lobby-core.js", "public/quiz-live.js"])
   execFileSync("node", ["--check", new URL(`../${f}`, import.meta.url).pathname]);

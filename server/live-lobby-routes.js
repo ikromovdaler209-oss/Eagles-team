@@ -138,10 +138,16 @@ router.get("/:id", validRoom, async (req, res, next) => {
     const roomRef = db.collection("liveSessions").doc(req.params.id);
     const doc = await roomRef.get();
     if (!doc.exists) return res.status(404).json({error: "Room not found"});
-    const data = doc.data();
+    let data = doc.data();
     const isHost = data.hostUid === req.user.uid || req.profile.role === "admin";
     const member = isHost ? null : await roomRef.collection("participants").doc(req.user.uid).get();
     if (!isHost && !member.exists) return res.status(403).json({error: "Not a member of this room"});
+    // Recover if Render stopped after committing the last answer but before
+    // advancing. Use the existing room poll, without any process-local timer.
+    if (data.status === "question" && effectiveStatus(data) === "review" &&
+        await advanceIfComplete(roomRef, data.currentQuestionIndex, data.participantCount)) {
+      data = (await roomRef.get()).data();
+    }
     // Only a host or participant can trigger recovery of an unfinished archive.
     if (data.finishedAt && !data.resultsArchivedAt && ["finished", "closed"].includes(data.status)) {
       // Archiving is retryable. A temporary write outage must not prevent a
@@ -158,6 +164,7 @@ router.get("/:id", validRoom, async (req, res, next) => {
       if (!question) return res.status(500).json({error: "Quiz snapshot unavailable"});
       response.review = {correctOption: question.correctOption};
     }
+    if (data.lastCompletedRound) response.lastCompletedRound = data.lastCompletedRound;
     if (member?.exists) {
       if (member.get("lastAnsweredIndex") === data.currentQuestionIndex && room.status !== "lobby") {
         response.myAnswer = {selectedOption: member.get("lastSelectedOption")};
@@ -255,6 +262,47 @@ router.post("/:id/start", validRoom, async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
+function nextRound(tx, roomRef, room, quiz, now, lastCompletedRound = null) {
+  const questions = quiz.get("questions");
+  if (!Array.isArray(questions) || questions.length !== room.get("questionCount"))
+    return {status: 500, error: "Quiz snapshot unavailable"};
+  const nextIndex = room.get("currentQuestionIndex") + 1;
+  if (nextIndex >= questions.length) {
+    tx.update(roomRef, {status: "finished", lastCompletedRound, finishedAt: FieldValue.serverTimestamp()});
+    return {ok: true, finished: true};
+  }
+  const nextQuestion = questions[nextIndex];
+  if (![25, 30].includes(nextQuestion.timeLimit)) return {status: 500, error: "Invalid quiz timer"};
+  tx.update(roomRef, {lastCompletedRound, currentQuestionIndex: nextIndex, currentQuestion: publicQuestion(nextQuestion),
+    questionStartedAt: Timestamp.fromMillis(now),
+    questionEndsAt: Timestamp.fromMillis(now + nextQuestion.timeLimit * 1000)});
+  return {ok: true, finished: false};
+}
+
+// Accepted answer documents are immutable. Count the round after the answer
+// commits so simultaneous submissions don't contend on a shared room counter.
+async function advanceIfComplete(roomRef, index, players) {
+  if (!players) return false;
+  const answers = roomRef.collection("answers").where("questionIndex", "==", index);
+  const snapshot = await answers.count().get();
+  if (snapshot.data().count !== players) return false;
+  const transition = await db.runTransaction(async tx => {
+    const room = await tx.get(roomRef);
+    if (room.get("status") !== "question" || room.get("currentQuestionIndex") !== index ||
+        room.get("participantCount") !== players) return false;
+    const quiz = await tx.get(roomRef.collection("private").doc("quiz"));
+    const previous = quiz.get("questions")?.[index];
+    if (!previous) throw new Error("Quiz snapshot unavailable");
+    const result = nextRound(tx, roomRef, room, quiz, Date.now(), {index, answer: previous.options[previous.correctOption]});
+    if (result.error) throw new Error(result.error);
+    return result;
+  });
+  if (transition.finished) {
+    try { await ensureArchived(db, roomRef.id); }
+    catch (err) { console.warn("[quiz-archive-pending]", err.code || err.name || "unknown"); }
+  }
+  return Boolean(transition);
+}
 router.post("/:id/answer", validRoom, async (req, res, next) => {
   if (!cleanBody(req.body, ["questionIndex", "selectedOption"]) ||
       !Number.isInteger(req.body.questionIndex) || req.body.questionIndex < 0 ||
@@ -271,7 +319,8 @@ router.post("/:id/answer", validRoom, async (req, res, next) => {
       ]);
       if (!room.exists) return {status: 404, error: "Room not found"};
       if (!member.exists || room.get("hostUid") === req.user.uid) return {status: 403, error: "Not a player in this room"};
-      if (previous.exists) return {ok: true, alreadySubmitted: true};
+      if (previous.exists) return {ok: true, alreadySubmitted: true,
+        players: room.get("currentQuestionIndex") === req.body.questionIndex && room.get("status") === "question" ? room.get("participantCount") : 0};
       const now = Date.now();
       if (room.get("status") !== "question" || room.get("currentQuestionIndex") !== req.body.questionIndex ||
           now >= (room.get("questionEndsAt")?.toMillis?.() || 0))
@@ -285,10 +334,11 @@ router.post("/:id/answer", validRoom, async (req, res, next) => {
       tx.update(memberRef, {lastAnsweredIndex: req.body.questionIndex,
         lastSelectedOption: req.body.selectedOption, lastAnswerCorrect: correct,
         answeredCount: FieldValue.increment(1), ...(correct ? {correctCount: FieldValue.increment(1)} : {})});
-      return {ok: true, alreadySubmitted: false};
+      return {ok: true, alreadySubmitted: false, players: room.get("participantCount")};
     });
     if (result.status) return res.status(result.status).json({error: result.error});
-    res.json(result);
+    await advanceIfComplete(roomRef, req.body.questionIndex, result.players);
+    res.json({ok: true, alreadySubmitted: result.alreadySubmitted});
   } catch (err) { next(err); }
 });
 
@@ -306,20 +356,7 @@ router.post("/:id/advance", validRoom, async (req, res, next) => {
         return {ok: true, finished: true}; // retry archival after a transient write failure
       if (room.get("status") !== "question" || effectiveStatus(room.data(), now) !== "review")
         return {status: 409, error: "Wait until the question timer ends"};
-      const questions = quiz.get("questions");
-      if (!Array.isArray(questions) || questions.length !== room.get("questionCount"))
-        return {status: 500, error: "Quiz snapshot unavailable"};
-      const nextIndex = room.get("currentQuestionIndex") + 1;
-      if (nextIndex >= questions.length) {
-        tx.update(roomRef, {status: "finished", finishedAt: FieldValue.serverTimestamp()});
-        return {ok: true, finished: true};
-      }
-      const nextQuestion = questions[nextIndex];
-      if (![25, 30].includes(nextQuestion.timeLimit)) return {status: 500, error: "Invalid quiz timer"};
-      tx.update(roomRef, {currentQuestionIndex: nextIndex, currentQuestion: publicQuestion(nextQuestion),
-        questionStartedAt: Timestamp.fromMillis(now),
-        questionEndsAt: Timestamp.fromMillis(now + nextQuestion.timeLimit * 1000)});
-      return {ok: true, finished: false};
+      return nextRound(tx, roomRef, room, quiz, now);
     });
     if (result.status) return res.status(result.status).json({error: result.error});
     if (result.finished) {

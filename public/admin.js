@@ -106,7 +106,29 @@ function renderStudents() {
         save.disabled = false;
       }
     });
-    cell(row, "Action", save);
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.textContent = "Remove";
+    remove.className = "admin-remove-student";
+    remove.setAttribute("aria-label", `Remove ${fullName} from the student list`);
+    remove.addEventListener("click", async () => {
+      if (!confirm(`Remove ${fullName} (${p.email || p.groupName}) from the list and deactivate access? Their results will be kept.`)) return;
+      remove.disabled = save.disabled = true;
+      try {
+        await api(`/admin/students/${encodeURIComponent(p.uid)}`, "DELETE");
+        loadedStudents = loadedStudents.filter(student => student.uid !== p.uid);
+        updateMetrics(loadedStudents);
+        renderStudents();
+        msg.textContent = "Student removed from the list.";
+      } catch (error) {
+        msg.textContent = error.message || "Unable to remove student.";
+        remove.disabled = save.disabled = false;
+      }
+    });
+    const actions = document.createElement("div");
+    actions.className = "admin-row-actions";
+    actions.append(save, remove);
+    cell(row, "Action", actions);
 
     const details = document.createElement("details");
     details.className = "admin-profile-details";

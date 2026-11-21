@@ -107,15 +107,16 @@ router.get("/me", auth, async (req, res, next) => {
 router.get("/admin/students", auth, adminOnly, async (req, res, next) => {
   try {
     const snapshot = await db.collection("users").where("role", "==", "student").get();
-    res.json({ students: snapshot.docs.map(d => ({ ...profileView(d.data()), uid: d.id, canCreateTests: d.get("canCreateTests") === true, canWriteReviews: d.get("canWriteReviews") === true, ...learningSummary(d.data()) })) });
+    res.json({ students: snapshot.docs.filter(doc => !doc.get("archivedAt")).map(d => ({ ...profileView(d.data()), uid: d.id, canCreateTests: d.get("canCreateTests") === true, canWriteReviews: d.get("canWriteReviews") === true, ...learningSummary(d.data()) })) });
   } catch (e) { next(e); }
 });
-router.patch("/admin/students/:uid", auth, adminOnly, async (req, res, next) => {
+async function updateStudent(req, res, next) {
   try {
     if (req.params.uid === req.user.uid) return res.status(400).json({ error: "Cannot edit own admin account" });
+    const archive = req.method === "DELETE";
     const allowed = ["groupName", "approvalStatus", "isActive", "canCreateTests", "canWriteReviews"];
     const input = req.body || {};
-    if (!Object.keys(input).length || Object.keys(input).some(k => !allowed.includes(k)))
+    if ((!archive && !Object.keys(input).length) || Object.keys(input).some(k => archive || !allowed.includes(k)))
       return res.status(400).json({ error: "Invalid fields" });
     if ("groupName" in input && !valid(input.groupName, 70)) return res.status(400).json({error: "Invalid group"});
     if ("groupName" in input) input.groupName = input.groupName.trim();
@@ -130,11 +131,15 @@ router.patch("/admin/students/:uid", auth, adminOnly, async (req, res, next) => 
       const student = await tx.get(ref);
       if (!student.exists) return 404;
       if (student.data().role !== "student") return 403;
-      tx.update(ref, input);
+      if (student.get("archivedAt")) return archive ? 200 : 404;
+      tx.update(ref, archive ? {archivedAt: FieldValue.serverTimestamp(), isActive: false,
+        canCreateTests: false, canWriteReviews: false} : input);
       return 200;
     });
     if (result !== 200) return res.status(result).json({error: result === 404 ? "Student not found" : "Access denied"});
     res.json({ ok: true });
   } catch (e) { next(e); }
-});
+}
+router.patch("/admin/students/:uid", auth, adminOnly, updateStudent);
+router.delete("/admin/students/:uid", auth, adminOnly, updateStudent);
 module.exports = router;

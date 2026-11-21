@@ -105,6 +105,10 @@
     }
   }
   function renderGame(room, data) {
+    const previous = data.lastCompletedRound;
+    $("previousRound").hidden = !previous;
+    $("previousRound").textContent = previous
+      ? `${translate("Question")} ${previous.index+1} · ${translate("Correct answer")}: ${previous.answer}` : "";
     const active = ["question", "review"].includes(room.status);
     $("gameplay").hidden = !active;
     $("finalResult").hidden = room.status !== "finished" && !data.myResult;

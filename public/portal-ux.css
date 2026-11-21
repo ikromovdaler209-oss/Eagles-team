@@ -257,3 +257,6 @@
 .dashboard .reading-history{grid-column:1/-1}
 .portal-section-heading .portal-text-link,.admin-footer-links a{display:inline-flex;align-items:center;min-height:44px;text-decoration:none}
 .portal-section-heading .portal-text-link:hover,.admin-footer-links a:hover{text-decoration:underline;text-underline-offset:.2em}
+
+.admin-row-actions {display:flex;flex-wrap:wrap;gap:6px;}
+.admin-page .admin-remove-student {background:white;color:#9e2635;border:1px solid #b55c67;min-height:44px;}
