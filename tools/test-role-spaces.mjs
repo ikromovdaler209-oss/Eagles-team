@@ -33,7 +33,7 @@ for(const file of readdirSync(new URL('../public/', import.meta.url)).filter(f=>
 }
 assert.match(profile, /canCreateTests:\s*p\.canCreateTests === true/);
 assert.match(practice, /id="practiceBuilderCard"[^>]+hidden/);
-assert.match(practice, /Live Quiz/);
+assert.match(practice, /Live Practice/);
 assert.match(builder, /me\.profile\?\.canCreateTests === true/);
 assert.match(admin, /me\.status !== "admin"/);
 for (const file of ['public/site-nav.js','public/quiz-builder.js','public/admin.js','public/student-dashboard.js','server/account-routes.js']) {

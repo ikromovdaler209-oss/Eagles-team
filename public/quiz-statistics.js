@@ -15,7 +15,7 @@
     notice(t("Loading results..."));
     const {sessions, limited} = await request("/quiz-results/sessions");
     const host = $("statsSessions"); host.replaceChildren();
-    if (!sessions.length) host.append(el("p", t("No completed Live Quiz sessions yet.")));
+    if (!sessions.length) host.append(el("p", t("No completed Live Practice sessions yet.")));
     for (const session of sessions) {
       const button = el("button"); button.type = "button";
       button.append(el("strong", session.quizTitle), el("small", `${formatDate(session.completedAt)} · ${session.summary?.participantCount || 0} ${t("participants")}`));
@@ -84,8 +84,8 @@
       for (const q of questions) {
         const div = el("div"); div.className = "stats-answer-row";
         div.append(el("strong", `${q.index + 1}. ${q.text}`));
-        div.append(el("p", `${t("Correct answer")}: ${q.options[q.correctOption]}`));
-        div.append(el("p", `${t("Selected answer")}: ${q.selectedOption === null ? t("skipped") : q.options[q.selectedOption]}`));
+        div.append(el("p", `${t("Correct answer")}: ${q.correctText ?? q.options[q.correctOption]}`));
+        div.append(el("p", `${t("Selected answer")}: ${q.selectedText !== undefined ? q.selectedText || t("skipped") : q.selectedOption === null ? t("skipped") : q.options[q.selectedOption]}`));
         container.append(div);
       }
       notice("");

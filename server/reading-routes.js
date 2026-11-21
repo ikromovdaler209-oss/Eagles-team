@@ -25,7 +25,8 @@ router.get("/manage", async (req,res) => {
   editor(req);
   const query = req.profile.role === "admin" ? tests : tests.where("owner","==",req.user.uid);
   const rows = await query.select("title","mode","minutes","count","status","version").get();
-  res.json(rows.docs.map(d => meta(d.id,d.data())));
+  const list = rows.docs.map(d => meta(d.id,d.data()));
+  res.json(req.query?.live === "1" ? [meta(sample,starter), ...list.filter(t => t.status === "published")] : list);
 });
 router.get("/manage/:id", async (req,res) => {
   const t = (await tests.doc(req.params.id).get()).data();

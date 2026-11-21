@@ -58,13 +58,15 @@ const db={collection:path=>new Col(path),runTransaction:async fn=>{
   const writes=[];
   const tx={
     get:ref=>ref.get(),
+    set:(ref,value)=>writes.push(["set",ref.path,value]),
     create:(ref,value)=>writes.push(["create",ref.path,value]),
     update:(ref,value)=>writes.push(["update",ref.path,value]),
     delete:ref=>writes.push(["delete",ref.path])
   };
   const result=await fn(tx);
   for(const [op,key,value] of writes){
-    if(op==="create"){assert(!docs.has(key),`Duplicate create: ${key}`);docs.set(key,updateValues({},value));}
+    if(op==="set")docs.set(key,updateValues({},value));
+    else if(op==="create"){assert(!docs.has(key),`Duplicate create: ${key}`);docs.set(key,updateValues({},value));}
     else if(op==="update"){assert(docs.has(key),`Missing update: ${key}`);docs.set(key,updateValues(docs.get(key),value));}
     else docs.delete(key);
   }
@@ -99,8 +101,13 @@ const fakeAuth={verifyIdToken:async token=>({uid:token})};
 const rateLimitConfigs=[];
 const fakeRateLimit=options=>{rateLimitConfigs.push(options);return async (_req,_res,next)=>next();};
 const source=readFileSync(new URL("../server/live-lobby-routes.js", import.meta.url),"utf8");
+const readingModule={exports:{}};
+vm.runInNewContext(readFileSync(new URL("../server/live-reading.js",import.meta.url),"utf8"),{
+  module:readingModule,require:id=>id==="firebase-admin/firestore"?{Timestamp,FieldValue}:require("../server/"+id.slice(2)),
+  Date,console
+});
 vm.runInNewContext(source,{
-  require:id=>id==="express"?fakeExpress:id==="express-rate-limit"?fakeRateLimit:id==="node:crypto"?require("node:crypto"):
+  require:id=>id==="./live-reading"?readingModule.exports:id==="express"?fakeExpress:id==="express-rate-limit"?fakeRateLimit:id==="node:crypto"?require("node:crypto"):
     id==="firebase-admin/firestore"?{Timestamp,FieldValue}:
     id==="./firebase"?{auth:fakeAuth,db}:id==="./live-lobby-core"?core:
     id==="./quiz-results-store"?require("../server/quiz-results-store.js"):require(id),
@@ -253,3 +260,35 @@ assert.equal(docs.get(`quizResults/${solo}_student`).accuracy,100);
 console.log("Live Quiz v1.3.3 simulated gameplay: PASS (roles, start, privacy, deadlines, duplicate answers, review, finish, reconnect, no points)");
 for (const f of ["server/live-lobby-routes.js", "server/live-lobby-core.js", "public/quiz-live.js"])
   execFileSync("node", ["--check", new URL(`../${f}`, import.meta.url).pathname]);
+
+// Exercise both advances and the shared result archive through the real routes.
+const sample=readingModule.exports.starter;
+docs.set("readingTests/class-reading",{...sample,owner:"teacher",sections:[...sample.sections,...sample.sections],count:6});
+const hostReading=(uid)=>call("POST","/",uid,{mode:"reading",quizId:"class-reading"});
+assert.equal((await hostReading("student")).statusCode,403);
+const readingRoom=await hostReading("teacher");
+assert.equal(readingRoom.statusCode,201);
+const base="/"+readingRoom.body.roomId;
+for(const uid of ["student","other"])await call("POST","/join",uid,{pin:readingRoom.body.pin});
+await call("POST",base+"/start","teacher");
+const view=async uid=>(await call("GET",base,uid)).body;
+assert.equal((await view("student")).room.sectionCount,2);
+assert(!JSON.stringify(await view("student")).includes('"keys"'));
+const values=["","False","ten minutes"];
+const send=(uid,section,answers,revision,submit)=>call("POST",base+"/reading",uid,{section,answers,revision,submit});
+assert.equal((await send("student",0,values,0,false)).statusCode,200);
+assert.equal((await send("student",0,values,0,false)).body.revision,1);
+assert.equal((await view("student")).draft.answers[1],"False");
+assert.equal((await view("other")).draft,undefined);
+assert.equal((await send("student",0,values,1,true)).statusCode,200);
+assert.equal((await view("other")).room.questionIndex,0);
+assert.equal((await send("other",0,["","",""],0,true)).statusCode,200);
+assert.equal((await view("other")).room.questionIndex,1);
+assert.equal((await send("other",1,["","False",""],0,false)).statusCode,200);
+docs.get("liveSessions"+base).questionEndsAt=Timestamp.fromMillis(Date.now()-1);
+assert.equal((await send("student",1,values,0,true)).statusCode,409);
+assert.equal((await call("POST",base+"/advance","teacher",{section:1})).statusCode,200);
+assert.equal((await view("student")).myResult.correct,2);
+assert.equal((await view("other")).myResult.correct,1);
+assert.equal(docs.get("quizResults/"+readingRoom.body.roomId+"_other").skipped,5);
+console.log("Live Reading PASS: shared PIN, private drafts, retry, early advance, deadline and archived results.");

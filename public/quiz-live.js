@@ -49,6 +49,22 @@
       }
     } catch (err) { notice(err.message); }
   }
+  let materialRequest = 0;
+  async function loadMaterials() {
+    const generation = ++materialRequest;
+    const reading = $("practiceMode").value === "reading";
+    $("quizSelect").replaceChildren();
+    $("createButton").disabled = true;
+    const published = reading ? await request("/reading/manage?live=1") :
+      (await request("/quizzes")).quizzes.filter(q => q.status === "published" && q.questionCount > 0);
+    if (generation !== materialRequest) return;
+    for (const q of published) $("quizSelect").add(new Option(q.title,q.id));
+    if (!published.length) $("quizSelect").add(new Option(translate("No published tests yet"),""));
+    $("createButton").disabled = !published.length;
+    const selected = new URLSearchParams(location.search).get("quiz");
+    if (!reading && published.some(q => q.id === selected)) $("quizSelect").value = selected;
+  }
+  $("practiceMode").addEventListener("change",()=>loadMaterials().catch(err=>notice(err.message)));
   async function init() {
     try {
       const me = await request("/me");
@@ -62,21 +78,7 @@
       if (isHost) {
         $("hostPanel").hidden = false;
         try {
-          const data = await request("/quizzes");
-          const published = data.quizzes.filter(q => q.status === "published" && q.questionCount > 0);
-          $("quizSelect").replaceChildren();
-          if (!published.length) {
-            const option = el("option", translate("No published tests yet")); option.value = "";
-            $("quizSelect").append(option);
-          }
-          for (const q of published) {
-            const opt = el("option", q.title);
-            opt.value = q.id;
-            $("quizSelect").append(opt);
-          }
-          $("createButton").disabled = !published.length;
-          const selected = new URLSearchParams(location.search).get("quiz");
-          if (selected && published.some(q => q.id === selected)) $("quizSelect").value = selected;
+          await loadMaterials();
           await getMyRooms();
         } catch (err) { notice(err.message); }
       }
@@ -92,6 +94,7 @@
     $("liveLanding").hidden = true;
     $("activeRoom").hidden = false;
     await updateRoom();
+    if (!roomId || ["closed","expired","finished"].includes(currentRoom?.status)) return;
     updateTimer = setInterval(() => { if (!document.hidden) updateRoom(); }, 4000);
     clockTimer = setInterval(updateClock, 250);
   }
@@ -99,6 +102,10 @@
     if (!currentRoom || currentRoom.status !== "question" || !currentRoom.questionEndsAt) return;
     const remaining = Math.max(0, Math.ceil((Date.parse(currentRoom.questionEndsAt) - (Date.now() - clockOffset)) / 1000));
     $("gameTimer").textContent = `${remaining}s`;
+    if (remaining === 0 && currentRoom.mode === "reading") {
+      $("readingFields").disabled = true;
+      $("submitSection").disabled = true;
+    }
     // Local clock is display-only. Answer eligibility is always checked on the server.
     for (const button of $("answerGrid").querySelectorAll("button")) {
       if (remaining === 0 || currentAnswer || answerPending) button.disabled = true;
@@ -110,6 +117,11 @@
     $("previousRound").textContent = previous
       ? `${translate("Question")} ${previous.index+1} · ${translate("Correct answer")}: ${previous.answer}` : "";
     const active = ["question", "review"].includes(room.status);
+    const reading = room.mode === "reading";
+    $("liveReading").hidden = !reading || !active;
+    if(!reading || !active) LiveReading.reset();
+    $("answerNotice").hidden = reading;
+    $("startQuiz").textContent = translate(reading ? "Start Reading" : "Start Quiz");
     $("gameplay").hidden = !active;
     $("finalResult").hidden = room.status !== "finished" && !data.myResult;
     $("waitingPlayers").hidden = room.status !== "lobby";
@@ -119,11 +131,20 @@
     $("nextQuestion").textContent = translate(room.questionIndex === room.questionCount - 1 ? "Finish quiz" : "Next question");
     $("nextQuestion").disabled = busy;
 
+    if(reading && active){
+      $("roundReview").hidden=true;
+      $("answerGrid").hidden=true;
+      $("nextQuestion").textContent=translate(room.questionIndex+1===room.sectionCount?"Finish test":"Next passage");
+      LiveReading.render(room,data.draft,updateRoom);
+      $("gameTimer").textContent=room.status==="review"?translate("Time is up"):"";
+      updateClock();
+      return;
+    }
     if (room.status === "finished" || data.myResult) {
       const result = data.myResult;
       $("resultMessage").textContent = result
         ? `${translate("Your result")}: ${result.accuracy}% (${result.correct}/${result.total} ${translate("correct")}; ${result.wrong} ${translate("wrong")}; ${result.skipped} ${translate("skipped")}).`
-        : translate("The quiz has ended. Results will be available to participants.");
+        : translate("Practice has ended. Participants can view their results.");
       return;
     }
     if (!active || !room.question) return;
@@ -201,7 +222,7 @@
   async function hostAction(action) {
     if (busy || !roomId) return;
     setBusy(true);
-    try { await post(`/live-sessions/${encodeURIComponent(roomId)}/${action}`); await updateRoom(); }
+    try { await post(`/live-sessions/${encodeURIComponent(roomId)}/${action}`, action==="advance" && currentRoom?.mode==="reading"?{section:currentRoom.questionIndex}:{}); await updateRoom(); }
     catch (err) { notice(err.message); }
     finally { setBusy(false); }
   }
@@ -220,7 +241,7 @@
   $("createButton").addEventListener("click", async () => {
     if (busy) return;
     setBusy(true);
-    try { const data = await post("/live-sessions", {quizId: $("quizSelect").value}); await enterRoom(data.roomId); }
+    try { const data = await post("/live-sessions", {quizId: $("quizSelect").value, ...($("practiceMode").value === "reading" ? {mode:"reading"} : {})}); await enterRoom(data.roomId); }
     catch (err) { notice(err.message); }
     finally { setBusy(false); }
   });

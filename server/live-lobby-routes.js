@@ -59,9 +59,10 @@ const roomCreationLimiter = rateLimit({
 // Only the host/admin may create a room, and only from a published test they own.
 router.post("/", roomCreationLimiter, async (req, res, next) => {
   if (!requireHost(req, res)) return;
-  if (!cleanBody(req.body, ["quizId"]) || !validId(req.body.quizId)) return res.status(400).json({error: "Invalid test ID"});
+  const reading = req.body?.mode === "reading";
+  if (!cleanBody(req.body, reading ? ["quizId","mode"] : ["quizId"]) || !validId(req.body.quizId)) return res.status(400).json({error: "Invalid test ID"});
   try {
-    const quizRef = db.collection("quizzes").doc(req.body.quizId);
+    const quizRef = db.collection(reading ? "readingTests" : "quizzes").doc(req.body.quizId);
     for (let attempt = 0; attempt < 12; attempt++) {
       const pin = randomPin();
       const roomRef = db.collection("liveSessions").doc(crypto.randomUUID());
@@ -70,18 +71,21 @@ router.post("/", roomCreationLimiter, async (req, res, next) => {
       const expiresAt = Timestamp.fromMillis(Date.now() + ROOM_LIFETIME_MS);
       const result = await db.runTransaction(async tx => {
         const [quiz, occupied] = await Promise.all([tx.get(quizRef), tx.get(pinRef)]);
-        if (!quiz.exists) return {error: 404, message: "Test not found"};
-        const data = quiz.data();
-        if (req.profile.role !== "admin" && data.creatorUid !== req.user.uid)
+        const builtIn = reading && quizRef.id === require("./live-reading").starterId;
+        if (!quiz.exists && !builtIn) return {error: 404, message: "Test not found"};
+        const data = builtIn ? require("./live-reading").starter : quiz.data();
+        const owner = reading ? data.owner : data.creatorUid;
+        if (!builtIn && req.profile.role !== "admin" && owner !== req.user.uid)
           return {error: 403, message: "Only the test owner can host"};
-        if (data.status !== "published" || !Array.isArray(data.questions) || data.questions.length === 0)
+        const count = reading ? data.count : data.questions?.length;
+        if (data.status !== "published" || !count)
           return {error: 409, message: "Publish a test with questions first"};
         if (occupied.exists) return {collision: true};
-        tx.create(roomRef, {pin, quizId: quizRef.id, quizTitle: data.title, questionCount: data.questions.length,
-          hostUid: req.user.uid, quizCreatorUid: data.creatorUid, status: "lobby", participantCount: 0, aliases: [], createdAt: FieldValue.serverTimestamp(), expiresAt});
+        tx.create(roomRef, {pin, quizId: quizRef.id, quizTitle: data.title, questionCount: count, ...(reading ? {mode:"reading",sectionCount:data.sections.length} : {}),
+          hostUid: req.user.uid, quizCreatorUid: owner, status: "lobby", participantCount: 0, aliases: [], createdAt: FieldValue.serverTimestamp(), expiresAt});
         tx.create(pinRef, {roomId: roomRef.id, expiresAt});
         // Freeze the test for later gameplay. Never expose this document through a participant endpoint.
-        tx.create(snapshotRef, {questions: data.questions, capturedAt: FieldValue.serverTimestamp()});
+        tx.create(snapshotRef, {...(reading ? {sections:data.sections,minutes:data.minutes} : {questions:data.questions}), capturedAt: FieldValue.serverTimestamp()});
         return {roomId: roomRef.id, pin};
       });
       if (result.collision) continue;
@@ -145,7 +149,7 @@ router.get("/:id", validRoom, async (req, res, next) => {
     // Recover if Render stopped after committing the last answer but before
     // advancing. Use the existing room poll, without any process-local timer.
     if (data.status === "question" && effectiveStatus(data) === "review" &&
-        await advanceIfComplete(roomRef, data.currentQuestionIndex, data.participantCount)) {
+        (data.mode === "reading" ? await require("./live-reading").ifComplete(db,roomRef,data.currentQuestionIndex,data.participantCount) : await advanceIfComplete(roomRef, data.currentQuestionIndex, data.participantCount))) {
       data = (await roomRef.get()).data();
     }
     // Only a host or participant can trigger recovery of an unfinished archive.
@@ -158,7 +162,7 @@ router.get("/:id", validRoom, async (req, res, next) => {
     const now = Date.now();
     const room = publicSession(doc.id, data, isHost, member?.get("alias") || null, now);
     const response = {room, serverTime: new Date(now).toISOString()};
-    if (room.status === "review" && Number.isInteger(data.currentQuestionIndex)) {
+    if (data.mode !== "reading" && room.status === "review" && Number.isInteger(data.currentQuestionIndex)) {
       const quizSnapshot = await roomRef.collection("private").doc("quiz").get();
       const question = quizSnapshot.get("questions")?.[data.currentQuestionIndex];
       if (!question) return res.status(500).json({error: "Quiz snapshot unavailable"});
@@ -166,6 +170,7 @@ router.get("/:id", validRoom, async (req, res, next) => {
     }
     if (data.lastCompletedRound) response.lastCompletedRound = data.lastCompletedRound;
     if (member?.exists) {
+      if (data.mode === "reading" && member.get("readingDraft")?.section === data.currentQuestionIndex) response.draft = member.get("readingDraft");
       if (member.get("lastAnsweredIndex") === data.currentQuestionIndex && room.status !== "lobby") {
         response.myAnswer = {selectedOption: member.get("lastSelectedOption")};
         if (room.status === "review" || room.status === "finished")
@@ -246,6 +251,10 @@ router.post("/:id/start", validRoom, async (req, res, next) => {
       if (!hostOf(room, req)) return {status: 403, error: "Host access required"};
       if (room.get("status") !== "lobby" || isExpired(room.data())) return {status: 409, error: "Room is no longer in the lobby"};
       if ((room.get("participantCount") || 0) < 1) return {status: 409, error: "Wait for at least one participant"};
+      if (room.get("mode") === "reading") {
+        tx.update(roomRef,{...require("./live-reading").roundUpdate(quiz.data(),0,Date.now()), startedAt:FieldValue.serverTimestamp()});
+        return {ok:true};
+      }
       const questions = quiz.get("questions");
       if (!Array.isArray(questions) || questions.length !== room.get("questionCount") || !questions.length)
         return {status: 500, error: "Quiz snapshot unavailable"};
@@ -319,6 +328,7 @@ router.post("/:id/answer", validRoom, async (req, res, next) => {
       ]);
       if (!room.exists) return {status: 404, error: "Room not found"};
       if (!member.exists || room.get("hostUid") === req.user.uid) return {status: 403, error: "Not a player in this room"};
+      if (room.get("mode") === "reading") return {status:409,error:"Question is closed"};
       if (previous.exists) return {ok: true, alreadySubmitted: true,
         players: room.get("currentQuestionIndex") === req.body.questionIndex && room.get("status") === "question" ? room.get("participantCount") : 0};
       const now = Date.now();
@@ -343,7 +353,7 @@ router.post("/:id/answer", validRoom, async (req, res, next) => {
 });
 
 router.post("/:id/advance", validRoom, async (req, res, next) => {
-  if (!cleanBody(req.body, [])) return res.status(400).json({error: "Invalid request"});
+  if (!cleanBody(req.body, ["section"])) return res.status(400).json({error: "Invalid request"});
   try {
     const roomRef = db.collection("liveSessions").doc(req.params.id);
     const quizRef = roomRef.collection("private").doc("quiz");
@@ -356,6 +366,10 @@ router.post("/:id/advance", validRoom, async (req, res, next) => {
         return {ok: true, finished: true}; // retry archival after a transient write failure
       if (room.get("status") !== "question" || effectiveStatus(room.data(), now) !== "review")
         return {status: 409, error: "Wait until the question timer ends"};
+      if (room.get("mode") === "reading") {
+        if (req.body.section !== room.get("currentQuestionIndex")) return {status:409,error:"Question is closed"};
+        return require("./live-reading").advance(tx,roomRef,room,quiz.data(),now);
+      }
       return nextRound(tx, roomRef, room, quiz, now);
     });
     if (result.status) return res.status(result.status).json({error: result.error});
@@ -370,5 +384,11 @@ router.post("/:id/advance", validRoom, async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
+router.post("/:id/reading", validRoom, async (req,res,next) => {
+  try {
+    const result = await require("./live-reading").save(db,db.collection("liveSessions").doc(req.params.id),req.user.uid,req.body);
+    res.status(result.status || 200).json(result);
+  } catch(error) { next(error); }
+});
 module.exports = router;
 module.exports.authorize = authorize;

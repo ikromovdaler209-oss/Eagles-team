@@ -148,6 +148,13 @@ router.get("/sessions/:id/participants/:uid/answers", async (req, res, next) => 
       roomRef.collection("answers").where("uid", "==", req.params.uid).get()
     ]);
     const answers = new Map(answersSnap.docs.map(item => [item.get("questionIndex"), item.data()]));
+    if (doc.get("mode") === "reading") {
+      const questions = questionsSnap.get("sections").flatMap(s => s.questions).map((q,index) => ({
+        index,text:q.prompt,correctText:q.keys.join(" / "),selectedText:answers.get(index)?.textAnswer || "",
+        outcome:answers.has(index) ? (answers.get(index).correct ? "correct" : "wrong") : "skipped"
+      }));
+      return res.json({questions});
+    }
     const questions = (questionsSnap.get("questions") || []).map((q, index) => ({
       index, text: q.text, options: q.options, correctOption: q.correctOption,
       selectedOption: answers.get(index)?.selectedOption ?? null,

@@ -18,6 +18,7 @@ function effectiveStatus(data, now = Date.now()) {
 function publicSession(id, data, isHost, alias = null, now = Date.now()) {
   return {
     id,
+    mode:data.mode || "quiz", sectionCount:data.sectionCount || null,
     pin: data.pin,
     quizTitle: data.quizTitle,
     questionCount: data.questionCount,

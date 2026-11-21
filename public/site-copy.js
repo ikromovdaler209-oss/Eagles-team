@@ -652,3 +652,22 @@ Object.assign(window.eaglesCopy,{
   "Remove question":["Удалить вопрос","Savolni olib tashlash"],"draft":["Черновик","Qoralama"],"published":["Опубликован","E’lon qilingan"],
   "Saved":["Сохранено","Saqlandi"]
 });
+Object.assign(window.eaglesCopy,{
+  "Live Practice":["Совместная практика","Guruh mashg‘uloti"],
+  "Live Practice Lobby":["Комнаты совместной практики","Guruh mashg‘uloti xonalari"],
+  "EAGLES TEAM · LIVE PRACTICE":["EAGLES TEAM · СОВМЕСТНАЯ ПРАКТИКА","EAGLES TEAM · GURUH MASHG‘ULOTI"],
+  "Practice mode":["Режим занятия","Mashg‘ulot turi"],
+  "Quiz":["Тест","Test"],"Start Reading":["Начать чтение","O‘qishni boshlash"],
+  "Submit section":["Сдать раздел","Bo‘limni topshirish"],
+  "Section submitted":["Раздел сдан","Bo‘lim topshirildi"],
+  "Next passage":["Следующий текст","Keyingi matn"],
+  "Completed Live Practice sessions and question statistics.":["Завершённые совместные занятия и статистика вопросов.","Yakunlangan guruh mashg‘ulotlari va savollar statistikasi."],
+  "Create quizzes for upcoming Live Practice sessions.":["Создавайте тесты для совместных занятий.","Guruh mashg‘ulotlari uchun testlar yarating."]
+});
+
+window.eaglesCopy["No completed Live Practice sessions yet."] = ["Завершённых совместных занятий пока нет.","Hozircha yakunlangan guruh mashg‘ulotlari yo‘q."];
+Object.assign(window.eaglesCopy,{
+  "Practice finished":["Занятие завершено","Mashg‘ulot yakunlandi"],
+  "View practice history →":["История совместных занятий →","Guruh mashg‘ulotlari tarixi →"],
+  "Practice has ended. Participants can view their results.":["Занятие завершено. Участники могут посмотреть свои результаты.","Mashg‘ulot yakunlandi. Ishtirokchilar natijalarini ko‘rishlari mumkin."]
+});

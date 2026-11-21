@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Live Quiz — Eagles Team</title>
+  <title>Live Practice — Eagles Team</title>
   <meta name="description" content="Join an Eagles Team live quiz using a PIN code.">
   <link rel="stylesheet" href="practice.css"><script src="/site-nav-hint.js"></script><link rel="stylesheet" href="site-nav.css"><link rel="stylesheet" href="quiz-live.css">
   <script src="site-copy.js" defer></script><script src="site-i18n.js" defer></script>
@@ -20,7 +20,7 @@
   </header>
   <p id="practiceGate" class="practice-access-notice" role="status">Checking account access...</p>
   <main class="live-shell">
-    <div class="live-heading"><p class="eyebrow">EAGLES TEAM · LIVE QUIZ</p><h1>Live Quiz Lobby</h1>
+    <div class="live-heading"><p class="eyebrow">EAGLES TEAM · LIVE PRACTICE</p><h1>Live Practice Lobby</h1>
       <p>Join a live classroom test with a six-digit PIN, or create a room from a published test.</p></div>
     <p id="liveMessage" class="live-notice" role="status" aria-live="polite"></p>
     <section class="live-layout" id="liveLanding" hidden>
@@ -31,6 +31,7 @@
         <p class="live-help">Only approved Eagles Team accounts can join. A room is limited to 200 participants.</p>
       </div>
       <div class="live-panel" id="hostPanel" hidden><h2>Host a room</h2>
+        <label for="practiceMode">Practice mode</label><select id="practiceMode"><option value="quiz">Quiz</option><option value="reading">Reading</option></select>
         <label for="quizSelect">Published test</label><select id="quizSelect"></select>
         <button type="button" id="createButton">Create room</button>
         <p class="live-help">Only published tests you own can be launched. Admins may host any published test.</p>
@@ -38,7 +39,7 @@
       </div>
     </section>
     <section class="live-panel live-room" id="activeRoom" hidden>
-      <div class="live-room-header"><div><p class="eyebrow">WAITING ROOM</p><h2 id="activeTitle">Live Quiz</h2></div><span id="roomStatus" class="live-state">Lobby</span></div>
+      <div class="live-room-header"><div><p class="eyebrow">WAITING ROOM</p><h2 id="activeTitle">Live Practice</h2></div><span id="roomStatus" class="live-state">Lobby</span></div>
       <div class="live-facts"><div><small>Room PIN</small><strong id="activePin">------</strong></div>
         <div><small>Players</small><strong id="activeCount">0</strong></div>
         <div><small>Questions</small><strong id="activeQuestions">0</strong></div></div>
@@ -54,6 +55,10 @@
       <section id="gameplay" class="live-game" aria-label="Live quiz question" hidden>
         <div class="live-game-meta"><span id="gameProgress"></span><strong id="gameTimer" role="timer" aria-live="off"></strong></div>
         <h3 id="gameQuestion"></h3>
+        <section id="liveReading" hidden>
+          <div class="live-reading-columns"><article id="livePassage"></article><fieldset id="readingFields" aria-label="Questions"></fieldset></div>
+          <button type="button" id="submitSection">Submit section</button><p id="readingSaveState" role="status"></p>
+        </section>
         <div id="answerGrid" class="live-answers" role="group" aria-label="Answer choices"></div>
         <p id="answerNotice" class="live-help" aria-live="polite"></p>
         <div id="roundReview" class="live-review" hidden>
@@ -63,12 +68,12 @@
         </div>
       </section>
       <section id="finalResult" class="live-review" hidden>
-        <h3>Quiz finished</h3><p id="resultMessage"></p>
-        <p class="live-help"><a href="/student-dashboard.html" id="liveHistoryLink">View quiz history →</a><a href="/quiz-statistics.html" id="liveHostStatsLink" hidden>Results &amp; Statistics →</a></p>
+        <h3>Practice finished</h3><p id="resultMessage"></p>
+        <p class="live-help"><a href="/student-dashboard.html" id="liveHistoryLink">View practice history →</a><a href="/quiz-statistics.html" id="liveHostStatsLink" hidden>Results &amp; Statistics →</a></p>
       </section>
       <a href="/practice.html" class="live-back">Back to Practice</a>
     </section>
   </main>
-  <script src="account-session.js" defer></script><script src="quiz-live.js" defer></script><script src="site-nav.js" defer></script>
+  <script src="account-session.js" defer></script><script src="live-reading.js" defer></script><script src="quiz-live.js" defer></script><script src="site-nav.js" defer></script>
 </body>
 </html>
