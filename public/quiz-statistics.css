@@ -25,3 +25,16 @@
 .stats-metrics>div{min-width:0;overflow-wrap:anywhere;border:1px solid #e5e7ed;}
 .stats-metrics strong{font-variant-numeric:tabular-nums;}
 @media(max-width:1060px){.stats-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* v1.5.3 — statistics lists and tables stay usable on narrow screens. */
+.stats-layout,.stats-layout > *, .stats-participants { min-width:0; }
+.stats-session-list button { width:100%; min-height:52px; overflow-wrap:anywhere; }
+.stats-session-list button:focus-visible { outline:3px solid #bf5161; outline-offset:2px; }
+.stats-participants { -webkit-overflow-scrolling:touch; }
+.stats-participants :is(td,th) { overflow-wrap:anywhere; }
+.stats-participants table { min-width:550px; }
+.stats-questions { overflow-wrap:anywhere; }
+@media(max-width:600px) {
+  .stats-participants table { min-width:500px; }
+  .stats-session-list { max-height:420px; }
+}

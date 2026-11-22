@@ -89,3 +89,34 @@ html:not(.eagles-practice-enabled) body#body2 .speaking-wrap,
 html:not(.eagles-practice-enabled) body.speaking-page .speaking-wrap,
 html:not(.eagles-practice-enabled) body.speaking-page #myh1 { visibility: hidden; }
 .practice-access-notice { max-width: 750px; margin: 5rem auto; padding: 1.5rem; text-align: center; }
+
+/* v1.5.3 — shared navigation and keyboard/touch polish */
+.site-header { min-width:0; }
+.site-brand { min-width:0; max-width:100%; overflow-wrap:anywhere; text-decoration:none!important; }
+.site-brand .site-mark { flex:none; }
+.site-nav a:not(.account-cta):not([href="join.html"]):focus-visible,
+.site-header .site-toggle:focus-visible,
+.site-header .site-brand:focus-visible { outline:3px solid #ffb1b9; outline-offset:3px; border-radius:6px; }
+.site-nav a:is([href="join.html"], .account-cta) {
+  transition:background-color .16s ease, box-shadow .16s ease;
+  line-height:1.2;
+}
+.site-nav a:is([href="join.html"], .account-cta):hover { background:#a91625; text-decoration:none; }
+.site-nav a:is([href="join.html"], .account-cta):focus-visible { outline:3px solid #ffb1b9; outline-offset:3px; }
+.site-toggle:hover { background:#383838; }
+@media(max-width:72em) {
+  .site-nav { z-index:30; max-height:min(75vh,calc(100dvh - 110px)); overscroll-behavior:contain; }
+  .site-nav a { border-radius:8px; }
+  .site-nav a:is(:hover,[aria-current]) { background:#292929; }
+  .site-nav a:is([href="join.html"],.account-cta) { margin-top:4px; }
+  .site-nav a:is([href="join.html"],.account-cta):is(:hover,[aria-current]) { background:#a91625; }
+  .site-nav a::after { content:none; }
+}
+@media(max-width:420px) {
+  .site-header { gap:8px; padding:10px; }
+  .site-brand { gap:8px; font-size:clamp(13px,4vw,16px); }
+  .site-mark { width:32px; height:32px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .site-nav a:is([href="join.html"], .account-cta) { transition:none; }
+}

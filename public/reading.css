@@ -28,3 +28,18 @@ body{margin:0;background:#f6f6f4;color:#202024;font-family:Inter,system-ui,sans-
 @media(max-width:740px){.reading .split{display:block}.reading .mobile-tab{display:inline-flex}.reading .split[data-tab=question] .text-pane,.reading .split[data-tab=text] .question-pane{display:none}}
 
 .reading .back{display:inline-flex;align-items:center;min-height:44px;text-decoration:none}.reading .back:hover{text-decoration:underline}
+
+/* v1.5.3 — readable exam navigation and accessible controls. */
+.reading > header { display:flex; flex-direction:column; align-items:flex-start; gap:11px; margin-bottom:21px; }
+.reading > header h1 { margin:0; line-height:1.2; font-size:clamp(27px,4vw,42px); }
+.reading > header .back { display:inline-flex;align-items:center;justify-content:center;min-height:44px;
+  padding:9px 15px;border:1px solid #d6bbc0;border-radius:9px;background:#fff5f6;
+  color:#8c1f31;text-decoration:none; }
+.reading > header .back:hover { border-color:#a62438;background:#ffecef;text-decoration:none; }
+.reading :is(button,input,select,textarea):disabled { cursor:not-allowed; }
+.reading .paper,.reading .item { overflow-wrap:anywhere; }
+@media(max-width:600px) {
+  .reading { margin-top:22px; }
+  .reading .numbers { display:flex; flex-wrap:wrap;gap:6px; }
+  .reading .numbers button { flex:0 0 auto; }
+}

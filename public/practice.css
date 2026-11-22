@@ -48,3 +48,31 @@ a{text-decoration:none;color:inherit}
 @media(max-width:690px){.practice-shell{width:min(94%,1180px);margin:17px auto 58px}.practice-hero{padding:30px 24px;min-height:238px;border-radius:19px}.practice-hero-graphic{display:none}.practice-area{margin-top:35px}.practice-section-heading{align-items:start;flex-direction:column;gap:8px}.practice-section-heading>p{text-align:left;max-width:none}.practice-skill-grid,.practice-live-grid{grid-template-columns:1fr}.skill-card{padding:21px;min-height:209px}.practice-live-grid .card{min-height:184px;padding:21px}}
 @media(max-width:400px){.practice-status{font-size:9px;padding:6px 8px}.practice-card-top{gap:8px}.skill-card{padding:19px}}
 @media(prefers-reduced-motion:reduce){.card,.practice-hero-link,.action>span{transition:none}.card:is(:hover,:focus-visible){transform:none}.card:hover .action>span{transform:none}}
+
+/* v1.5.3 — avoid a vacant grid cell when Test Builder is permission-gated. */
+@media(min-width:691px) {
+  .practice-live-grid:has(#practiceBuilderCard[hidden]) > .practice-live-card {
+    grid-column:1 / -1;
+    min-height:155px;
+    flex-direction:row;
+    align-items:center;
+    gap:24px;
+  }
+  .practice-live-grid:has(#practiceBuilderCard[hidden]) .practice-live-copy { flex:1; }
+  .practice-live-grid:has(#practiceBuilderCard[hidden]) .practice-live-card > .action {
+    margin:0 0 0 auto;
+    white-space:nowrap;
+  }
+}
+.practice-hero-link { min-height:44px; text-decoration:none; }
+.practice-hero-link:active { background:#ffffff2e; }
+.skill-card:focus-visible,.practice-live-grid .card:focus-visible { outline:3px solid #b5273d; outline-offset:3px; }
+.skill-card .action,.practice-live-grid .action { line-height:1.45; }
+@media(max-width:900px) {
+  .practice-live-grid:has(#practiceBuilderCard[hidden]) > .practice-live-card { flex-wrap:wrap; }
+  .practice-live-grid:has(#practiceBuilderCard[hidden]) .practice-live-card > .action { width:100%; margin:0; }
+}
+@media(max-width:690px) {
+  .practice-live-grid .card { gap:14px; }
+  .practice-section-heading h2 { overflow-wrap:anywhere; }
+}

@@ -46,3 +46,18 @@
 .speaking-feedback{border-left:3px solid #2a8767;padding-left:12px;white-space:pre-wrap}
 @media(max-width:650px){.speaking-topline{margin-top:22px}.speaking-wrap{margin-top:15px;padding:22px 17px}.speaking-history{padding:20px 17px}.speaking-recorder-heading{flex-wrap:wrap}.speaking-recorder-clock{order:-1}.speaking-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.speaking-controls .speaking-primary{grid-column:1/-1}.speaking-submit{width:100%}.speaking-history-head{align-items:center}}
 @media(prefers-reduced-motion:reduce){.speaking-microphone.is-live .speaking-mic-symbol{animation:none}}
+
+/* v1.5.3 — recorder controls remain readable and usable on phones. */
+.speaking-topline a { display:inline-flex;align-items:center;min-height:44px;padding:8px 13px;
+  border-radius:9px;border:1px solid #e2c4ca;background:#fff7f8; }
+.speaking-topline a:hover { border-color:#b21d36;background:#fff0f2;text-decoration:none; }
+.speaking-controls { align-items:stretch; }
+.speaking-controls .speaking-btn { line-height:1.4; }
+.speaking-recorder,.speaking-history { min-width:0; overflow-wrap:anywhere; }
+.speaking-page .speaking-btn:focus-visible,.speaking-topline a:focus-visible { outline:3px solid #b72b43;outline-offset:3px; }
+@media(max-width:600px) {
+  .speaking-topline { margin-top:16px; }
+  .speaking-controls { display:grid; grid-template-columns:minmax(0,1fr); gap:9px; }
+  .speaking-controls .speaking-btn { width:100%; margin:0; }
+  .speaking-submit { width:100%; }
+}
