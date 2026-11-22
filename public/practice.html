@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Practice | Eagles Community</title>
-  <meta name="description" content="Practice IELTS Writing and Speaking at Eagles Community.">
+  <meta name="description" content="Explore IELTS Reading, Writing, Speaking, Listening preview and Live Quiz at Eagles Team.">
   <link rel="stylesheet" href="practice.css">
 <script src="/site-nav-hint.js"></script><link rel="stylesheet" href="site-nav.css">
 </head>
@@ -26,15 +26,63 @@
     </nav>
 </header>
   <p id="practiceGate" class="practice-access-notice" role="status">Checking account access...</p>
-  <main>
-    <div class="intro"><span class="eyebrow">EAGLES COMMUNITY</span><h1>Choose your practice</h1><p>Build your English skills, one section at a time.</p></div>
-    <section class="cards" aria-label="Practice sections">
-      <a class="card" href="Writing.html"><span class="symbol">✎</span><h2>Writing</h2><p>Practice written responses and improve your writing skills.</p><span class="action">Start practice →</span></a>
-      <a class="card" href="speaking.html"><span class="symbol">◉</span><h2>Speaking</h2><p>Improve your speaking fluency and confidence.</p><span class="action">Start practice →</span></a>
-      <a class="card" href="reading.html"><span class="symbol">▤</span><h2>Reading</h2><p>IELTS Academic Reading</p><span class="action">Start practice →</span></a>
-      <a class="card" href="listening.html"><span class="symbol">♫</span><h2>Listening</h2><p>Explore the upcoming IELTS Listening interface.</p><span class="action">View preview →</span></a>
-      <a class="card" href="quiz-live.html"><span class="symbol">◷</span><h2>Live Practice</h2><p>Enter a PIN to join a live classroom test, or host a room if you have permission.</p><span class="action">Open Live Lobby →</span></a>
-      <a class="card" id="practiceBuilderCard" href="quiz-builder.html" hidden><span class="symbol">▣</span><h2>Test Builder</h2><p>Create and manage live tests.</p><span class="action">Manage tests →</span></a>
+  <main class="practice-shell" id="practiceContent">
+    <section class="practice-hero" aria-labelledby="practiceTitle">
+      <div class="practice-hero-copy">
+        <p class="eyebrow">EAGLES COMMUNITY · LEARNING ZONE</p>
+        <h1 id="practiceTitle">Choose your practice</h1>
+        <p>Build your English skills, one section at a time.</p>
+        <a class="practice-hero-link" href="#practiceAreasTitle">Explore practice areas <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="practice-hero-graphic" aria-hidden="true">
+        <span class="practice-graphic-ring"></span>
+        <span class="practice-graphic-icon">E</span>
+        <span class="practice-graphic-caption">READ · LISTEN · WRITE · SPEAK</span>
+      </div>
+    </section>
+
+    <section class="practice-area" aria-labelledby="practiceAreasTitle">
+      <div class="practice-section-heading">
+        <div><p class="eyebrow">SKILL DEVELOPMENT</p><h2 id="practiceAreasTitle">IELTS practice areas</h2></div>
+        <p>Choose a section to continue learning.</p>
+      </div>
+      <div class="cards practice-skill-grid">
+        <a class="card skill-card" href="reading.html">
+          <div class="practice-card-top"><span class="symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5C9 4.5 5.5 4.5 2.5 6v12c3-1.5 6.5-1.5 9.5.5 3-2 6.5-2 9.5-.5V6c-3-1.5-6.5-1.5-9.5.5Z"/><path d="M12 6.5v12"/></svg></span><span class="practice-status practice-status-live">Available</span></div>
+          <div><h3>Reading</h3><p>IELTS Academic Reading</p></div><span class="action">Start practice <span aria-hidden="true">→</span></span>
+        </a>
+        <a class="card skill-card" href="listening.html">
+          <div class="practice-card-top"><span class="symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15V11a8 8 0 0 1 16 0v4"/><rect x="2.5" y="13" width="4" height="7" rx="2"/><rect x="17.5" y="13" width="4" height="7" rx="2"/></svg></span><span class="practice-status practice-status-preview">Preview mode</span></div>
+          <div><h3>Listening</h3><p>Explore the upcoming IELTS Listening interface.</p></div><span class="action">View preview <span aria-hidden="true">→</span></span>
+        </a>
+        <a class="card skill-card" href="Writing.html">
+          <div class="practice-card-top"><span class="symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m14 5 5 5M3 21l5-1 12-12a3.5 3.5 0 0 0-5-5L3 15v6Z"/></svg></span><span class="practice-status practice-status-live">Available</span></div>
+          <div><h3>Writing</h3><p>Practice written responses and improve your writing skills.</p></div><span class="action">Start practice <span aria-hidden="true">→</span></span>
+        </a>
+        <a class="card skill-card" href="speaking.html">
+          <div class="practice-card-top"><span class="symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="13" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5m-5 0h10"/></svg></span><span class="practice-status practice-status-limited">Recording preview</span></div>
+          <div><h3>Speaking</h3><p>Improve your speaking fluency and confidence.</p></div><span class="action">Start practice <span aria-hidden="true">→</span></span>
+        </a>
+      </div>
+    </section>
+
+    <section class="practice-area" aria-labelledby="practiceLiveTitle">
+      <div class="practice-section-heading">
+        <div><p class="eyebrow">CLASSROOM PRACTICE</p><h2 id="practiceLiveTitle">Live Quiz &amp; test tools</h2></div>
+        <p>Join your class or manage a test you created.</p>
+      </div>
+      <div class="cards practice-live-grid">
+        <a class="card practice-live-card" href="quiz-live.html">
+          <span class="practice-live-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><path d="M2 20v-2a6 6 0 0 1 12 0v2M17 4a4 4 0 0 1 0 8m1 3a5 5 0 0 1 4 5"/></svg></span>
+          <div class="practice-live-copy"><h3>Live Practice</h3><p>Enter a PIN to join a live classroom test, or host a room if you have permission.</p></div>
+          <span class="action">Open Live Lobby <span aria-hidden="true">→</span></span>
+        </a>
+        <a class="card practice-builder-card" id="practiceBuilderCard" href="quiz-builder.html" hidden>
+          <span class="practice-live-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h8l4 4v14H5V3h2Zm8 0v5h5M9 13h6m-6 4h6"/></svg></span>
+          <div class="practice-live-copy"><h3>Test Builder</h3><p>Create and manage live tests.</p></div>
+          <span class="action">Manage tests <span aria-hidden="true">→</span></span>
+        </a>
+      </div>
     </section>
   </main>
 
