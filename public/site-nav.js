@@ -3,7 +3,7 @@
   const button = document.querySelector('.site-toggle');
   if (!nav || !button) return;
 
-  const restrictedPage = ['practice.html', 'Writing.html', 'speaking.html', 'quiz-live.html', 'reading.html']
+  const restrictedPage = ['practice.html', 'Writing.html', 'speaking.html', 'quiz-live.html', 'reading.html', 'listening.html']
     .includes(decodeURIComponent(location.pathname.split('/').pop()));
   const gateMessage = document.getElementById('practiceGate');
   const translate = label => window.eaglesTranslate?.(label) || label;

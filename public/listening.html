@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Preview the future IELTS Listening practice interface at Eagles Team.">
+  <title>IELTS Listening Preview | Eagles Team</title>
+  <script src="/site-nav-hint.js"></script>
+  <link rel="stylesheet" href="site-nav.css">
+  <link rel="stylesheet" href="listening.css">
+  <script src="site-copy.js" defer></script>
+  <script src="site-i18n.js" defer></script>
+  <script src="site-nav.js" defer></script>
+  <script src="listening.js" defer></script>
+</head>
+<body data-practice-page>
+  <header class="site-header">
+    <a class="site-brand" href="Eagles-homepage.html"><span class="site-mark" aria-hidden="true">E</span>Eagles-Community</a>
+    <button class="site-toggle" type="button" aria-controls="mainNav" aria-expanded="false" aria-label="Open menu">☰</button>
+    <nav id="mainNav" class="site-nav" aria-label="Main navigation">
+      <a href="Eagles-homepage.html">Home</a>
+      <a href="Eagles.courses.html">Courses</a>
+      <a href="Eagles-teachers.html">Teachers</a>
+      <a href="Eagles-about.html">About</a>
+      <a href="Eagles-contacts.html">Contacts</a>
+      <a href="practice.html" aria-current="location">Practice</a>
+      <a href="join.html">Join Us</a>
+    </nav>
+  </header>
+  <p id="practiceGate" class="practice-access-notice" role="status">Checking account access...</p>
+  <main class="listening-shell" id="listeningPreview">
+    <a class="listening-back" href="practice.html"><span aria-hidden="true">←</span> Back to Practice</a>
+
+    <section class="listening-hero" aria-labelledby="listeningTitle">
+      <div class="listening-hero-text">
+        <p class="listening-eyebrow">EAGLES TEAM / IELTS PRACTICE</p>
+        <span class="listening-state">UI PREVIEW · NOT AN ACTIVE TEST</span>
+        <h1 id="listeningTitle">IELTS Listening</h1>
+        <p class="listening-lead">Explore how Listening practice will look. Audio, marking and progress tracking will be added in a later update.</p>
+        <div class="listening-metrics" aria-label="Planned test format">
+          <div><strong>04</strong><span>Sections</span></div>
+          <div><strong>40</strong><span>Questions in a full test</span></div>
+          <div><strong>30:00</strong><span>Illustrative timer</span></div>
+        </div>
+      </div>
+      <div class="listening-hero-art" aria-hidden="true">
+        <div class="listening-headphone-outline">
+          <svg viewBox="0 0 160 160" fill="none" role="img" aria-hidden="true">
+            <path d="M32 88V76C32 49 54 27 80 27s48 22 48 49v12" stroke="currentColor" stroke-width="11" stroke-linecap="round"/>
+            <rect x="23" y="79" width="29" height="47" rx="12" stroke="currentColor" stroke-width="9"/>
+            <rect x="108" y="79" width="29" height="47" rx="12" stroke="currentColor" stroke-width="9"/>
+            <path d="M126 122c-6 18-20 23-39 23h-9" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="listening-wave-bars">
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div class="listening-art-caption">A clear space to listen and focus.</div>
+      </div>
+    </section>
+
+    <section class="listening-preview" aria-labelledby="workspaceTitle">
+      <div class="listening-preview-top">
+        <div>
+          <p class="listening-eyebrow">WORKSPACE PREVIEW</p>
+          <h2 id="workspaceTitle">Get familiar with the exam layout</h2>
+          <p>Choose a section to explore sample question layouts. This preview does not collect or save answers.</p>
+        </div>
+        <span class="listening-preview-tag">Preview mode</span>
+      </div>
+
+      <div class="listening-section-tabs" role="tablist" aria-label="Listening sections">
+        <button type="button" class="listening-tab is-active" role="tab" id="listeningTab1" data-listening-tab="1" aria-controls="listeningPanel1" aria-selected="true" tabindex="0"><span>Section 01</span><small>Everyday conversation</small></button>
+        <button type="button" class="listening-tab" role="tab" id="listeningTab2" data-listening-tab="2" aria-controls="listeningPanel2" aria-selected="false" tabindex="-1"><span>Section 02</span><small>Social context</small></button>
+        <button type="button" class="listening-tab" role="tab" id="listeningTab3" data-listening-tab="3" aria-controls="listeningPanel3" aria-selected="false" tabindex="-1"><span>Section 03</span><small>Academic discussion</small></button>
+        <button type="button" class="listening-tab" role="tab" id="listeningTab4" data-listening-tab="4" aria-controls="listeningPanel4" aria-selected="false" tabindex="-1"><span>Section 04</span><small>Academic lecture</small></button>
+      </div>
+
+      <div class="listening-workspace">
+        <aside class="listening-audio-panel" aria-label="Audio player preview">
+          <div class="listening-audio-title"><span class="listening-audio-icon" aria-hidden="true">♫</span><div><strong>Listening audio</strong><small>Player preview only</small></div></div>
+          <div class="listening-player">
+            <button class="listening-play" type="button" disabled aria-label="Playback unavailable" title="Audio playback is not available yet"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 9 6-9 6z" fill="currentColor"/></svg></button>
+            <div class="listening-track"><span></span></div>
+            <span class="listening-duration">00:00 / --:--</span>
+          </div>
+          <p class="listening-audio-message">Audio playback is not connected yet.</p>
+          <div class="listening-timer"><span>Illustrative timer</span><strong>30:00</strong></div>
+          <div class="listening-audio-divider"></div>
+          <h3>What to expect</h3>
+          <p>Four sections with different conversation and lecture styles.</p>
+          <p class="listening-info">Real exam timing and playback controls will appear when Listening is activated.</p>
+        </aside>
+
+        <div class="listening-question-panel">
+          <div class="listening-question-heading"><div><span class="listening-overline">EXAMPLE QUESTIONS</span><strong>Section <span id="listeningSectionCount">01</span> / 04</strong></div><span class="listening-disabled-badge">Sample content</span></div>
+
+          <section class="listening-section-content" id="listeningPanel1" role="tabpanel" aria-labelledby="listeningTab1" data-listening-panel="1">
+            <h3>Booking a community course</h3><p class="listening-instruction">Complete the form below. Write NO MORE THAN TWO WORDS for each answer.</p>
+            <div class="listening-example-card"><p class="listening-question-number">QUESTION 01</p><label for="listenQ1">Preferred course location</label><input id="listenQ1" type="text" disabled placeholder="Your answer" aria-describedby="demoNotice1"><p class="listening-field-note" id="demoNotice1">Sample field · answers are disabled in preview</p></div>
+            <div class="listening-example-card"><p class="listening-question-number">QUESTION 02</p><p class="listening-question-prompt">Which day does the course begin?</p><fieldset disabled class="listening-options"><legend class="sr-only">Choose a day</legend><label><input type="radio" name="listenQ2"> Monday</label><label><input type="radio" name="listenQ2"> Wednesday</label><label><input type="radio" name="listenQ2"> Friday</label></fieldset></div>
+          </section>
+
+          <section class="listening-section-content" id="listeningPanel2" role="tabpanel" aria-labelledby="listeningTab2" data-listening-panel="2" hidden>
+            <h3>Visiting a local museum</h3><p class="listening-instruction">Choose the correct answer, A, B or C.</p>
+            <div class="listening-example-card"><p class="listening-question-number">QUESTION 11</p><p class="listening-question-prompt">What is included in the guided tour?</p><fieldset disabled class="listening-options"><legend class="sr-only">Choose the tour feature</legend><label><input type="radio" name="listenQ11"> A. Gallery access</label><label><input type="radio" name="listenQ11"> B. Lunch at the café</label><label><input type="radio" name="listenQ11"> C. Transport to the museum</label></fieldset></div>
+            <div class="listening-example-card"><p class="listening-question-number">QUESTION 12</p><label for="listenQ12">Opening hours</label><input id="listenQ12" type="text" disabled placeholder="Your answer"><p class="listening-field-note">Sample field · answers are disabled in preview</p></div>
+          </section>
+
+          <section class="listening-section-content" id="listeningPanel3" role="tabpanel" aria-labelledby="listeningTab3" data-listening-panel="3" hidden>
+            <h3>University group project</h3><p class="listening-instruction">Match each topic with the correct speaker.</p>
+            <div class="listening-example-card"><p class="listening-question-number">QUESTION 21</p><label for="listenQ21">Research methods</label><select id="listenQ21" disabled><option>Choose a speaker</option><option>Speaker A</option><option>Speaker B</option><option>Speaker C</option></select><p class="listening-field-note">Sample field · answers are disabled in preview</p></div>
+            <div class="listening-example-card"><p class="listening-question-number">QUESTION 22</p><label for="listenQ22">Presentation slides</label><select id="listenQ22" disabled><option>Choose a speaker</option><option>Speaker A</option><option>Speaker B</option><option>Speaker C</option></select></div>
+          </section>
+
+          <section class="listening-section-content" id="listeningPanel4" role="tabpanel" aria-labelledby="listeningTab4" data-listening-panel="4" hidden>
+            <h3>Renewable energy lecture</h3><p class="listening-instruction">Complete the notes below. Write ONE WORD ONLY for each answer.</p>
+            <div class="listening-example-card"><p class="listening-question-number">QUESTION 31</p><label for="listenQ31">Solar panels are most effective in direct</label><input id="listenQ31" type="text" disabled placeholder="Your answer"><p class="listening-field-note">Sample field · answers are disabled in preview</p></div>
+            <div class="listening-example-card"><p class="listening-question-number">QUESTION 32</p><label for="listenQ32">The research also considers energy</label><input id="listenQ32" type="text" disabled placeholder="Your answer"></div>
+          </section>
+
+          <div class="listening-preview-bottom"><span>Questions and audio shown here are illustrative only.</span><a href="practice.html" class="listening-return">Back to Practice <span aria-hidden="true">→</span></a></div>
+        </div>
+      </div>
+    </section>
+    <p class="listening-footer-note">The full Listening experience is being prepared. No account data or test results are collected on this page.</p>
+  </main>
+</body>
+</html>
