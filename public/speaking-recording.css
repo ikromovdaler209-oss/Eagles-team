@@ -61,3 +61,32 @@
   .speaking-controls .speaking-btn { width:100%; margin:0; }
   .speaking-submit { width:100%; }
 }
+
+/* IELTS Speaking Part 2 — cue card prompts. */
+.speaking-page .question-box.is-part2-cue {
+  display:block;
+  overflow-wrap:anywhere;
+}
+.speaking-page .part2-cue-title {
+  display:block;
+  margin-top:18px;
+  padding-top:16px;
+  border-top:1px solid #e0e3e9;
+  color:#9a2037;
+  font-size:.94rem;
+  line-height:1.4;
+  font-weight:800;
+}
+.speaking-page .part2-cue-list {
+  margin:10px 0 0;
+  padding-left:1.45rem;
+  color:#343a46;
+  font-size:.94em;
+  line-height:1.7;
+}
+.speaking-page .part2-cue-list li { padding-left:3px; margin:3px 0; }
+.speaking-page .part2-cue-list li::marker { color:#b21d36; }
+@media(max-width:600px) {
+  .speaking-page .part2-cue-title { margin-top:15px; padding-top:13px; }
+  .speaking-page .part2-cue-list { padding-left:1.3rem; line-height:1.6; }
+}
