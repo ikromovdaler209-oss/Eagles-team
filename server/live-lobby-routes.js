@@ -71,9 +71,9 @@ router.post("/", roomCreationLimiter, async (req, res, next) => {
       const expiresAt = Timestamp.fromMillis(Date.now() + ROOM_LIFETIME_MS);
       const result = await db.runTransaction(async tx => {
         const [quiz, occupied] = await Promise.all([tx.get(quizRef), tx.get(pinRef)]);
-        const builtIn = reading && quizRef.id === require("./live-reading").starterId;
+        const builtIn = reading ? require("./reading-practice-content").getBuiltIn(quizRef.id) : null;
         if (!quiz.exists && !builtIn) return {error: 404, message: "Test not found"};
-        const data = builtIn ? require("./live-reading").starter : quiz.data();
+        const data = builtIn || quiz.data();
         const owner = reading ? data.owner : data.creatorUid;
         if (!builtIn && req.profile.role !== "admin" && owner !== req.user.uid)
           return {error: 403, message: "Only the test owner can host"};

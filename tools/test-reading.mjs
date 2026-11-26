@@ -62,6 +62,21 @@ assert.equal((await call("get","/mine",null,"bob")).length,0);
 const stats=await call("get","/statistics",null,"author");assert.equal(stats.groups[0].count,1);assert(!JSON.stringify(stats).includes("alice"));assert.equal(stats.people.length,0);
 assert.equal(stats.groups[0].privacyLimited,true);assert.equal(stats.groups[0].misses,undefined);assert.equal(stats.groups[0].average,undefined);
 assert.equal((await call("get","/statistics",null,"admin")).people[0].student,"alice");
+// Built-in reading content is available without adding Firestore documents.
+const available = await call("get","/catalog",null,"alice");
+assert.equal(available.tests.length,4);
+assert.deepEqual(available.tests.slice(0,3).map(t=>t.id),["shade-experiment","cooling-streets","library-of-things"]);
+for(const id of ["cooling-streets","library-of-things"]){
+  const started=await call("post","/start/:id",id);
+  assert.equal(started.answers.length,9);
+  assert(!JSON.stringify(started).includes('"keys"'));
+  const {getBuiltIn}=require("./reading-practice-content");
+  const answers=getBuiltIn(id).sections[0].questions.map(q=>q.keys[0]);
+  const finished=await call("put","/attempt/:id",started.id,"alice",{revision:0,submit:true,answers});
+  assert.equal(finished.result.accuracy,100);
+  assert.equal(finished.result.correct,9);
+}
+await assert.rejects(call("put","/manage/:id","cooling-streets","author",{...original,version:0}),/Access denied/);
 const second=await start();assert.notEqual(second.id,a.id);
 const submitted=await call("put","/attempt/:id",second.id,"alice",{submit:true,revision:0,answers:["","",""]});
 assert.equal(submitted.result.skipped,3);

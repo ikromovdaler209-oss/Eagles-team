@@ -109,6 +109,7 @@ vm.runInNewContext(readFileSync(new URL("../server/live-reading.js",import.meta.
 vm.runInNewContext(source,{
   require:id=>id==="./live-reading"?readingModule.exports:id==="express"?fakeExpress:id==="express-rate-limit"?fakeRateLimit:id==="node:crypto"?require("node:crypto"):
     id==="firebase-admin/firestore"?{Timestamp,FieldValue}:
+    id==="./reading-practice-content"?require("../server/reading-practice-content.js"):
     id==="./firebase"?{auth:fakeAuth,db}:id==="./live-lobby-core"?core:
     id==="./quiz-results-store"?require("../server/quiz-results-store.js"):require(id),
   module:{exports:{}},console,Date,Promise
@@ -261,6 +262,12 @@ console.log("Live Quiz v1.3.3 simulated gameplay: PASS (roles, start, privacy, d
 for (const f of ["server/live-lobby-routes.js", "server/live-lobby-core.js", "public/quiz-live.js"])
   execFileSync("node", ["--check", new URL(`../${f}`, import.meta.url).pathname]);
 
+// The new published Reading samples can also be hosted without Firestore quiz documents.
+const contentRoom = await call("POST", "/", "teacher", {mode:"reading",quizId:"cooling-streets"});
+assert.equal(contentRoom.statusCode,201);
+assert.equal(docs.get("liveSessions/"+contentRoom.body.roomId).questionCount,9);
+assert.equal(docs.get("liveSessions/"+contentRoom.body.roomId).sectionCount,1);
+assert.equal((await call("POST","/","student",{mode:"reading",quizId:"library-of-things"})).statusCode,403);
 // Exercise both advances and the shared result archive through the real routes.
 const sample=readingModule.exports.starter;
 docs.set("readingTests/class-reading",{...sample,owner:"teacher",sections:[...sample.sections,...sample.sections],count:6});

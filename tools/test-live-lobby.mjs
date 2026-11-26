@@ -98,6 +98,7 @@ const source=readFileSync(new URL("../server/live-lobby-routes.js", import.meta.
 vm.runInNewContext(source,{
   require:id=>id==="express"?fakeExpress:id==="express-rate-limit"?fakeRateLimit:id==="node:crypto"?require("node:crypto"):
     id==="firebase-admin/firestore"?{Timestamp,FieldValue}:
+    id==="./reading-practice-content"?require("../server/reading-practice-content.js"):
     id==="./firebase"?{auth:fakeAuth,db}:id==="./live-lobby-core"?core:
     id==="./quiz-results-store"?require("../server/quiz-results-store.js"):require(id),
   module:{exports:{}},console,Date,Promise

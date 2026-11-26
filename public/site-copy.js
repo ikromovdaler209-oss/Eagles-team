@@ -1,4 +1,6 @@
 window.eaglesCopy = {
+  "Read an illustrative script (text-only preview)": ["Прочитать пример сценария (только текст)", "Namunaviy matnni o‘qish (faqat matn)"],
+  "This sample script is not an audio recording.": ["Это демонстрационный текст, а не аудиозапись.", "Bu namunaviy matn, audioyozuv emas."],
   "EAGLES COMMUNITY · LEARNING ZONE": ["EAGLES COMMUNITY · УЧЕБНЫЙ РАЗДЕЛ", "EAGLES COMMUNITY · O‘QUV BO‘LIMI"],
   "Explore practice areas": ["Выбрать направление", "Mashq bo‘limlarini ko‘rish"],
   "Start practice": ["Начать практику", "Mashqni boshlash"],

@@ -5,9 +5,9 @@ const {db} = require("./firebase");
 const authorize = require("./live-lobby-routes").authorize;
 const {canHost, validId} = require("./live-lobby-core");
 const {cleanTest, publicSections, grade, fail} = require("./reading-core");
-const starter = require("./reading-starter");
+const {builtIns, getBuiltIn} = require("./reading-practice-content");
 const tests = db.collection("readingTests"), attempts = db.collection("readingAttempts");
-const sample = "shade-experiment";
+const builtInMeta = () => [...builtIns].map(([id,test]) => meta(id,test));
 router.use((_req,res,next) => { res.set("Cache-Control","no-store"); next(); });
 router.use(authorize, rateLimit({windowMs:900000, limit:900, keyGenerator:req => req.user.uid}));
 router.param("id", (req,res,next,id) => validId(id) ? next() : res.status(400).json({error:"Invalid ID"}));
@@ -19,14 +19,14 @@ function own(req,test) {
 const meta = (id,t) => ({id,title:t.title,mode:t.mode,minutes:t.minutes,count:t.count,status:t.status,version:t.version});
 router.get("/catalog", async (req,res) => {
   const snap = await tests.where("status","==","published").select("title","mode","minutes","count","status","version").get();
-  res.json({tests:[meta(sample,starter), ...snap.docs.map(d => meta(d.id,d.data()))], editor:canHost(req.profile)});
+  res.json({tests:[...builtInMeta(), ...snap.docs.map(d => meta(d.id,d.data()))], editor:canHost(req.profile)});
 });
 router.get("/manage", async (req,res) => {
   editor(req);
   const query = req.profile.role === "admin" ? tests : tests.where("owner","==",req.user.uid);
   const rows = await query.select("title","mode","minutes","count","status","version").get();
   const list = rows.docs.map(d => meta(d.id,d.data()));
-  res.json(req.query?.live === "1" ? [meta(sample,starter), ...list.filter(t => t.status === "published")] : list);
+  res.json(req.query?.live === "1" ? [...builtInMeta(), ...list.filter(t => t.status === "published")] : list);
 });
 router.get("/manage/:id", async (req,res) => {
   const t = (await tests.doc(req.params.id).get()).data();
@@ -36,7 +36,7 @@ router.get("/manage/:id", async (req,res) => {
 router.put("/manage/:id", async (req,res) => {
   editor(req);
   const id = req.params.id;
-  if (id === sample) fail(403,"Access denied");
+  if (getBuiltIn(id)) fail(403,"Access denied");
   const test = cleanTest(req.body), ref = tests.doc(id);
   await db.runTransaction(async tx => {
     const current = (await tx.get(ref)).data();
@@ -72,7 +72,7 @@ router.post("/start/:id", async (req,res) => {
       const ref = attempts.doc(current.id), a = (await tx.get(ref)).data();
       if (a && !a.completed) { if (Date.now() >= a.deadline) finish(tx,ref,a,Date.now()); return view(ref.id,a); }
     }
-    const t = id === sample ? starter : (await tx.get(tests.doc(id))).data();
+    const t = getBuiltIn(id) || (await tx.get(tests.doc(id))).data();
     if (!t || t.status !== "published") fail(404,"Test not found");
     const a = {uid,owner:t.owner,testId:id,version:t.version,title:t.title,sections:t.sections,
       deadline:Date.now()+t.minutes*60000,answers:Array(t.count).fill(""),revision:0,completed:null};

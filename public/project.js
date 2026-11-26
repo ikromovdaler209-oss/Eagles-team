@@ -150,8 +150,11 @@ function showPrompt(box, question) {
     if (column >= 0) {
         const translation = document.createElement("span");
         translation.className = "prompt-translation";
-        translation.textContent = window.eaglesPrompts[question][column];
-        box.append(translation);
+        const translated = window.eaglesPrompts?.[question]?.[column];
+        if (translated) {
+            translation.textContent = translated;
+            box.append(translation);
+        }
     }
 }
 //Speaking
@@ -291,6 +294,10 @@ let questions3 = ["Why do you think people spend so much time on social media no
             "Do teachers play videos in class in your country?", "Why are young people so obsessed with watching short videos?", "Why do stories and movies for children always feature animals?", "What are the advantages and disadvantages of keeping a pet?", "Do you think children love animals more than old people do?",
             "Do you like to take care of animals? Why?", "How are pets now different from those in the past?", "Is it safe for animals to live in cities?", "Should schools teach children about animals?", "Do you think it is necessary to learn first aid skills?", "What are the differences between the work of a doctor and that of a nurse?", 
             "Do you think being a doctor is easy or difficult?", "Why do some children want to become doctors?", "Do you think learning biology is interesting for children?", "Do you think governments should put a large amount of money into medical research?", "Is having happy workers important for the success of a company?"]
+        // Keep each prompt only once per part, without changing translation keys.
+        questions1 = [...new Set(questions1)];
+        questions2 = [...new Set(questions2)];
+        questions3 = [...new Set(questions3)];
         let used1 = []; let used2 = []; let used3 = [];
 function Press() {
 if (radio1.checked) {
