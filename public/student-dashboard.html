@@ -84,7 +84,7 @@
           <div class="portal-section-heading"><div><p class="eyebrow">ACCOUNT</p><h2 id="studentProfileHeading">Student profile</h2></div></div>
           <dl id="profile" class="student-profile-list"></dl>
           <details class="portal-details">
-            <summary>Edit profile</summary>
+            <summary>Edit name and surname</summary>
             <form id="edit">
               <label>First name<input name="firstName" autocomplete="given-name" maxlength="70" required></label>
               <label>Last name<input name="lastName" autocomplete="family-name" maxlength="70" required></label>
@@ -110,7 +110,36 @@
         <section class="dashboard-card reading-history"><h2>IELTS Reading Results</h2><p id="readingSummary" role="status"></p><ul id="readingHistory" class="quiz-history-list"></ul></section>
         <section class="dashboard-card dashboard-progress-section"><div class="portal-section-heading"><div><p class="eyebrow">OVERVIEW</p><h2>Learning progress</h2></div></div><p class="portal-empty-state">Your available learning results appear in the sections above.</p></section>
         <section class="dashboard-card dashboard-activity-section"><div class="portal-section-heading"><div><p class="eyebrow">HISTORY</p><h2>Recent activity</h2></div></div><ul id="activity" class="portal-activity"></ul></section>
-        <section class="dashboard-card dashboard-settings-section"><div class="portal-section-heading"><div><p class="eyebrow">SECURITY</p><h2>Account settings</h2></div></div><details class="portal-details"><summary>Change password</summary>
+        <section class="dashboard-card dashboard-settings-section" aria-labelledby="studentSettingsHeading">
+          <div class="portal-section-heading"><div><p class="eyebrow">PERSONALISATION & SECURITY</p><h2 id="studentSettingsHeading">Account settings</h2></div></div>
+          <div class="student-account-preferences">
+            <div class="account-preference" aria-labelledby="studentLanguageTitle">
+              <h3 id="studentLanguageTitle">Interface language</h3>
+              <p class="portal-muted-note">Your preference is saved on this device for all pages.</p>
+              <label for="studentLanguageSelect">Choose language</label>
+              <select id="studentLanguageSelect" name="interfaceLanguage">
+                <option value="en">English</option>
+                <option value="ru">Русский</option>
+                <option value="uz">O‘zbekcha</option>
+              </select>
+            </div>
+            <div class="account-preference" aria-labelledby="studentEmailTitle">
+              <h3 id="studentEmailTitle">Email address</h3>
+              <p class="portal-muted-note">Current email: <strong id="studentCurrentEmail">—</strong></p>
+              <details class="portal-details">
+                <summary>Change email</summary>
+                <form id="changeEmail" autocomplete="off">
+                  <label>New email address<input name="newEmail" type="email" autocomplete="email" maxlength="254" required></label>
+                  <label>Current password<input name="password" type="password" autocomplete="current-password" required></label>
+                  <button type="submit">Send verification email</button>
+                </form>
+                <p class="portal-muted-note">Your current email remains active until you confirm the new address using the link sent by Firebase.</p>
+              </details>
+              <button type="button" class="student-secondary-action" id="checkChangedEmail">I've verified my new email</button>
+              <p id="emailChangeFeedback" role="status" aria-live="polite"></p>
+            </div>
+          </div>
+          <details class="portal-details"><summary>Change password</summary>
           <form id="password" method="post">
             <label>Current password<input name="current" type="password" autocomplete="current-password" required></label>
             <label>New password<input name="newPassword" type="password" autocomplete="new-password" minlength="8" required></label>

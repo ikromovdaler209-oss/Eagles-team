@@ -10,7 +10,37 @@
     approved: "Account status: Approved"
   };
   let email;
+  let ownUid;
   let revision = 0;
+  const supportedLanguages = ["en", "ru", "uz"];
+  const getLanguage = () => supportedLanguages.includes(localStorage.getItem("eaglesLanguage"))
+    ? localStorage.getItem("eaglesLanguage") : "en";
+  const emailMessage = message => { el("emailChangeFeedback").textContent = t(message); };
+  const firebaseErrors = {
+    EMAIL_EXISTS: "This email is already in use.",
+    INVALID_EMAIL: "Enter a valid email address.",
+    INVALID_LOGIN_CREDENTIALS: "Incorrect current password.",
+    INVALID_PASSWORD: "Incorrect current password.",
+    EMAIL_NOT_FOUND: "Incorrect current password.",
+    TOO_MANY_ATTEMPTS_TRY_LATER: "Too many attempts. Please try again later.",
+    OPERATION_NOT_ALLOWED: "Email changes are not available for this account.",
+    CREDENTIAL_TOO_OLD_LOGIN_AGAIN: "Please sign in again and retry.",
+    INVALID_ID_TOKEN: "Please sign in again and retry."
+  };
+  async function firebaseAccountRequest(method, body, languageHeader = false) {
+    const response = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:${method}?key=${API_KEY}`, {
+      method: "POST", headers: {"Content-Type":"application/json",
+        ...(languageHeader ? {"X-Firebase-Locale": getLanguage() === "uz" ? "en" : getLanguage()} : {})},
+      body: JSON.stringify(body)
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      const code = String(data?.error?.message || "").split(/\s*:/)[0];
+      throw new Error(firebaseErrors[code] || "Unable to update email. Please try again.");
+    }
+    return data;
+  };
+
   function logout() {
     clearSession();
     location.replace("/account.html");
@@ -126,12 +156,15 @@
       if (rev !== revision) return;
       renderStatus(data.status);
       const p = data.profile;
+      ownUid = data.uid;
       email = p.email;
       el("dashboardBuilderLink").hidden = p.canCreateTests !== true;
       el("welcome").textContent = p.firstName;
       el("studentInitials").textContent = [p.firstName, p.lastName]
         .filter(Boolean).map(part => String(part).trim().charAt(0).toLocaleUpperCase()).join("").slice(0, 2) || "E";
       el("studentIdentityEmail").textContent = email || "";
+      el("studentCurrentEmail").textContent = email || "—";
+      el("studentLanguageSelect").value = getLanguage();
       el("studentIdentityGroup").textContent = p.groupName || "—";
       el("profile").replaceChildren();
       for (const [label, value] of [["First name",p.firstName],["Last name",p.lastName],["Email",email],["Study group",p.groupName]]) {
@@ -182,6 +215,59 @@
       finally { button.disabled = false; }
     });
   }
+  el("studentLanguageSelect").addEventListener("change", event => {
+    const language = event.target.value;
+    if (!supportedLanguages.includes(language)) return;
+    try { localStorage.setItem("eaglesLanguage", language); }
+    catch { emailMessage("Unable to save language preference in this browser."); return; }
+    // Translate from the original English strings. Re-running the page's initial
+    // translation over already translated DOM nodes would be inconsistent.
+    location.reload();
+  });
+  el("changeEmail").addEventListener("submit", async event => {
+    event.preventDefault();
+    const form = event.currentTarget, button = form.querySelector("button");
+    const newEmail = form.elements.newEmail.value.trim();
+    const password = form.elements.password.value;
+    if (!email || !ownUid || !newEmail || !password) return;
+    if (newEmail.toLowerCase() === email.toLowerCase()) {
+      emailMessage("This is already your account email.");
+      return;
+    }
+    button.disabled = true;
+    emailMessage("Please wait...");
+    try {
+      // Freshly authenticate the same UID, without overwriting the existing
+      // persisted browser session or using the account profile as an auth source.
+      const proof = await firebaseAccountRequest("signInWithPassword", {
+        email, password, returnSecureToken: true
+      });
+      if (proof.localId !== ownUid) throw new Error("Please sign in again and retry.");
+      await firebaseAccountRequest("sendOobCode", {
+        requestType: "VERIFY_AND_CHANGE_EMAIL", idToken: proof.idToken, newEmail
+      }, true);
+      form.reset();
+      emailMessage("Verification sent. Check your new inbox, then confirm the change.");
+    } catch (error) { emailMessage(error.message || "Unable to update email. Please try again."); }
+    finally { button.disabled = false; }
+  });
+  el("checkChangedEmail").addEventListener("click", async event => {
+    const button = event.currentTarget;
+    button.disabled = true;
+    emailMessage("Checking verified email...");
+    try {
+      const result = await request("/profile/sync-email", {method: "POST"});
+      if (result.updated || result.email !== email) {
+        await load();
+        emailMessage("Email address updated successfully.");
+      } else {
+        emailMessage("Email not changed yet. Confirm the link in your new inbox first.");
+      }
+    } catch (error) {
+      if (error.code === 401) { failure(error); return; }
+      emailMessage("Unable to check email. Please sign in again if you confirmed the link.");
+    } finally { button.disabled = false; }
+  });
   el("logout").addEventListener("click", logout);
   el("retry").addEventListener("click", load);
   window.addEventListener("pageshow", event => { if (event.persisted) load(); });

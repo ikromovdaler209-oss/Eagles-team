@@ -53,10 +53,20 @@ function learningSummary(p) {
 }
 router.get("/dashboard", auth, async (req, res, next) => {
   try {
-    const p = (await db.collection("users").doc(req.user.uid).get()).data();
+    const ref = db.collection("users").doc(req.user.uid);
+    const p = (await ref.get()).data();
     const status = state(p);
     if (status !== "approved") return res.status(403).json({status});
-    res.json({status, profile: profileView(p), ...learningSummary(p)});
+    // After a verified Firebase email change, a newly issued ID token carries
+    // the updated email. Confirm it with Auth before syncing the Firestore mirror.
+    if (req.user.email && req.user.email !== p.email) {
+      const authUser = await firebaseAuth.getUser(req.user.uid);
+      if (authUser.email && authUser.email !== p.email) {
+        await ref.update({email: authUser.email, profileUpdatedAt: FieldValue.serverTimestamp()});
+        p.email = authUser.email;
+      }
+    }
+    res.json({status, uid: req.user.uid, profile: profileView(p), ...learningSummary(p)});
   } catch (e) { next(e); }
 });
 router.patch("/profile", auth, async (req, res, next) => {
@@ -77,6 +87,25 @@ router.patch("/profile", auth, async (req, res, next) => {
     if (status !== "approved") return res.status(403).json({status});
     res.json({ok: true});
   } catch (e) { next(e); }
+});
+// Keep the database email aligned only with the authoritative Auth account,
+// never with a client-submitted email address. The verification link must be
+// confirmed before Firebase updates Auth's email.
+router.post("/profile/sync-email", auth, async (req, res, next) => {
+  try {
+    const ref = db.collection("users").doc(req.user.uid);
+    const doc = await ref.get();
+    if (state(doc.data()) !== "approved") return res.status(403).json({error: "Access denied"});
+    const user = await firebaseAuth.getUser(req.user.uid);
+    if (!user.email) return res.status(409).json({error: "No account email found"});
+    const updated = doc.data().email !== user.email;
+    if (updated) {
+      // Never overwrite other account fields: roles, group and permissions are
+      // exclusively admin-controlled and remain untouched.
+      await ref.update({email: user.email, profileUpdatedAt: FieldValue.serverTimestamp()});
+    }
+    res.json({email: user.email, updated});
+  } catch (error) { next(error); }
 });
 router.post("/profile", auth, async (req, res, next) => {
   try {

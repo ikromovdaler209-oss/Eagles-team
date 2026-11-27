@@ -24,3 +24,18 @@
 .quiz-history-list li{border:1px solid #e4e6ea;padding:12px 14px;border-radius:10px;display:flex;flex-direction:column;gap:5px}
 .quiz-history-list li span{font-size:13px;color:#636876;overflow-wrap:anywhere}
 @media(max-width:600px){.quiz-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Student self-service settings: aligned with the existing portal cards. */
+.student-account-preferences{display:grid;gap:16px;margin:2px 0 19px}
+.account-preference{border:1px solid #e3e6ec;background:#f8f9fb;border-radius:13px;padding:17px;min-width:0}
+.account-preference h3{font:800 15px/1.4 Poppins,Inter,sans-serif;margin:0 0 5px;color:#202733}
+.account-preference .portal-muted-note{font-size:12px;color:#687386;line-height:1.6;margin:4px 0 13px}
+.account-preference label{display:block;font-weight:700;font-size:12px;color:#394252}
+.account-preference select,.account-preference input{width:100%;max-width:100%;margin-top:7px;background:#fff}
+.account-preference .portal-details{margin:10px 0 12px}
+.account-preference #changeEmail{display:grid;gap:8px;margin:12px 0}
+.account-preference #changeEmail button{justify-self:start;max-width:100%}
+.account-preference .student-secondary-action{background:#fff;border:1px solid #b9c1ce;color:#702335;border-radius:9px;font:700 12px Inter,sans-serif;padding:10px 14px;max-width:100%;text-align:left}
+.account-preference .student-secondary-action:hover{background:#fff0f2;color:#6a1627}
+.account-preference #emailChangeFeedback{font-size:12px;line-height:1.5;min-height:0;overflow-wrap:anywhere;margin:10px 0 0;color:#5d3541}
+@media(max-width:390px){.account-preference{padding:13px}}
