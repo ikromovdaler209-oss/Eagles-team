@@ -135,8 +135,11 @@ router.get("/me", auth, async (req, res, next) => {
 });
 router.get("/admin/students", auth, adminOnly, async (req, res, next) => {
   try {
-    const snapshot = await db.collection("users").where("role", "==", "student").get();
-    res.json({ students: snapshot.docs.filter(doc => !doc.get("archivedAt")).map(d => ({ ...profileView(d.data()), uid: d.id, canCreateTests: d.get("canCreateTests") === true, canWriteReviews: d.get("canWriteReviews") === true, ...learningSummary(d.data()) })) });
+    // Bound reads for large centres. Return a truncation marker instead of
+    // silently presenting a partial roster as the full student population.
+    const rosterLimit = 1000;
+    const snapshot = await db.collection("users").where("role", "==", "student").limit(rosterLimit + 1).get();
+    res.json({ students: snapshot.docs.slice(0, rosterLimit).filter(doc => !doc.get("archivedAt")).map(d => ({ ...profileView(d.data()), uid: d.id, canCreateTests: d.get("canCreateTests") === true, canWriteReviews: d.get("canWriteReviews") === true, ...learningSummary(d.data()) })), limited: snapshot.docs.length > rosterLimit });
   } catch (e) { next(e); }
 });
 // An administrator-only read model. Individual results remain unavailable to

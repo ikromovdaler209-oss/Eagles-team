@@ -62,7 +62,7 @@
     state.textContent = t("Loading test results...");
     content.hidden = true;
     try {
-      const {summary, results, totalResults} = await request("/quiz-results/mine");
+      const {summary, results, totalResults, limited} = await request("/quiz-results/mine");
       if (rev !== revision) return;
       el("quizTestsTaken").textContent = String(summary.testsTaken);
       el("quizAvgAccuracy").textContent = formatAccuracy(summary.averageAccuracy);
@@ -91,7 +91,8 @@
         track.append(fill);
         li.append(head, details, track); list.append(li);
       }
-      state.textContent = totalResults ? "" : t("No test results yet.");
+      state.textContent = limited ? "Only the first 1,000 results are included; summary statistics may be incomplete." :
+        (totalResults ? "" : t("No test results yet."));
       el("recentQuizzesHeading").hidden = !totalResults;
       content.hidden = false;
     } catch (error) {

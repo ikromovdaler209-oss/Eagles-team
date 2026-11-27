@@ -52,13 +52,15 @@ const rank = (a, b) => b.accuracy - a.accuracy || b.correct - a.correct;
 // Personal history belongs strictly to the authenticated owner.
 router.get("/mine", async (req, res, next) => {
   try {
-    const snap = await db.collection("quizResults").where("uid", "==", req.user.uid).get();
-    const records = snap.docs.map(safeResult).sort((a, b) => (b.completedAt || "").localeCompare(a.completedAt || ""));
+    const historyLimit = 1000;
+    const snap = await db.collection("quizResults").where("uid", "==", req.user.uid).limit(historyLimit + 1).get();
+    const limited = snap.docs.length > historyLimit;
+    const records = snap.docs.slice(0, historyLimit).map(safeResult).sort((a, b) => (b.completedAt || "").localeCompare(a.completedAt || ""));
     const n = records.length;
     const summary = {testsTaken: n, averageAccuracy: n ? round2(records.reduce((sum, x) => sum + x.accuracy, 0) / n) : null,
       bestAccuracy: n ? Math.max(...records.map(x => x.accuracy)) : null,
       latestAccuracy: n ? records[0].accuracy : null};
-    res.json({summary, results: records.slice(0, 50), totalResults: n});
+    res.json({summary, results: records.slice(0, 50), totalResults: n, limited});
   } catch (err) {next(err);}
 });
 

@@ -14,7 +14,7 @@ function snap(id) {
 const db = {
   collection:()=>({
     doc:id=>({id,get:async()=>snap(id)}),
-    where:()=>({get:async()=>({docs:[...profiles.keys()].filter(id=>profiles.get(id).role==="student").map(snap)})})
+    where:()=>({limit:n=>({get:async()=>({docs:[...profiles.keys()].filter(id=>profiles.get(id).role==="student").slice(0,n).map(snap)})})})
   }),
   runTransaction:fn=>fn({get:ref=>ref.get(),update:(ref,fields)=>Object.assign(profiles.get(ref.id),fields)})
 };

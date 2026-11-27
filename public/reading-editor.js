@@ -52,7 +52,8 @@ const ReadingEditor=(()=>{
     for(const r of rows){const card=box("item");card.append(el("h3",r.title),el("p",t(r.status)),button("Edit",async()=>{model=await api("/manage/"+r.id);id=r.id;draw();}));root.append(card);}
   }
   async function stats(){
-    const {groups,people}=await api("/statistics");root.replaceChildren(el("h2",t("Reading statistics")),button("Manage Reading tests",open));
+    const {groups,people,limited}=await api("/statistics");root.replaceChildren(el("h2",t("Reading statistics")),button("Manage Reading tests",open));
+    if(limited)root.append(el("p","Showing a limited sample of historical attempts; statistics may be incomplete."));
     if(!groups.length)root.append(el("p",t("No test results yet.")));
     for(const g of groups){const card=box("paper");card.append(el("h3",g.title+" · v"+g.version),el("p",t("Attempts")+" · "+g.count));
       if(g.privacyLimited){card.append(el("p",t("Statistics appear after three different students complete this test.")));root.append(card);continue;}

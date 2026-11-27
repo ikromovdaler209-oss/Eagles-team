@@ -4,10 +4,14 @@ const path = require("path");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const crypto = require("crypto");
+const {trustedProxyHops} = require("./security-config");
 
 dotenv.config();
 
 const app = express();
+// IP-based rate limits must see the original client, not Render's proxy.
+// Never set this to boolean true: that could trust forged forwarded headers.
+app.set("trust proxy", trustedProxyHops());
 const PORT = process.env.PORT || 3000;
 
 const TOKEN = process.env.BOT_TOKEN;

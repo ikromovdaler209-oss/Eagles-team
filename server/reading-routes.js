@@ -8,6 +8,8 @@ const {cleanTest, publicSections, grade, fail} = require("./reading-core");
 const {builtIns, getBuiltIn} = require("./reading-practice-content");
 const tests = db.collection("readingTests"), attempts = db.collection("readingAttempts");
 const builtInMeta = () => [...builtIns].map(([id,test]) => meta(id,test));
+const LIST_LIMIT = 500;
+const HISTORY_LIMIT = 1000;
 router.use((_req,res,next) => { res.set("Cache-Control","no-store"); next(); });
 router.use(authorize, rateLimit({windowMs:900000, limit:900, keyGenerator:req => req.user.uid}));
 router.param("id", (req,res,next,id) => validId(id) ? next() : res.status(400).json({error:"Invalid ID"}));
@@ -18,14 +20,15 @@ function own(req,test) {
 }
 const meta = (id,t) => ({id,title:t.title,mode:t.mode,minutes:t.minutes,count:t.count,status:t.status,version:t.version});
 router.get("/catalog", async (req,res) => {
-  const snap = await tests.where("status","==","published").select("title","mode","minutes","count","status","version").get();
-  res.json({tests:[...builtInMeta(), ...snap.docs.map(d => meta(d.id,d.data()))], editor:canHost(req.profile)});
+  const snap = await tests.where("status","==","published").select("title","mode","minutes","count","status","version").limit(LIST_LIMIT+1).get();
+  res.json({tests:[...builtInMeta(), ...snap.docs.slice(0,LIST_LIMIT).map(d => meta(d.id,d.data()))], editor:canHost(req.profile), limited:snap.docs.length>LIST_LIMIT});
 });
 router.get("/manage", async (req,res) => {
   editor(req);
   const query = req.profile.role === "admin" ? tests : tests.where("owner","==",req.user.uid);
-  const rows = await query.select("title","mode","minutes","count","status","version").get();
-  const list = rows.docs.map(d => meta(d.id,d.data()));
+  const rows = await query.select("title","mode","minutes","count","status","version").limit(LIST_LIMIT+1).get();
+  const list = rows.docs.slice(0,LIST_LIMIT).map(d => meta(d.id,d.data()));
+  if (rows.docs.length>LIST_LIMIT) res.set("X-Results-Limited","true");
   res.json(req.query?.live === "1" ? [...builtInMeta(), ...list.filter(t => t.status === "published")] : list);
 });
 router.get("/manage/:id", async (req,res) => {
@@ -104,9 +107,9 @@ async function attempt(req,res) {
 router.get("/attempt/:id",attempt);
 router.put("/attempt/:id",attempt);
 async function completedRows(query) {
-  const snap = await query.select("title","owner","uid","testId","version","deadline","completed","result").get();
+  const snap = await query.select("title","owner","uid","testId","version","deadline","completed","result").limit(HISTORY_LIMIT+1).get();
   const rows = [];
-  for (const doc of snap.docs) {
+  for (const doc of snap.docs.slice(0,HISTORY_LIMIT)) {
     let a = doc.data();
     if (!a.completed && a.deadline <= Date.now()) {
       a = await db.runTransaction(async tx => {
@@ -116,9 +119,17 @@ async function completedRows(query) {
     }
     if (a.completed) rows.push(a);
   }
-  return rows.sort((a,b) => b.completed-a.completed);
+  rows.sort((a,b) => b.completed-a.completed);
+  // A bounded sample is not a complete historical aggregate. Let the caller
+  // disclose this instead of presenting truncated statistics as final.
+  rows.limited = snap.docs.length>HISTORY_LIMIT;
+  return rows;
 }
-router.get("/mine",async (req,res) => res.json((await completedRows(attempts.where("uid","==",req.user.uid))).map(summary)));
+router.get("/mine",async (req,res) => {
+  const rows = await completedRows(attempts.where("uid","==",req.user.uid));
+  if (rows.limited) res.set("X-Results-Limited","true");
+  res.json(rows.map(summary));
+});
 router.get("/statistics",async (req,res) => {
   editor(req);
   const admin = req.profile.role === "admin";
@@ -146,7 +157,7 @@ router.get("/statistics",async (req,res) => {
     }
     for (const a of rows) people.push({...summary(a),student:names.get(a.uid)});
   }
-  res.json({groups:groupsView,people});
+  res.json({groups:groupsView,people,limited:rows.limited});
 });
 router.use((err,req,res,next) => {
   if (res.headersSent) return next(err);

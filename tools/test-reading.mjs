@@ -28,11 +28,12 @@ class Ref{
   async get(){const data=structuredClone(docs.get(this.path));return {ref:this,id:this.id,data:()=>data,get:k=>data?.[k]};}
 }
 class Collection{
-  constructor(path,predicate=()=>true){this.path=path;this.predicate=predicate;}
+  constructor(path,predicate=()=>true,max=Infinity){this.path=path;this.predicate=predicate;this.max=max;}
   doc(id="auto"+(++sequence)){return new Ref(this.path+"/"+id);}
-  where(key,op,value){assert.equal(op,"==");return new Collection(this.path,d=>d[key]===value);}
+  where(key,op,value){assert.equal(op,"==");return new Collection(this.path,d=>d[key]===value,this.max);}
   select(){return this;}
-  async get(){const rows=[];for(const [path,d] of docs)if(path.startsWith(this.path+"/")&&!path.slice(this.path.length+1).includes("/")&&this.predicate(d))rows.push(await new Ref(path).get());return {docs:rows};}
+  limit(max){return new Collection(this.path,this.predicate,max);}
+  async get(){const rows=[];for(const [path,d] of docs)if(path.startsWith(this.path+"/")&&!path.slice(this.path.length+1).includes("/")&&this.predicate(d))rows.push(await new Ref(path).get());return {docs:rows.slice(0,this.max)};}
 }
 const db={collection:p=>new Collection(p),getAll:(...refs)=>Promise.all(refs.map(r=>r.get())),async runTransaction(fn){
   const writes=[];const set=(r,d)=>writes.push(()=>docs.set(r.path,structuredClone(d)));

@@ -4,6 +4,7 @@ const tbody = document.getElementById("students");
 const studentSearch = document.getElementById("studentSearch");
 const studentStatusFilter = document.getElementById("studentStatusFilter");
 let loadedStudents = [];
+let studentRosterLimited = false;
 
 async function api(path, method = "GET", body) {
   return request(path, { method, ...(body ? { body: JSON.stringify(body) } : {}) });
@@ -137,7 +138,8 @@ function renderStudents() {
     profileLink.setAttribute("aria-label", `View ${fullName}'s student profile and results`);
     cell(row, "Profile and learning", profileLink);
   }
-  msg.textContent = `${filtered.length} of ${loadedStudents.length} student profiles shown`;
+  msg.textContent = `${filtered.length} of ${loadedStudents.length} student profiles shown` +
+    (studentRosterLimited ? " · More students exist; contact an administrator to enable paginated access." : "");
   if (!filtered.length) {
     const row = tbody.insertRow();
     const empty = row.insertCell();
@@ -150,11 +152,13 @@ function renderStudents() {
 async function load() {
   msg.textContent = "Loading student profiles...";
   try {
-    const { students } = await api("/admin/students");
+    const { students, limited } = await api("/admin/students");
+    studentRosterLimited = limited === true;
     loadedStudents = students.filter(p => p.role === "student");
     updateMetrics(loadedStudents);
     renderStudents();
   } catch (error) {
+    studentRosterLimited = false;
     loadedStudents = [];
     tbody.replaceChildren();
     updateMetrics([]);
