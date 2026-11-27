@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Student profile — Eagles Team Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="account.css">
+  <script src="/site-nav-hint.js"></script>
+  <link rel="stylesheet" href="site-nav.css">
+  <link rel="stylesheet" href="portal-ux.css">
+  <link rel="stylesheet" href="admin-student-profile.css">
+</head>
+<body class="admin-page student-inspection-page">
+  <header class="site-header">
+    <a class="site-brand" href="Eagles-homepage.html"><span class="site-mark" aria-hidden="true">E</span>Eagles-Community</a>
+    <button class="site-toggle" type="button" aria-controls="mainNav" aria-expanded="false" aria-label="Open menu">☰</button>
+    <nav id="mainNav" class="site-nav" aria-label="Main navigation">
+      <a href="Eagles-homepage.html">Home</a>
+      <a href="Eagles.courses.html">Courses</a>
+      <a href="Eagles-teachers.html">Teachers</a>
+      <a href="Eagles-about.html">About</a>
+      <a href="Eagles-contacts.html">Contacts</a>
+      <a href="practice.html">Practice</a>
+      <a href="join.html">Join Us</a>
+    </nav>
+  </header>
+  <main class="student-inspection-shell" id="profileMain">
+    <div class="inspection-return"><a href="/admin.html#studentsSection">← Back to student administration</a></div>
+    <p id="profileNotice" role="status" aria-live="polite" class="inspection-notice">Checking administrator access...</p>
+    <button type="button" id="retryProfile" class="inspection-retry" hidden>Try again</button>
+    <div id="profileWorkspace" hidden>
+      <header class="inspection-hero">
+        <div class="inspection-avatar" id="studentAvatar" aria-hidden="true">S</div>
+        <div class="inspection-hero-copy">
+          <p class="inspection-eyebrow">ADMIN · STUDENT PROFILE</p>
+          <h1 id="studentName">Student profile</h1>
+          <p id="studentEmail" class="inspection-email"></p>
+          <div class="inspection-statuses"><span id="studentApproval" class="inspection-pill"></span><span id="studentActive" class="inspection-pill"></span></div>
+        </div>
+        <button id="profileRefresh" class="inspection-refresh" type="button">Refresh profile</button>
+      </header>
+      <nav class="inspection-tabs" role="tablist" aria-label="Student profile sections">
+        <button type="button" role="tab" id="tabOverview" aria-controls="panelOverview" aria-selected="true" tabindex="0" data-tab="overview">Overview</button>
+        <button type="button" role="tab" id="tabQuiz" aria-controls="panelQuiz" aria-selected="false" tabindex="-1" data-tab="quiz">Quiz Results</button>
+        <button type="button" role="tab" id="tabPractice" aria-controls="panelPractice" aria-selected="false" tabindex="-1" data-tab="practice">IELTS Practice</button>
+        <button type="button" role="tab" id="tabAccount" aria-controls="panelAccount" aria-selected="false" tabindex="-1" data-tab="account">Account Details</button>
+      </nav>
+      <section id="panelOverview" class="inspection-panel" role="tabpanel" aria-labelledby="tabOverview">
+        <div class="inspection-section-head"><div><p class="inspection-kicker">LEARNING AT A GLANCE</p><h2>Student overview</h2></div><p class="inspection-help">Results reflect saved attempts, not estimated progress.</p></div>
+        <p id="overviewLimited" class="inspection-limit" hidden>Some results are not included in this preview. Totals and averages below reflect only the loaded records.</p>
+        <div class="inspection-stats" id="profileMetrics">
+          <div><small>Live tests</small><strong id="metricQuizCount">—</strong><span>Completed sessions</span></div>
+          <div><small>Live average</small><strong id="metricQuizAverage">—</strong><span>Correct answers</span></div>
+          <div><small>Reading attempts</small><strong id="metricReadingCount">—</strong><span>Completed practice</span></div>
+          <div><small>Reading average</small><strong id="metricReadingAverage">—</strong><span>Correct answers</span></div>
+          <div><small>Speaking answers</small><strong id="metricSpeakingCount">—</strong><span>Submitted recordings</span></div>
+          <div><small>Speaking reviewed</small><strong id="metricSpeakingReviewed">—</strong><span>Reviewed submissions</span></div>
+        </div>
+        <div class="inspection-duo">
+          <div class="inspection-card"><h3>Student information</h3><dl class="inspection-details" id="overviewIdentity"></dl></div>
+          <div class="inspection-card"><h3>Recent account activity</h3><ul id="overviewActivity" class="inspection-activity"></ul></div>
+        </div>
+      </section>
+      <section id="panelQuiz" class="inspection-panel" role="tabpanel" aria-labelledby="tabQuiz" hidden>
+        <div class="inspection-section-head"><div><p class="inspection-kicker">LIVE PRACTICE</p><h2>Quiz Results</h2></div><p id="quizTotal" class="inspection-help"></p></div>
+        <p id="quizLimited" class="inspection-limit" hidden>Some older results are not included in this preview. Metrics represent the records loaded.</p>
+        <div id="quizResultsList" class="inspection-result-list"></div>
+      </section>
+      <section id="panelPractice" class="inspection-panel" role="tabpanel" aria-labelledby="tabPractice" hidden>
+        <div class="inspection-section-head"><div><p class="inspection-kicker">IELTS PRACTICE</p><h2>Reading &amp; Speaking</h2></div><p class="inspection-help">Listening preview does not yet save results.</p></div>
+        <div class="inspection-duo">
+          <div class="inspection-card"><h3>Reading attempts <span id="readingTotal" class="inspection-count"></span></h3><p id="readingLimited" class="inspection-limit" hidden>Some records are not included in this preview.</p><div id="readingResultsList" class="inspection-result-list"></div></div>
+          <div class="inspection-card"><h3>Speaking submissions <span id="speakingTotal" class="inspection-count"></span></h3><p id="speakingLimited" class="inspection-limit" hidden>Some records are not included in this preview.</p><div id="speakingResultsList" class="inspection-result-list"></div></div>
+        </div>
+      </section>
+      <section id="panelAccount" class="inspection-panel" role="tabpanel" aria-labelledby="tabAccount" hidden>
+        <div class="inspection-section-head"><div><p class="inspection-kicker">ACCOUNT INFORMATION</p><h2>Account Details</h2></div></div>
+        <div class="inspection-duo">
+          <div class="inspection-card"><h3>Identity &amp; registration</h3><dl class="inspection-details" id="accountIdentity"></dl></div>
+          <div class="inspection-card"><h3>Access &amp; permissions</h3><dl class="inspection-details" id="accountPermissions"></dl><a class="inspection-action-link" href="/admin.html#studentsSection">Manage student permissions →</a></div>
+        </div>
+        <p class="inspection-privacy">This page is read-only. Changes to status, group, and permissions remain in the existing Admin Page.</p>
+      </section>
+    </div>
+  </main>
+  <script src="account-session.js" defer></script>
+  <script src="admin-student-profile.js" defer></script>
+  <script src="site-nav.js" defer></script>
+</body>
+</html>

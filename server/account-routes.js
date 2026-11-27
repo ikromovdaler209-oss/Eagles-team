@@ -110,6 +110,79 @@ router.get("/admin/students", auth, adminOnly, async (req, res, next) => {
     res.json({ students: snapshot.docs.filter(doc => !doc.get("archivedAt")).map(d => ({ ...profileView(d.data()), uid: d.id, canCreateTests: d.get("canCreateTests") === true, canWriteReviews: d.get("canWriteReviews") === true, ...learningSummary(d.data()) })) });
   } catch (e) { next(e); }
 });
+// An administrator-only read model. Individual results remain unavailable to
+// test creators and never enter public student endpoints.
+router.get("/admin/students/:uid/profile", auth, adminOnly, async (req, res, next) => {
+  try {
+    const uid = req.params.uid;
+    if (!/^[A-Za-z0-9_-]{6,128}$/.test(uid))
+      return res.status(400).json({error: "Invalid student ID"});
+    const document = await db.collection("users").doc(uid).get();
+    const student = document.data();
+    if (!student || student.role !== "student" || student.archivedAt)
+      return res.status(404).json({error: "Student not found"});
+
+    // Single-field equality queries require no composite index. Limit responses
+    // to prevent an old account from loading an unlimited number of records.
+    const pageSize = 200;
+    const [quizSnap, readingSnap, speakingSnap] = await Promise.all([
+      db.collection("quizResults").where("uid", "==", uid).select(
+        "sessionId", "quizTitle", "total", "correct", "wrong", "skipped", "accuracy", "completedAt").limit(pageSize + 1).get(),
+      db.collection("readingAttempts").where("uid", "==", uid).select(
+        "title", "testId", "completed", "result").limit(pageSize + 1).get(),
+      db.collection("speakingSubmissions").where("uid", "==", uid).select(
+        "part", "prompt", "durationSeconds", "status", "asset", "audioDeletedAt", "createdAt", "reviewedAt", "review").limit(pageSize + 1).get()
+    ]);
+    const iso = value => {
+      const date = value?.toDate?.() || (typeof value === "number" || typeof value === "string" ? new Date(value) : null);
+      return date instanceof Date && Number.isFinite(date.getTime()) ? date.toISOString() : null;
+    };
+    const number = value => Number.isFinite(value) ? value : 0;
+    const recent = rows => rows.sort((a,b) => (b.completedAt || b.createdAt || "").localeCompare(a.completedAt || a.createdAt || ""));
+    const completeQuiz = quizSnap.docs.slice(0, pageSize).map(d => {
+      const x = d.data();
+      return {sessionId: x.sessionId || "", title: x.quizTitle || "Untitled test",
+        correct: number(x.correct), wrong: number(x.wrong), skipped: number(x.skipped),
+        total: number(x.total), accuracy: number(x.accuracy), completedAt: iso(x.completedAt)};
+    });
+    const reading = readingSnap.docs.slice(0, pageSize).map(d => {
+      const x = d.data();
+      if (!x.completed || !x.result) return null;
+      return {title: x.title || "Reading practice", testId: x.testId || "",
+        correct: number(x.result.correct), wrong: number(x.result.wrong), skipped: number(x.result.skipped),
+        total: number(x.result.total), accuracy: number(x.result.accuracy), completedAt: iso(x.completed)};
+    }).filter(Boolean);
+    const speaking = speakingSnap.docs.slice(0, pageSize).map(d => {
+      const x = d.data();
+      if (!["pending_review", "reviewed"].includes(x.status)) return null;
+      return {id: d.id, part: x.part, prompt: x.prompt || "", status: x.status,
+        durationSeconds: number(x.durationSeconds), createdAt: iso(x.createdAt),
+        reviewedAt: iso(x.reviewedAt), audioAvailable: Boolean(x.asset && !x.audioDeletedAt),
+        review: x.status === "reviewed" && x.review ? {
+          overall: x.review.overall, feedback: x.review.feedback || "", criteria: x.review.criteria || null
+        } : null};
+    }).filter(Boolean);
+    const summary = rows => ({count: rows.length,
+      average: rows.length ? Math.round(rows.reduce((sum,r) => sum + r.accuracy, 0) / rows.length * 100) / 100 : null,
+      best: rows.length ? Math.max(...rows.map(r=>r.accuracy)) : null});
+    const activity = [["Registered", student.createdAt], ["Profile updated", student.profileUpdatedAt]]
+      .map(([type,value]) => ({type, date: iso(value)})).filter(row => row.date);
+    res.json({
+      student: {uid, firstName: student.firstName || "", lastName: student.lastName || "",
+        email: student.email || "", groupName: student.groupName || "", role: student.role,
+        approvalStatus: student.approvalStatus || "pending", isActive: student.isActive === true,
+        canCreateTests: student.canCreateTests === true, canWriteReviews: student.canWriteReviews === true,
+        registeredAt: iso(student.createdAt), updatedAt: iso(student.profileUpdatedAt)},
+      overview: {quiz: summary(completeQuiz), reading: summary(reading),
+        speaking: {submitted: speaking.length, reviewed: speaking.filter(x => x.status === "reviewed").length}},
+      quiz: {items: recent(completeQuiz).slice(0, 50), limited: quizSnap.docs.length > pageSize},
+      reading: {items: recent(reading).slice(0, 50), limited: readingSnap.docs.length > pageSize},
+      speaking: {items: recent(speaking).slice(0, 50), limited: speakingSnap.docs.length > pageSize},
+      activity: activity.sort((a,b) => b.date.localeCompare(a.date))
+    });
+  } catch (error) {next(error);}
+});
+
 async function updateStudent(req, res, next) {
   try {
     if (req.params.uid === req.user.uid) return res.status(400).json({ error: "Cannot edit own admin account" });

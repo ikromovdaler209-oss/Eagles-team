@@ -130,24 +130,12 @@ function renderStudents() {
     actions.append(save, remove);
     cell(row, "Action", actions);
 
-    const details = document.createElement("details");
-    details.className = "admin-profile-details";
-    const summary = document.createElement("summary");
-    summary.textContent = "View profile";
-    details.append(summary);
-    const description = document.createElement("p");
-    description.textContent = `${fullName} · ${p.email || "—"} · ${p.groupName || "No group assigned"}`;
-    details.append(description);
-    const learning = document.createElement("p");
-    learning.textContent = "See Quiz statistics for completed test results.";
-    details.append(learning);
-    const activity = Array.isArray(p.activity) ? p.activity : [];
-    for (const event of activity) {
-      const line = document.createElement("p");
-      line.textContent = `${event.type === "registered" ? "Registered" : "Profile updated"} · ${event.date ? new Date(event.date).toLocaleDateString("en") : ""}`;
-      details.append(line);
-    }
-    cell(row, "Profile and learning", details);
+    const profileLink = document.createElement("a");
+    profileLink.className = "admin-profile-link";
+    profileLink.href = `/admin-student-profile.html?uid=${encodeURIComponent(p.uid)}`;
+    profileLink.textContent = "View profile →";
+    profileLink.setAttribute("aria-label", `View ${fullName}'s student profile and results`);
+    cell(row, "Profile and learning", profileLink);
   }
   msg.textContent = `${filtered.length} of ${loadedStudents.length} student profiles shown`;
   if (!filtered.length) {
